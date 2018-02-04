@@ -50,20 +50,41 @@ export interface Payload {
     master_branch?: string;
     description?:   string;
     pusher_type?:   string;
+    number?:        number;
+    pull_request?:  PullRequest;
     forkee?:        Forkee;
-    pages?:         Page[];
 }
 
 export interface Comment {
-    url:                string;
-    html_url:           string;
-    issue_url:          string;
-    id:                 number;
-    user:               User;
-    created_at:         string;
-    updated_at:         string;
-    author_association: string;
-    body:               string;
+    url:                     string;
+    html_url:                string;
+    issue_url?:              string;
+    id:                      number;
+    user:                    User;
+    created_at:              string;
+    updated_at:              string;
+    author_association:      string;
+    body:                    string;
+    pull_request_review_id?: number;
+    diff_hunk?:              string;
+    path?:                   string;
+    position?:               number;
+    original_position?:      number;
+    commit_id?:              string;
+    original_commit_id?:     string;
+    pull_request_url?:       string;
+    _links?:                 CommentLinks;
+    in_reply_to_id?:         number;
+}
+
+export interface CommentLinks {
+    self:         HTML;
+    html:         HTML;
+    pull_request: HTML;
+}
+
+export interface HTML {
+    href: string;
 }
 
 export interface User {
@@ -87,7 +108,6 @@ export interface User {
 }
 
 export enum UserType {
-    Bot = "Bot",
     User = "User",
 }
 
@@ -111,7 +131,7 @@ export interface Forkee {
     owner:             User;
     private:           boolean;
     html_url:          string;
-    description:       string;
+    description?:      string;
     fork:              boolean;
     url:               string;
     forks_url:         string;
@@ -157,11 +177,11 @@ export interface Forkee {
     ssh_url:           string;
     clone_url:         string;
     svn_url:           string;
-    homepage:          string;
+    homepage?:         GravatarID;
     size:              number;
     stargazers_count:  number;
     watchers_count:    number;
-    language:          null;
+    language?:         ForkeeLanguage;
     has_issues:        boolean;
     has_projects:      boolean;
     has_downloads:     boolean;
@@ -175,8 +195,18 @@ export interface Forkee {
     forks:             number;
     open_issues:       number;
     watchers:          number;
-    default_branch:    string;
-    public:            boolean;
+    default_branch:    DefaultBranch;
+    public?:           boolean;
+}
+
+export enum DefaultBranch {
+    Master = "master",
+}
+
+export enum ForkeeLanguage {
+    Go = "Go",
+    HTML = "HTML",
+    JavaScript = "JavaScript",
 }
 
 export interface Issue {
@@ -199,9 +229,8 @@ export interface Issue {
     comments:           number;
     created_at:         string;
     updated_at:         string;
-    closed_at?:         string;
+    closed_at:          string;
     author_association: string;
-    pull_request?:      PullRequest;
     body:               string;
 }
 
@@ -214,19 +243,68 @@ export interface Label {
 }
 
 export interface PullRequest {
-    url:       string;
-    html_url:  string;
-    diff_url:  string;
-    patch_url: string;
+    url:                    string;
+    id:                     number;
+    html_url:               string;
+    diff_url:               string;
+    patch_url:              string;
+    issue_url:              string;
+    number:                 number;
+    state:                  string;
+    locked:                 boolean;
+    title:                  string;
+    user:                   User;
+    body:                   string;
+    created_at:             string;
+    updated_at:             string;
+    closed_at:              null;
+    merged_at:              null;
+    merge_commit_sha?:      string;
+    assignee:               null;
+    assignees:              any[];
+    requested_reviewers:    any[];
+    requested_teams:        any[];
+    milestone:              null;
+    commits_url:            string;
+    review_comments_url:    string;
+    review_comment_url:     string;
+    comments_url:           string;
+    statuses_url:           string;
+    head:                   Base;
+    base:                   Base;
+    _links:                 PullRequestLinks;
+    author_association:     string;
+    merged?:                boolean;
+    mergeable?:             null;
+    rebaseable?:            null;
+    mergeable_state?:       string;
+    merged_by?:             null;
+    comments?:              number;
+    review_comments?:       number;
+    maintainer_can_modify?: boolean;
+    commits?:               number;
+    additions?:             number;
+    deletions?:             number;
+    changed_files?:         number;
 }
 
-export interface Page {
-    page_name: string;
-    title:     string;
-    summary:   null;
-    action:    string;
-    sha:       string;
-    html_url:  string;
+export interface PullRequestLinks {
+    self:            HTML;
+    html:            HTML;
+    issue:           HTML;
+    comments:        HTML;
+    review_comments: HTML;
+    review_comment:  HTML;
+    commits:         HTML;
+    statuses:        HTML;
+}
+
+export interface Base {
+    label: string;
+    ref:   string;
+    sha:   string;
+    user:  User;
+    repo:  Forkee;
 }
 
 export interface Repo {
@@ -243,7 +321,7 @@ export interface Gists {
     git_pull_url: string;
     git_push_url: string;
     html_url:     string;
-    files:        { [key: string]: File };
+    files:        Files;
     public:       boolean;
     created_at:   string;
     updated_at:   string;
@@ -255,21 +333,39 @@ export interface Gists {
     owner?:       User;
 }
 
-export interface File {
+export interface Files {
+    "gistfile1.txt"?:                      Empty;
+    "entity404.mojang"?:                   Empty;
+    "-"?:                                  Empty;
+    "Maze Runner: The Death Cure (2018)"?: Empty;
+    "DataShowFragment.kt"?:                Empty;
+    "main-styles.css"?:                    Empty;
+    "config.json"?:                        Empty;
+    "app.js"?:                             Empty;
+    "server.txt"?:                         Empty;
+}
+
+export interface Empty {
     filename:  string;
-    type:      FileType;
-    language?: string;
+    type:      Type;
+    language?: Language;
     raw_url:   string;
     size:      number;
 }
 
-export enum FileType {
+export enum Language {
+    CSS = "CSS",
+    JSON = "JSON",
+    JavaScript = "JavaScript",
+    Kotlin = "Kotlin",
+    Text = "Text",
+}
+
+export enum Type {
     ApplicationJSON = "application/json",
     ApplicationJavascript = "application/javascript",
-    ApplicationXML = "application/xml",
-    TextHTML = "text/html",
+    TextCSS = "text/css",
     TextPlain = "text/plain",
-    TextXYAML = "text/x-yaml",
 }
 
 export interface User {
@@ -297,7 +393,6 @@ export enum GravatarID {
 }
 
 export enum UserType {
-    Bot = "Bot",
     User = "User",
 }
 
@@ -464,19 +559,38 @@ export module Convert {
             master_branch: U(null, ""),
             description: U(null, ""),
             pusher_type: U(null, ""),
+            number: U(null, 0),
+            pull_request: U(null, O("PullRequest")),
             forkee: U(null, O("Forkee")),
-            pages: U(null, A(O("Page"))),
         },
         "Comment": {
             url: "",
             html_url: "",
-            issue_url: "",
+            issue_url: U(null, ""),
             id: 0,
             user: O("User"),
             created_at: "",
             updated_at: "",
             author_association: "",
             body: "",
+            pull_request_review_id: U(null, 0),
+            diff_hunk: U(null, ""),
+            path: U(null, ""),
+            position: U(null, 0),
+            original_position: U(null, 0),
+            commit_id: U(null, ""),
+            original_commit_id: U(null, ""),
+            pull_request_url: U(null, ""),
+            _links: U(null, O("CommentLinks")),
+            in_reply_to_id: U(null, 0),
+        },
+        "CommentLinks": {
+            self: O("HTML"),
+            html: O("HTML"),
+            pull_request: O("HTML"),
+        },
+        "HTML": {
+            href: "",
         },
         "User": {
             login: "",
@@ -515,7 +629,7 @@ export module Convert {
             owner: O("User"),
             private: false,
             html_url: "",
-            description: "",
+            description: U(null, ""),
             fork: false,
             url: "",
             forks_url: "",
@@ -561,11 +675,11 @@ export module Convert {
             ssh_url: "",
             clone_url: "",
             svn_url: "",
-            homepage: "",
+            homepage: U(E("GravatarID"), null),
             size: 0,
             stargazers_count: 0,
             watchers_count: 0,
-            language: null,
+            language: U(E("ForkeeLanguage"), null),
             has_issues: false,
             has_projects: false,
             has_downloads: false,
@@ -579,8 +693,8 @@ export module Convert {
             forks: 0,
             open_issues: 0,
             watchers: 0,
-            default_branch: "",
-            public: false,
+            default_branch: E("DefaultBranch"),
+            public: U(null, false),
         },
         "Issue": {
             url: "",
@@ -602,9 +716,8 @@ export module Convert {
             comments: 0,
             created_at: "",
             updated_at: "",
-            closed_at: U(null, ""),
+            closed_at: "",
             author_association: "",
-            pull_request: U(null, O("PullRequest")),
             body: "",
         },
         "Label": {
@@ -616,17 +729,65 @@ export module Convert {
         },
         "PullRequest": {
             url: "",
+            id: 0,
             html_url: "",
             diff_url: "",
             patch_url: "",
-        },
-        "Page": {
-            page_name: "",
+            issue_url: "",
+            number: 0,
+            state: "",
+            locked: false,
             title: "",
-            summary: null,
-            action: "",
+            user: O("User"),
+            body: "",
+            created_at: "",
+            updated_at: "",
+            closed_at: null,
+            merged_at: null,
+            merge_commit_sha: U(null, ""),
+            assignee: null,
+            assignees: A(undefined),
+            requested_reviewers: A(undefined),
+            requested_teams: A(undefined),
+            milestone: null,
+            commits_url: "",
+            review_comments_url: "",
+            review_comment_url: "",
+            comments_url: "",
+            statuses_url: "",
+            head: O("Base"),
+            base: O("Base"),
+            _links: O("PullRequestLinks"),
+            author_association: "",
+            merged: U(null, false),
+            mergeable: null,
+            rebaseable: null,
+            mergeable_state: U(null, ""),
+            merged_by: null,
+            comments: U(null, 0),
+            review_comments: U(null, 0),
+            maintainer_can_modify: U(null, false),
+            commits: U(null, 0),
+            additions: U(null, 0),
+            deletions: U(null, 0),
+            changed_files: U(null, 0),
+        },
+        "PullRequestLinks": {
+            self: O("HTML"),
+            html: O("HTML"),
+            issue: O("HTML"),
+            comments: O("HTML"),
+            review_comments: O("HTML"),
+            review_comment: O("HTML"),
+            commits: O("HTML"),
+            statuses: O("HTML"),
+        },
+        "Base": {
+            label: "",
+            ref: "",
             sha: "",
-            html_url: "",
+            user: O("User"),
+            repo: O("Forkee"),
         },
         "Repo": {
             id: 0,
@@ -641,7 +802,7 @@ export module Convert {
             git_pull_url: "",
             git_push_url: "",
             html_url: "",
-            files: M(O("File")),
+            files: O("Files"),
             public: false,
             created_at: "",
             updated_at: "",
@@ -652,10 +813,21 @@ export module Convert {
             truncated: false,
             owner: U(null, O("User")),
         },
-        "File": {
+        "Files": {
+            "gistfile1.txt": U(null, O("Empty")),
+            "entity404.mojang": U(null, O("Empty")),
+            "-": U(null, O("Empty")),
+            "Maze Runner: The Death Cure (2018)": U(null, O("Empty")),
+            "DataShowFragment.kt": U(null, O("Empty")),
+            "main-styles.css": U(null, O("Empty")),
+            "config.json": U(null, O("Empty")),
+            "app.js": U(null, O("Empty")),
+            "server.txt": U(null, O("Empty")),
+        },
+        "Empty": {
             filename: "",
-            type: E("FileType"),
-            language: U(null, ""),
+            type: E("Type"),
+            language: U(E("Language"), null),
             raw_url: "",
             size: 0,
         },
@@ -671,16 +843,28 @@ export module Convert {
             GravatarID.Empty,
         ],
         "UserType": [
-            UserType.Bot,
             UserType.User,
         ],
-        "FileType": [
-            FileType.ApplicationJSON,
-            FileType.ApplicationJavascript,
-            FileType.ApplicationXML,
-            FileType.TextHTML,
-            FileType.TextPlain,
-            FileType.TextXYAML,
+        "DefaultBranch": [
+            DefaultBranch.Master,
+        ],
+        "ForkeeLanguage": [
+            ForkeeLanguage.Go,
+            ForkeeLanguage.HTML,
+            ForkeeLanguage.JavaScript,
+        ],
+        "Language": [
+            Language.CSS,
+            Language.JSON,
+            Language.JavaScript,
+            Language.Kotlin,
+            Language.Text,
+        ],
+        "Type": [
+            Type.ApplicationJSON,
+            Type.ApplicationJavascript,
+            Type.TextCSS,
+            Type.TextPlain,
         ],
     };
 }

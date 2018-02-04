@@ -33,20 +33,41 @@ class Payload {
     masterBranch?: String
     description?: Maybe<String>
     pusherType?: String
+    number?: Int
+    pullRequest?: PullRequest
     forkee?: Forkee
-    pages?: List<Page>
 }
 
 class Comment {
     url: String
     htmlURL: String
-    issueURL: String
+    issueURL?: String
     id: Int
     user: User
     createdAt: DateTime
     updatedAt: DateTime
     authorAssociation: String
     body: String
+    pullRequestReviewID?: Int
+    diffHunk?: String
+    path?: String
+    position?: Int
+    originalPosition?: Int
+    commitID?: String
+    originalCommitID?: String
+    pullRequestURL?: String
+    links?: CommentLinks
+    inReplyToID?: Int
+}
+
+class CommentLinks {
+    self: HTML
+    html: HTML
+    pullRequest: HTML
+}
+
+class HTML {
+    href: String
 }
 
 class User {
@@ -89,7 +110,7 @@ class Forkee {
     owner: User
     private: Bool
     htmlURL: String
-    description: String
+    description: Maybe<String>
     fork: Bool
     url: String
     forksURL: String
@@ -135,11 +156,11 @@ class Forkee {
     sshURL: String
     cloneURL: String
     svnURL: String
-    homepage: String
+    homepage: Maybe<GravatarID>
     size: Int
     stargazersCount: Int
     watchersCount: Int
-    language: Null
+    language: Maybe<ForkeeLanguage>
     hasIssues: Bool
     hasProjects: Bool
     hasDownloads: Bool
@@ -153,8 +174,8 @@ class Forkee {
     forks: Int
     openIssues: Int
     watchers: Int
-    defaultBranch: String
-    public: Bool
+    defaultBranch: DefaultBranch
+    public?: Bool
 }
 
 class Issue {
@@ -177,9 +198,8 @@ class Issue {
     comments: Int
     createdAt: DateTime
     updatedAt: DateTime
-    closedAt: Maybe<DateTime>
+    closedAt: DateTime
     authorAssociation: String
-    pullRequest?: PullRequest
     body: String
 }
 
@@ -193,18 +213,67 @@ class Label {
 
 class PullRequest {
     url: String
+    id: Int
     htmlURL: String
     diffURL: String
     patchURL: String
+    issueURL: String
+    number: Int
+    state: String
+    locked: Bool
+    title: String
+    user: User
+    body: String
+    createdAt: DateTime
+    updatedAt: DateTime
+    closedAt: Null
+    mergedAt: Null
+    mergeCommitSHA: Maybe<String>
+    assignee: Null
+    assignees: List<Any>
+    requestedReviewers: List<Any>
+    requestedTeams: List<Any>
+    milestone: Null
+    commitsURL: String
+    reviewCommentsURL: String
+    reviewCommentURL: String
+    commentsURL: String
+    statusesURL: String
+    head: Base
+    base: Base
+    links: PullRequestLinks
+    authorAssociation: String
+    merged?: Bool
+    mergeable?: Null
+    rebaseable?: Null
+    mergeableState?: String
+    mergedBy?: Null
+    comments?: Int
+    reviewComments?: Int
+    maintainerCanModify?: Bool
+    commits?: Int
+    additions?: Int
+    deletions?: Int
+    changedFiles?: Int
 }
 
-class Page {
-    pageName: String
-    title: String
-    summary: Null
-    action: String
+class Base {
+    label: String
+    ref: String
     sha: String
-    htmlURL: String
+    user: User
+    repo: Forkee
+}
+
+class PullRequestLinks {
+    self: HTML
+    html: HTML
+    issue: HTML
+    comments: HTML
+    reviewComments: HTML
+    reviewComment: HTML
+    commits: HTML
+    statuses: HTML
 }
 
 class Repo {
@@ -221,7 +290,7 @@ class Gists {
     gitPullURL: String
     gitPushURL: String
     htmlURL: String
-    files: Map<String, File>
+    files: Files
     public: Bool
     createdAt: DateTime
     updatedAt: DateTime
@@ -233,10 +302,22 @@ class Gists {
     owner?: User
 }
 
-class File {
+class Files {
+    gistfile1Txt?: Empty
+    entity404Mojang?: Empty
+    empty?: Empty
+    mazeRunnerTheDeathCure2018?: Empty
+    dataShowFragmentKt?: Empty
+    mainStylesCSS?: Empty
+    configJSON?: Empty
+    appJS?: Empty
+    serverTxt?: Empty
+}
+
+class Empty {
     filename: String
-    type: FileType
-    language: Maybe<String>
+    type: Type
+    language: Maybe<Language>
     rawURL: String
     size: Int
 }
@@ -252,6 +333,12 @@ class Meta {
 
 enum GravatarID = Empty
 
-enum UserType = Bot | User
+enum UserType = User
 
-enum FileType = ApplicationJSON | ApplicationJavascript | ApplicationXML | TextHTML | TextPlain | TextXYAML
+enum DefaultBranch = Master
+
+enum ForkeeLanguage = Go | HTML | JavaScript
+
+enum Language = CSS | JSON | JavaScript | Kotlin | Text
+
+enum Type = ApplicationJSON | ApplicationJavascript | TextCSS | TextPlain

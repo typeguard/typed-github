@@ -35,25 +35,20 @@ module QuickType exposing
     , Actor
     , Payload
     , Comment
-    , CommentLinks
-    , HTML
     , User
     , Commit
     , Author
     , Forkee
-    , License
     , Issue
     , Label
     , PullRequest
-    , Base
-    , PullRequestLinks
+    , Page
     , Repo
     , Gist
-    , Files
-    , Empty
+    , File
     , GravatarID(..)
     , UserType(..)
-    , Type(..)
+    , FileType(..)
     )
 
 import Json.Decode as Jdec
@@ -91,56 +86,37 @@ type alias Actor =
     }
 
 type GravatarID
-    = Purple
+    = Empty
 
 type alias Payload =
-    { ref : Maybe String
+    { action : Maybe String
+    , issue : Maybe Issue
+    , comment : Maybe Comment
+    , pushID : Maybe Int
+    , size : Maybe Int
+    , distinctSize : Maybe Int
+    , ref : Maybe String
+    , head : Maybe String
+    , before : Maybe String
+    , commits : Maybe (Array Commit)
     , refType : Maybe String
     , masterBranch : Maybe String
     , description : Maybe String
     , pusherType : Maybe String
-    , pushID : Maybe Int
-    , size : Maybe Int
-    , distinctSize : Maybe Int
-    , head : Maybe String
-    , before : Maybe String
-    , commits : Maybe (Array Commit)
     , forkee : Maybe Forkee
-    , action : Maybe String
-    , issue : Maybe Issue
-    , number : Maybe Int
-    , pullRequest : Maybe PullRequest
-    , comment : Maybe Comment
+    , pages : Maybe (Array Page)
     }
 
 type alias Comment =
     { url : String
-    , pullRequestReviewID : Int
+    , htmlURL : String
+    , issueURL : String
     , id : Int
-    , diffHunk : String
-    , path : String
-    , position : Int
-    , originalPosition : Int
-    , commitID : String
-    , originalCommitID : String
     , user : User
-    , body : String
     , createdAt : String
     , updatedAt : String
-    , htmlURL : String
-    , pullRequestURL : String
     , authorAssociation : String
-    , links : CommentLinks
-    }
-
-type alias CommentLinks =
-    { self : HTML
-    , html : HTML
-    , pullRequest : HTML
-    }
-
-type alias HTML =
-    { href : String
+    , body : String
     }
 
 type alias User =
@@ -164,7 +140,7 @@ type alias User =
     }
 
 type UserType
-    = Organization
+    = Bot
     | PurpleUser
 
 type alias Commit =
@@ -187,7 +163,7 @@ type alias Forkee =
     , owner : User
     , private : Bool
     , htmlURL : String
-    , description : Maybe String
+    , description : String
     , fork : Bool
     , url : String
     , forksURL : String
@@ -233,11 +209,11 @@ type alias Forkee =
     , sshURL : String
     , cloneURL : String
     , svnURL : String
-    , homepage : Maybe String
+    , homepage : String
     , size : Int
     , stargazersCount : Int
     , watchersCount : Int
-    , language : Maybe String
+    , language : ()
     , hasIssues : Bool
     , hasProjects : Bool
     , hasDownloads : Bool
@@ -247,19 +223,12 @@ type alias Forkee =
     , mirrorURL : ()
     , archived : Bool
     , openIssuesCount : Int
-    , license : Maybe License
+    , license : ()
     , forks : Int
     , openIssues : Int
     , watchers : Int
     , defaultBranch : String
-    , public : Maybe Bool
-    }
-
-type alias License =
-    { key : String
-    , name : String
-    , spdxID : Maybe String
-    , url : Maybe String
+    , public : Bool
     }
 
 type alias Issue =
@@ -276,14 +245,15 @@ type alias Issue =
     , labels : Array Label
     , state : String
     , locked : Bool
-    , assignee : Maybe User
-    , assignees : Array User
+    , assignee : ()
+    , assignees : Array Jdec.Value
     , milestone : ()
     , comments : Int
     , createdAt : String
     , updatedAt : String
     , closedAt : Maybe String
     , authorAssociation : String
+    , pullRequest : Maybe PullRequest
     , body : String
     }
 
@@ -297,67 +267,18 @@ type alias Label =
 
 type alias PullRequest =
     { url : String
-    , id : Int
     , htmlURL : String
     , diffURL : String
     , patchURL : String
-    , issueURL : String
-    , number : Int
-    , state : String
-    , locked : Bool
+    }
+
+type alias Page =
+    { pageName : String
     , title : String
-    , user : User
-    , body : String
-    , createdAt : String
-    , updatedAt : String
-    , closedAt : ()
-    , mergedAt : ()
-    , mergeCommitSHA : Maybe String
-    , assignee : ()
-    , assignees : Array Jdec.Value
-    , requestedReviewers : Array Jdec.Value
-    , requestedTeams : Array Jdec.Value
-    , milestone : ()
-    , commitsURL : String
-    , reviewCommentsURL : String
-    , reviewCommentURL : String
-    , commentsURL : String
-    , statusesURL : String
-    , head : Base
-    , base : Base
-    , links : PullRequestLinks
-    , authorAssociation : String
-    , merged : Maybe Bool
-    , mergeable : Maybe ()
-    , rebaseable : Maybe ()
-    , mergeableState : Maybe String
-    , mergedBy : Maybe ()
-    , comments : Maybe Int
-    , reviewComments : Maybe Int
-    , maintainerCanModify : Maybe Bool
-    , commits : Maybe Int
-    , additions : Maybe Int
-    , deletions : Maybe Int
-    , changedFiles : Maybe Int
-    }
-
-type alias Base =
-    { label : String
-    , ref : String
+    , summary : ()
+    , action : String
     , sha : String
-    , user : User
-    , repo : Forkee
-    }
-
-type alias PullRequestLinks =
-    { self : HTML
-    , html : HTML
-    , issue : HTML
-    , comments : HTML
-    , reviewComments : HTML
-    , reviewComment : HTML
-    , commits : HTML
-    , statuses : HTML
+    , htmlURL : String
     }
 
 type alias Repo =
@@ -374,7 +295,7 @@ type alias Gist =
     , gitPullURL : String
     , gitPushURL : String
     , htmlURL : String
-    , files : Files
+    , files : Dict String File
     , public : Bool
     , createdAt : String
     , updatedAt : String
@@ -386,38 +307,21 @@ type alias Gist =
     , owner : Maybe User
     }
 
-type alias Files =
-    { gistfile1Txt : Maybe Empty
-    , ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26ConfigJSON : Maybe Empty
-    , ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26MetadataTsv : Maybe Empty
-    , ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26TensorTsv : Maybe Empty
-    , configJSON : Maybe Empty
-    , empty : Maybe Empty
-    , the6MnUZy7Z : Maybe Empty
-    , leDbreatheIno : Maybe Empty
-    , i3BlocksSpotify : Maybe Empty
-    , readmeMd : Maybe Empty
-    , decryptFileSh : Maybe Empty
-    , encryptFileSh : Maybe Empty
-    , limitedNoOfRecordsJava : Maybe Empty
-    , clientApp : Maybe Empty
-    , serverAp : Maybe Empty
-    , ruwikiruscorporaUposSkipgram300_2_2018_Fafdb1F6D6866Fb229E806Fc354B7458ConfigJSON : Maybe Empty
-    }
-
-type alias Empty =
+type alias File =
     { filename : String
-    , purpleType : Type
+    , purpleType : FileType
     , language : Maybe String
     , rawURL : String
     , size : Int
     }
 
-type Type
+type FileType
     = ApplicationJSON
-    | ApplicationXSh
+    | ApplicationJavascript
+    | ApplicationXML
+    | TextHTML
     | TextPlain
-    | TextTabSeparatedValues
+    | TextXYAML
 
 type alias User =
     { login : String
@@ -440,10 +344,10 @@ type alias User =
     }
 
 type GravatarID
-    = Purple
+    = Empty
 
 type UserType
-    = Organization
+    = Bot
     | PurpleUser
 
 type alias Meta =
@@ -535,124 +439,80 @@ gravatarID =
     Jdec.string
         |> Jdec.andThen (\str ->
             case str of
-                "" -> Jdec.succeed Purple
+                "" -> Jdec.succeed Empty
                 somethingElse -> Jdec.fail <| "Invalid GravatarID: " ++ somethingElse
         )
 
 encodeGravatarID : GravatarID -> Jenc.Value
 encodeGravatarID x = case x of
-    Purple -> Jenc.string ""
+    Empty -> Jenc.string ""
 
 payload : Jdec.Decoder Payload
 payload =
     Jpipe.decode Payload
+        |> Jpipe.optional "action" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.optional "issue" (Jdec.nullable issue) Nothing
+        |> Jpipe.optional "comment" (Jdec.nullable comment) Nothing
+        |> Jpipe.optional "push_id" (Jdec.nullable Jdec.int) Nothing
+        |> Jpipe.optional "size" (Jdec.nullable Jdec.int) Nothing
+        |> Jpipe.optional "distinct_size" (Jdec.nullable Jdec.int) Nothing
         |> Jpipe.optional "ref" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.optional "head" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.optional "before" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.optional "commits" (Jdec.nullable (Jdec.array commit)) Nothing
         |> Jpipe.optional "ref_type" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.optional "master_branch" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.optional "description" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.optional "pusher_type" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.optional "push_id" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "size" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "distinct_size" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "head" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.optional "before" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.optional "commits" (Jdec.nullable (Jdec.array commit)) Nothing
         |> Jpipe.optional "forkee" (Jdec.nullable forkee) Nothing
-        |> Jpipe.optional "action" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.optional "issue" (Jdec.nullable issue) Nothing
-        |> Jpipe.optional "number" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "pull_request" (Jdec.nullable pullRequest) Nothing
-        |> Jpipe.optional "comment" (Jdec.nullable comment) Nothing
+        |> Jpipe.optional "pages" (Jdec.nullable (Jdec.array page)) Nothing
 
 encodePayload : Payload -> Jenc.Value
 encodePayload x =
     Jenc.object
-        [ ("ref", makeNullableEncoder Jenc.string x.ref)
+        [ ("action", makeNullableEncoder Jenc.string x.action)
+        , ("issue", makeNullableEncoder encodeIssue x.issue)
+        , ("comment", makeNullableEncoder encodeComment x.comment)
+        , ("push_id", makeNullableEncoder Jenc.int x.pushID)
+        , ("size", makeNullableEncoder Jenc.int x.size)
+        , ("distinct_size", makeNullableEncoder Jenc.int x.distinctSize)
+        , ("ref", makeNullableEncoder Jenc.string x.ref)
+        , ("head", makeNullableEncoder Jenc.string x.head)
+        , ("before", makeNullableEncoder Jenc.string x.before)
+        , ("commits", makeNullableEncoder (makeArrayEncoder encodeCommit) x.commits)
         , ("ref_type", makeNullableEncoder Jenc.string x.refType)
         , ("master_branch", makeNullableEncoder Jenc.string x.masterBranch)
         , ("description", makeNullableEncoder Jenc.string x.description)
         , ("pusher_type", makeNullableEncoder Jenc.string x.pusherType)
-        , ("push_id", makeNullableEncoder Jenc.int x.pushID)
-        , ("size", makeNullableEncoder Jenc.int x.size)
-        , ("distinct_size", makeNullableEncoder Jenc.int x.distinctSize)
-        , ("head", makeNullableEncoder Jenc.string x.head)
-        , ("before", makeNullableEncoder Jenc.string x.before)
-        , ("commits", makeNullableEncoder (makeArrayEncoder encodeCommit) x.commits)
         , ("forkee", makeNullableEncoder encodeForkee x.forkee)
-        , ("action", makeNullableEncoder Jenc.string x.action)
-        , ("issue", makeNullableEncoder encodeIssue x.issue)
-        , ("number", makeNullableEncoder Jenc.int x.number)
-        , ("pull_request", makeNullableEncoder encodePullRequest x.pullRequest)
-        , ("comment", makeNullableEncoder encodeComment x.comment)
+        , ("pages", makeNullableEncoder (makeArrayEncoder encodePage) x.pages)
         ]
 
 comment : Jdec.Decoder Comment
 comment =
     Jpipe.decode Comment
         |> Jpipe.required "url" Jdec.string
-        |> Jpipe.required "pull_request_review_id" Jdec.int
+        |> Jpipe.required "html_url" Jdec.string
+        |> Jpipe.required "issue_url" Jdec.string
         |> Jpipe.required "id" Jdec.int
-        |> Jpipe.required "diff_hunk" Jdec.string
-        |> Jpipe.required "path" Jdec.string
-        |> Jpipe.required "position" Jdec.int
-        |> Jpipe.required "original_position" Jdec.int
-        |> Jpipe.required "commit_id" Jdec.string
-        |> Jpipe.required "original_commit_id" Jdec.string
         |> Jpipe.required "user" user
-        |> Jpipe.required "body" Jdec.string
         |> Jpipe.required "created_at" Jdec.string
         |> Jpipe.required "updated_at" Jdec.string
-        |> Jpipe.required "html_url" Jdec.string
-        |> Jpipe.required "pull_request_url" Jdec.string
         |> Jpipe.required "author_association" Jdec.string
-        |> Jpipe.required "_links" commentLinks
+        |> Jpipe.required "body" Jdec.string
 
 encodeComment : Comment -> Jenc.Value
 encodeComment x =
     Jenc.object
         [ ("url", Jenc.string x.url)
-        , ("pull_request_review_id", Jenc.int x.pullRequestReviewID)
+        , ("html_url", Jenc.string x.htmlURL)
+        , ("issue_url", Jenc.string x.issueURL)
         , ("id", Jenc.int x.id)
-        , ("diff_hunk", Jenc.string x.diffHunk)
-        , ("path", Jenc.string x.path)
-        , ("position", Jenc.int x.position)
-        , ("original_position", Jenc.int x.originalPosition)
-        , ("commit_id", Jenc.string x.commitID)
-        , ("original_commit_id", Jenc.string x.originalCommitID)
         , ("user", encodeUser x.user)
-        , ("body", Jenc.string x.body)
         , ("created_at", Jenc.string x.createdAt)
         , ("updated_at", Jenc.string x.updatedAt)
-        , ("html_url", Jenc.string x.htmlURL)
-        , ("pull_request_url", Jenc.string x.pullRequestURL)
         , ("author_association", Jenc.string x.authorAssociation)
-        , ("_links", encodeCommentLinks x.links)
-        ]
-
-commentLinks : Jdec.Decoder CommentLinks
-commentLinks =
-    Jpipe.decode CommentLinks
-        |> Jpipe.required "self" html
-        |> Jpipe.required "html" html
-        |> Jpipe.required "pull_request" html
-
-encodeCommentLinks : CommentLinks -> Jenc.Value
-encodeCommentLinks x =
-    Jenc.object
-        [ ("self", encodeHTML x.self)
-        , ("html", encodeHTML x.html)
-        , ("pull_request", encodeHTML x.pullRequest)
-        ]
-
-html : Jdec.Decoder HTML
-html =
-    Jpipe.decode HTML
-        |> Jpipe.required "href" Jdec.string
-
-encodeHTML : HTML -> Jenc.Value
-encodeHTML x =
-    Jenc.object
-        [ ("href", Jenc.string x.href)
+        , ("body", Jenc.string x.body)
         ]
 
 user : Jdec.Decoder User
@@ -703,14 +563,14 @@ userType =
     Jdec.string
         |> Jdec.andThen (\str ->
             case str of
-                "Organization" -> Jdec.succeed Organization
+                "Bot" -> Jdec.succeed Bot
                 "User" -> Jdec.succeed PurpleUser
                 somethingElse -> Jdec.fail <| "Invalid UserType: " ++ somethingElse
         )
 
 encodeUserType : UserType -> Jenc.Value
 encodeUserType x = case x of
-    Organization -> Jenc.string "Organization"
+    Bot -> Jenc.string "Bot"
     PurpleUser -> Jenc.string "User"
 
 commit : Jdec.Decoder Commit
@@ -754,7 +614,7 @@ forkee =
         |> Jpipe.required "owner" user
         |> Jpipe.required "private" Jdec.bool
         |> Jpipe.required "html_url" Jdec.string
-        |> Jpipe.optional "description" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.required "description" Jdec.string
         |> Jpipe.required "fork" Jdec.bool
         |> Jpipe.required "url" Jdec.string
         |> Jpipe.required "forks_url" Jdec.string
@@ -800,11 +660,11 @@ forkee =
         |> Jpipe.required "ssh_url" Jdec.string
         |> Jpipe.required "clone_url" Jdec.string
         |> Jpipe.required "svn_url" Jdec.string
-        |> Jpipe.optional "homepage" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.required "homepage" Jdec.string
         |> Jpipe.required "size" Jdec.int
         |> Jpipe.required "stargazers_count" Jdec.int
         |> Jpipe.required "watchers_count" Jdec.int
-        |> Jpipe.optional "language" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.optional "language" (Jdec.null ()) ()
         |> Jpipe.required "has_issues" Jdec.bool
         |> Jpipe.required "has_projects" Jdec.bool
         |> Jpipe.required "has_downloads" Jdec.bool
@@ -814,12 +674,12 @@ forkee =
         |> Jpipe.optional "mirror_url" (Jdec.null ()) ()
         |> Jpipe.required "archived" Jdec.bool
         |> Jpipe.required "open_issues_count" Jdec.int
-        |> Jpipe.optional "license" (Jdec.nullable license) Nothing
+        |> Jpipe.optional "license" (Jdec.null ()) ()
         |> Jpipe.required "forks" Jdec.int
         |> Jpipe.required "open_issues" Jdec.int
         |> Jpipe.required "watchers" Jdec.int
         |> Jpipe.required "default_branch" Jdec.string
-        |> Jpipe.optional "public" (Jdec.nullable Jdec.bool) Nothing
+        |> Jpipe.required "public" Jdec.bool
 
 encodeForkee : Forkee -> Jenc.Value
 encodeForkee x =
@@ -830,7 +690,7 @@ encodeForkee x =
         , ("owner", encodeUser x.owner)
         , ("private", Jenc.bool x.private)
         , ("html_url", Jenc.string x.htmlURL)
-        , ("description", makeNullableEncoder Jenc.string x.description)
+        , ("description", Jenc.string x.description)
         , ("fork", Jenc.bool x.fork)
         , ("url", Jenc.string x.url)
         , ("forks_url", Jenc.string x.forksURL)
@@ -876,11 +736,11 @@ encodeForkee x =
         , ("ssh_url", Jenc.string x.sshURL)
         , ("clone_url", Jenc.string x.cloneURL)
         , ("svn_url", Jenc.string x.svnURL)
-        , ("homepage", makeNullableEncoder Jenc.string x.homepage)
+        , ("homepage", Jenc.string x.homepage)
         , ("size", Jenc.int x.size)
         , ("stargazers_count", Jenc.int x.stargazersCount)
         , ("watchers_count", Jenc.int x.watchersCount)
-        , ("language", makeNullableEncoder Jenc.string x.language)
+        , ("language", always Jenc.null x.language)
         , ("has_issues", Jenc.bool x.hasIssues)
         , ("has_projects", Jenc.bool x.hasProjects)
         , ("has_downloads", Jenc.bool x.hasDownloads)
@@ -890,29 +750,12 @@ encodeForkee x =
         , ("mirror_url", always Jenc.null x.mirrorURL)
         , ("archived", Jenc.bool x.archived)
         , ("open_issues_count", Jenc.int x.openIssuesCount)
-        , ("license", makeNullableEncoder encodeLicense x.license)
+        , ("license", always Jenc.null x.license)
         , ("forks", Jenc.int x.forks)
         , ("open_issues", Jenc.int x.openIssues)
         , ("watchers", Jenc.int x.watchers)
         , ("default_branch", Jenc.string x.defaultBranch)
-        , ("public", makeNullableEncoder Jenc.bool x.public)
-        ]
-
-license : Jdec.Decoder License
-license =
-    Jpipe.decode License
-        |> Jpipe.required "key" Jdec.string
-        |> Jpipe.required "name" Jdec.string
-        |> Jpipe.optional "spdx_id" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.optional "url" (Jdec.nullable Jdec.string) Nothing
-
-encodeLicense : License -> Jenc.Value
-encodeLicense x =
-    Jenc.object
-        [ ("key", Jenc.string x.key)
-        , ("name", Jenc.string x.name)
-        , ("spdx_id", makeNullableEncoder Jenc.string x.spdxID)
-        , ("url", makeNullableEncoder Jenc.string x.url)
+        , ("public", Jenc.bool x.public)
         ]
 
 issue : Jdec.Decoder Issue
@@ -931,14 +774,15 @@ issue =
         |> Jpipe.required "labels" (Jdec.array label)
         |> Jpipe.required "state" Jdec.string
         |> Jpipe.required "locked" Jdec.bool
-        |> Jpipe.optional "assignee" (Jdec.nullable user) Nothing
-        |> Jpipe.required "assignees" (Jdec.array user)
+        |> Jpipe.optional "assignee" (Jdec.null ()) ()
+        |> Jpipe.required "assignees" (Jdec.array Jdec.value)
         |> Jpipe.optional "milestone" (Jdec.null ()) ()
         |> Jpipe.required "comments" Jdec.int
         |> Jpipe.required "created_at" Jdec.string
         |> Jpipe.required "updated_at" Jdec.string
         |> Jpipe.optional "closed_at" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.required "author_association" Jdec.string
+        |> Jpipe.optional "pull_request" (Jdec.nullable pullRequest) Nothing
         |> Jpipe.required "body" Jdec.string
 
 encodeIssue : Issue -> Jenc.Value
@@ -957,14 +801,15 @@ encodeIssue x =
         , ("labels", makeArrayEncoder encodeLabel x.labels)
         , ("state", Jenc.string x.state)
         , ("locked", Jenc.bool x.locked)
-        , ("assignee", makeNullableEncoder encodeUser x.assignee)
-        , ("assignees", makeArrayEncoder encodeUser x.assignees)
+        , ("assignee", always Jenc.null x.assignee)
+        , ("assignees", makeArrayEncoder identity x.assignees)
         , ("milestone", always Jenc.null x.milestone)
         , ("comments", Jenc.int x.comments)
         , ("created_at", Jenc.string x.createdAt)
         , ("updated_at", Jenc.string x.updatedAt)
         , ("closed_at", makeNullableEncoder Jenc.string x.closedAt)
         , ("author_association", Jenc.string x.authorAssociation)
+        , ("pull_request", makeNullableEncoder encodePullRequest x.pullRequest)
         , ("body", Jenc.string x.body)
         ]
 
@@ -991,139 +836,38 @@ pullRequest : Jdec.Decoder PullRequest
 pullRequest =
     Jpipe.decode PullRequest
         |> Jpipe.required "url" Jdec.string
-        |> Jpipe.required "id" Jdec.int
         |> Jpipe.required "html_url" Jdec.string
         |> Jpipe.required "diff_url" Jdec.string
         |> Jpipe.required "patch_url" Jdec.string
-        |> Jpipe.required "issue_url" Jdec.string
-        |> Jpipe.required "number" Jdec.int
-        |> Jpipe.required "state" Jdec.string
-        |> Jpipe.required "locked" Jdec.bool
-        |> Jpipe.required "title" Jdec.string
-        |> Jpipe.required "user" user
-        |> Jpipe.required "body" Jdec.string
-        |> Jpipe.required "created_at" Jdec.string
-        |> Jpipe.required "updated_at" Jdec.string
-        |> Jpipe.optional "closed_at" (Jdec.null ()) ()
-        |> Jpipe.optional "merged_at" (Jdec.null ()) ()
-        |> Jpipe.optional "merge_commit_sha" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.optional "assignee" (Jdec.null ()) ()
-        |> Jpipe.required "assignees" (Jdec.array Jdec.value)
-        |> Jpipe.required "requested_reviewers" (Jdec.array Jdec.value)
-        |> Jpipe.required "requested_teams" (Jdec.array Jdec.value)
-        |> Jpipe.optional "milestone" (Jdec.null ()) ()
-        |> Jpipe.required "commits_url" Jdec.string
-        |> Jpipe.required "review_comments_url" Jdec.string
-        |> Jpipe.required "review_comment_url" Jdec.string
-        |> Jpipe.required "comments_url" Jdec.string
-        |> Jpipe.required "statuses_url" Jdec.string
-        |> Jpipe.required "head" base
-        |> Jpipe.required "base" base
-        |> Jpipe.required "_links" pullRequestLinks
-        |> Jpipe.required "author_association" Jdec.string
-        |> Jpipe.optional "merged" (Jdec.nullable Jdec.bool) Nothing
-        |> Jpipe.optional "mergeable" (Jdec.nullable (Jdec.null ())) Nothing
-        |> Jpipe.optional "rebaseable" (Jdec.nullable (Jdec.null ())) Nothing
-        |> Jpipe.optional "mergeable_state" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.optional "merged_by" (Jdec.nullable (Jdec.null ())) Nothing
-        |> Jpipe.optional "comments" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "review_comments" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "maintainer_can_modify" (Jdec.nullable Jdec.bool) Nothing
-        |> Jpipe.optional "commits" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "additions" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "deletions" (Jdec.nullable Jdec.int) Nothing
-        |> Jpipe.optional "changed_files" (Jdec.nullable Jdec.int) Nothing
 
 encodePullRequest : PullRequest -> Jenc.Value
 encodePullRequest x =
     Jenc.object
         [ ("url", Jenc.string x.url)
-        , ("id", Jenc.int x.id)
         , ("html_url", Jenc.string x.htmlURL)
         , ("diff_url", Jenc.string x.diffURL)
         , ("patch_url", Jenc.string x.patchURL)
-        , ("issue_url", Jenc.string x.issueURL)
-        , ("number", Jenc.int x.number)
-        , ("state", Jenc.string x.state)
-        , ("locked", Jenc.bool x.locked)
-        , ("title", Jenc.string x.title)
-        , ("user", encodeUser x.user)
-        , ("body", Jenc.string x.body)
-        , ("created_at", Jenc.string x.createdAt)
-        , ("updated_at", Jenc.string x.updatedAt)
-        , ("closed_at", always Jenc.null x.closedAt)
-        , ("merged_at", always Jenc.null x.mergedAt)
-        , ("merge_commit_sha", makeNullableEncoder Jenc.string x.mergeCommitSHA)
-        , ("assignee", always Jenc.null x.assignee)
-        , ("assignees", makeArrayEncoder identity x.assignees)
-        , ("requested_reviewers", makeArrayEncoder identity x.requestedReviewers)
-        , ("requested_teams", makeArrayEncoder identity x.requestedTeams)
-        , ("milestone", always Jenc.null x.milestone)
-        , ("commits_url", Jenc.string x.commitsURL)
-        , ("review_comments_url", Jenc.string x.reviewCommentsURL)
-        , ("review_comment_url", Jenc.string x.reviewCommentURL)
-        , ("comments_url", Jenc.string x.commentsURL)
-        , ("statuses_url", Jenc.string x.statusesURL)
-        , ("head", encodeBase x.head)
-        , ("base", encodeBase x.base)
-        , ("_links", encodePullRequestLinks x.links)
-        , ("author_association", Jenc.string x.authorAssociation)
-        , ("merged", makeNullableEncoder Jenc.bool x.merged)
-        , ("mergeable", makeNullableEncoder (always Jenc.null) x.mergeable)
-        , ("rebaseable", makeNullableEncoder (always Jenc.null) x.rebaseable)
-        , ("mergeable_state", makeNullableEncoder Jenc.string x.mergeableState)
-        , ("merged_by", makeNullableEncoder (always Jenc.null) x.mergedBy)
-        , ("comments", makeNullableEncoder Jenc.int x.comments)
-        , ("review_comments", makeNullableEncoder Jenc.int x.reviewComments)
-        , ("maintainer_can_modify", makeNullableEncoder Jenc.bool x.maintainerCanModify)
-        , ("commits", makeNullableEncoder Jenc.int x.commits)
-        , ("additions", makeNullableEncoder Jenc.int x.additions)
-        , ("deletions", makeNullableEncoder Jenc.int x.deletions)
-        , ("changed_files", makeNullableEncoder Jenc.int x.changedFiles)
         ]
 
-base : Jdec.Decoder Base
-base =
-    Jpipe.decode Base
-        |> Jpipe.required "label" Jdec.string
-        |> Jpipe.required "ref" Jdec.string
+page : Jdec.Decoder Page
+page =
+    Jpipe.decode Page
+        |> Jpipe.required "page_name" Jdec.string
+        |> Jpipe.required "title" Jdec.string
+        |> Jpipe.optional "summary" (Jdec.null ()) ()
+        |> Jpipe.required "action" Jdec.string
         |> Jpipe.required "sha" Jdec.string
-        |> Jpipe.required "user" user
-        |> Jpipe.required "repo" forkee
+        |> Jpipe.required "html_url" Jdec.string
 
-encodeBase : Base -> Jenc.Value
-encodeBase x =
+encodePage : Page -> Jenc.Value
+encodePage x =
     Jenc.object
-        [ ("label", Jenc.string x.label)
-        , ("ref", Jenc.string x.ref)
+        [ ("page_name", Jenc.string x.pageName)
+        , ("title", Jenc.string x.title)
+        , ("summary", always Jenc.null x.summary)
+        , ("action", Jenc.string x.action)
         , ("sha", Jenc.string x.sha)
-        , ("user", encodeUser x.user)
-        , ("repo", encodeForkee x.repo)
-        ]
-
-pullRequestLinks : Jdec.Decoder PullRequestLinks
-pullRequestLinks =
-    Jpipe.decode PullRequestLinks
-        |> Jpipe.required "self" html
-        |> Jpipe.required "html" html
-        |> Jpipe.required "issue" html
-        |> Jpipe.required "comments" html
-        |> Jpipe.required "review_comments" html
-        |> Jpipe.required "review_comment" html
-        |> Jpipe.required "commits" html
-        |> Jpipe.required "statuses" html
-
-encodePullRequestLinks : PullRequestLinks -> Jenc.Value
-encodePullRequestLinks x =
-    Jenc.object
-        [ ("self", encodeHTML x.self)
-        , ("html", encodeHTML x.html)
-        , ("issue", encodeHTML x.issue)
-        , ("comments", encodeHTML x.comments)
-        , ("review_comments", encodeHTML x.reviewComments)
-        , ("review_comment", encodeHTML x.reviewComment)
-        , ("commits", encodeHTML x.commits)
-        , ("statuses", encodeHTML x.statuses)
+        , ("html_url", Jenc.string x.htmlURL)
         ]
 
 repo : Jdec.Decoder Repo
@@ -1151,7 +895,7 @@ gist =
         |> Jpipe.required "git_pull_url" Jdec.string
         |> Jpipe.required "git_push_url" Jdec.string
         |> Jpipe.required "html_url" Jdec.string
-        |> Jpipe.required "files" files
+        |> Jpipe.required "files" (Jdec.dict file)
         |> Jpipe.required "public" Jdec.bool
         |> Jpipe.required "created_at" Jdec.string
         |> Jpipe.required "updated_at" Jdec.string
@@ -1172,7 +916,7 @@ encodeGist x =
         , ("git_pull_url", Jenc.string x.gitPullURL)
         , ("git_push_url", Jenc.string x.gitPushURL)
         , ("html_url", Jenc.string x.htmlURL)
-        , ("files", encodeFiles x.files)
+        , ("files", makeDictEncoder encodeFile x.files)
         , ("public", Jenc.bool x.public)
         , ("created_at", Jenc.string x.createdAt)
         , ("updated_at", Jenc.string x.updatedAt)
@@ -1184,84 +928,47 @@ encodeGist x =
         , ("owner", makeNullableEncoder encodeUser x.owner)
         ]
 
-files : Jdec.Decoder Files
-files =
-    Jpipe.decode Files
-        |> Jpipe.optional "gistfile1.txt" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_config.json" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_metadata.tsv" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_tensor.tsv" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "config.json" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "-" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "6mnUZy7z" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "LEDbreathe.ino" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "i3blocks-spotify" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "_README.md" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "decryptFile.sh" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "encryptFile.sh" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "limitedNoOfRecords.java" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "CLIENT APP" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "SERVER AP" (Jdec.nullable empty) Nothing
-        |> Jpipe.optional "ruwikiruscorpora_upos_skipgram_300_2_2018_fafdb1f6d6866fb229e806fc354b7458_config.json" (Jdec.nullable empty) Nothing
-
-encodeFiles : Files -> Jenc.Value
-encodeFiles x =
-    Jenc.object
-        [ ("gistfile1.txt", makeNullableEncoder encodeEmpty x.gistfile1Txt)
-        , ("ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_config.json", makeNullableEncoder encodeEmpty x.ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26ConfigJSON)
-        , ("ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_metadata.tsv", makeNullableEncoder encodeEmpty x.ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26MetadataTsv)
-        , ("ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_tensor.tsv", makeNullableEncoder encodeEmpty x.ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26TensorTsv)
-        , ("config.json", makeNullableEncoder encodeEmpty x.configJSON)
-        , ("-", makeNullableEncoder encodeEmpty x.empty)
-        , ("6mnUZy7z", makeNullableEncoder encodeEmpty x.the6MnUZy7Z)
-        , ("LEDbreathe.ino", makeNullableEncoder encodeEmpty x.leDbreatheIno)
-        , ("i3blocks-spotify", makeNullableEncoder encodeEmpty x.i3BlocksSpotify)
-        , ("_README.md", makeNullableEncoder encodeEmpty x.readmeMd)
-        , ("decryptFile.sh", makeNullableEncoder encodeEmpty x.decryptFileSh)
-        , ("encryptFile.sh", makeNullableEncoder encodeEmpty x.encryptFileSh)
-        , ("limitedNoOfRecords.java", makeNullableEncoder encodeEmpty x.limitedNoOfRecordsJava)
-        , ("CLIENT APP", makeNullableEncoder encodeEmpty x.clientApp)
-        , ("SERVER AP", makeNullableEncoder encodeEmpty x.serverAp)
-        , ("ruwikiruscorpora_upos_skipgram_300_2_2018_fafdb1f6d6866fb229e806fc354b7458_config.json", makeNullableEncoder encodeEmpty x.ruwikiruscorporaUposSkipgram300_2_2018_Fafdb1F6D6866Fb229E806Fc354B7458ConfigJSON)
-        ]
-
-empty : Jdec.Decoder Empty
-empty =
-    Jpipe.decode Empty
+file : Jdec.Decoder File
+file =
+    Jpipe.decode File
         |> Jpipe.required "filename" Jdec.string
-        |> Jpipe.required "type" purpleType
+        |> Jpipe.required "type" fileType
         |> Jpipe.optional "language" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.required "raw_url" Jdec.string
         |> Jpipe.required "size" Jdec.int
 
-encodeEmpty : Empty -> Jenc.Value
-encodeEmpty x =
+encodeFile : File -> Jenc.Value
+encodeFile x =
     Jenc.object
         [ ("filename", Jenc.string x.filename)
-        , ("type", encodeType x.purpleType)
+        , ("type", encodeFileType x.purpleType)
         , ("language", makeNullableEncoder Jenc.string x.language)
         , ("raw_url", Jenc.string x.rawURL)
         , ("size", Jenc.int x.size)
         ]
 
-purpleType : Jdec.Decoder Type
-purpleType =
+fileType : Jdec.Decoder FileType
+fileType =
     Jdec.string
         |> Jdec.andThen (\str ->
             case str of
                 "application/json" -> Jdec.succeed ApplicationJSON
-                "application/x-sh" -> Jdec.succeed ApplicationXSh
+                "application/javascript" -> Jdec.succeed ApplicationJavascript
+                "application/xml" -> Jdec.succeed ApplicationXML
+                "text/html" -> Jdec.succeed TextHTML
                 "text/plain" -> Jdec.succeed TextPlain
-                "text/tab-separated-values" -> Jdec.succeed TextTabSeparatedValues
-                somethingElse -> Jdec.fail <| "Invalid Type: " ++ somethingElse
+                "text/x-yaml" -> Jdec.succeed TextXYAML
+                somethingElse -> Jdec.fail <| "Invalid FileType: " ++ somethingElse
         )
 
-encodeType : Type -> Jenc.Value
-encodeType x = case x of
+encodeFileType : FileType -> Jenc.Value
+encodeFileType x = case x of
     ApplicationJSON -> Jenc.string "application/json"
-    ApplicationXSh -> Jenc.string "application/x-sh"
+    ApplicationJavascript -> Jenc.string "application/javascript"
+    ApplicationXML -> Jenc.string "application/xml"
+    TextHTML -> Jenc.string "text/html"
     TextPlain -> Jenc.string "text/plain"
-    TextTabSeparatedValues -> Jenc.string "text/tab-separated-values"
+    TextXYAML -> Jenc.string "text/x-yaml"
 
 user : Jdec.Decoder User
 user =
@@ -1311,27 +1018,27 @@ gravatarID =
     Jdec.string
         |> Jdec.andThen (\str ->
             case str of
-                "" -> Jdec.succeed Purple
+                "" -> Jdec.succeed Empty
                 somethingElse -> Jdec.fail <| "Invalid GravatarID: " ++ somethingElse
         )
 
 encodeGravatarID : GravatarID -> Jenc.Value
 encodeGravatarID x = case x of
-    Purple -> Jenc.string ""
+    Empty -> Jenc.string ""
 
 userType : Jdec.Decoder UserType
 userType =
     Jdec.string
         |> Jdec.andThen (\str ->
             case str of
-                "Organization" -> Jdec.succeed Organization
+                "Bot" -> Jdec.succeed Bot
                 "User" -> Jdec.succeed PurpleUser
                 somethingElse -> Jdec.fail <| "Invalid UserType: " ++ somethingElse
         )
 
 encodeUserType : UserType -> Jenc.Value
 encodeUserType x = case x of
-    Organization -> Jenc.string "Organization"
+    Bot -> Jenc.string "Bot"
     PurpleUser -> Jenc.string "User"
 
 meta : Jdec.Decoder Meta

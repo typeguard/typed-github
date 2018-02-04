@@ -70,8 +70,35 @@ namespace QuickType
 
     public partial class Payload
     {
+        [JsonProperty("action")]
+        public string Action { get; set; }
+
+        [JsonProperty("issue")]
+        public Issue Issue { get; set; }
+
+        [JsonProperty("comment")]
+        public Comment Comment { get; set; }
+
+        [JsonProperty("push_id")]
+        public long? PushId { get; set; }
+
+        [JsonProperty("size")]
+        public long? Size { get; set; }
+
+        [JsonProperty("distinct_size")]
+        public long? DistinctSize { get; set; }
+
         [JsonProperty("ref")]
         public string Ref { get; set; }
+
+        [JsonProperty("head")]
+        public string Head { get; set; }
+
+        [JsonProperty("before")]
+        public string Before { get; set; }
+
+        [JsonProperty("commits")]
+        public Commit[] Commits { get; set; }
 
         [JsonProperty("ref_type")]
         public string RefType { get; set; }
@@ -85,41 +112,11 @@ namespace QuickType
         [JsonProperty("pusher_type")]
         public string PusherType { get; set; }
 
-        [JsonProperty("push_id")]
-        public long? PushId { get; set; }
-
-        [JsonProperty("size")]
-        public long? Size { get; set; }
-
-        [JsonProperty("distinct_size")]
-        public long? DistinctSize { get; set; }
-
-        [JsonProperty("head")]
-        public string Head { get; set; }
-
-        [JsonProperty("before")]
-        public string Before { get; set; }
-
-        [JsonProperty("commits")]
-        public Commit[] Commits { get; set; }
-
         [JsonProperty("forkee")]
         public Forkee Forkee { get; set; }
 
-        [JsonProperty("action")]
-        public string Action { get; set; }
-
-        [JsonProperty("issue")]
-        public Issue Issue { get; set; }
-
-        [JsonProperty("number")]
-        public long? Number { get; set; }
-
-        [JsonProperty("pull_request")]
-        public PullRequest PullRequest { get; set; }
-
-        [JsonProperty("comment")]
-        public Comment Comment { get; set; }
+        [JsonProperty("pages")]
+        public Page[] Pages { get; set; }
     }
 
     public partial class Comment
@@ -127,35 +124,17 @@ namespace QuickType
         [JsonProperty("url")]
         public string Url { get; set; }
 
-        [JsonProperty("pull_request_review_id")]
-        public long PullRequestReviewId { get; set; }
+        [JsonProperty("html_url")]
+        public string HtmlUrl { get; set; }
+
+        [JsonProperty("issue_url")]
+        public string IssueUrl { get; set; }
 
         [JsonProperty("id")]
         public long Id { get; set; }
 
-        [JsonProperty("diff_hunk")]
-        public string DiffHunk { get; set; }
-
-        [JsonProperty("path")]
-        public string Path { get; set; }
-
-        [JsonProperty("position")]
-        public long Position { get; set; }
-
-        [JsonProperty("original_position")]
-        public long OriginalPosition { get; set; }
-
-        [JsonProperty("commit_id")]
-        public string CommitId { get; set; }
-
-        [JsonProperty("original_commit_id")]
-        public string OriginalCommitId { get; set; }
-
         [JsonProperty("user")]
         public User User { get; set; }
-
-        [JsonProperty("body")]
-        public string Body { get; set; }
 
         [JsonProperty("created_at")]
         public System.DateTime CreatedAt { get; set; }
@@ -163,35 +142,11 @@ namespace QuickType
         [JsonProperty("updated_at")]
         public System.DateTime UpdatedAt { get; set; }
 
-        [JsonProperty("html_url")]
-        public string HtmlUrl { get; set; }
-
-        [JsonProperty("pull_request_url")]
-        public string PullRequestUrl { get; set; }
-
         [JsonProperty("author_association")]
         public string AuthorAssociation { get; set; }
 
-        [JsonProperty("_links")]
-        public CommentLinks Links { get; set; }
-    }
-
-    public partial class CommentLinks
-    {
-        [JsonProperty("self")]
-        public Html Self { get; set; }
-
-        [JsonProperty("html")]
-        public Html Html { get; set; }
-
-        [JsonProperty("pull_request")]
-        public Html PullRequest { get; set; }
-    }
-
-    public partial class Html
-    {
-        [JsonProperty("href")]
-        public string Href { get; set; }
+        [JsonProperty("body")]
+        public string Body { get; set; }
     }
 
     public partial class User
@@ -446,7 +401,7 @@ namespace QuickType
         public long WatchersCount { get; set; }
 
         [JsonProperty("language")]
-        public string Language { get; set; }
+        public object Language { get; set; }
 
         [JsonProperty("has_issues")]
         public bool HasIssues { get; set; }
@@ -476,7 +431,7 @@ namespace QuickType
         public long OpenIssuesCount { get; set; }
 
         [JsonProperty("license")]
-        public License License { get; set; }
+        public object License { get; set; }
 
         [JsonProperty("forks")]
         public long Forks { get; set; }
@@ -491,22 +446,7 @@ namespace QuickType
         public string DefaultBranch { get; set; }
 
         [JsonProperty("public")]
-        public bool? Public { get; set; }
-    }
-
-    public partial class License
-    {
-        [JsonProperty("key")]
-        public string Key { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("spdx_id")]
-        public string SpdxId { get; set; }
-
-        [JsonProperty("url")]
-        public string Url { get; set; }
+        public bool Public { get; set; }
     }
 
     public partial class Issue
@@ -551,10 +491,10 @@ namespace QuickType
         public bool Locked { get; set; }
 
         [JsonProperty("assignee")]
-        public User Assignee { get; set; }
+        public object Assignee { get; set; }
 
         [JsonProperty("assignees")]
-        public User[] Assignees { get; set; }
+        public object[] Assignees { get; set; }
 
         [JsonProperty("milestone")]
         public object Milestone { get; set; }
@@ -573,6 +513,9 @@ namespace QuickType
 
         [JsonProperty("author_association")]
         public string AuthorAssociation { get; set; }
+
+        [JsonProperty("pull_request")]
+        public PullRequest PullRequest { get; set; }
 
         [JsonProperty("body")]
         public string Body { get; set; }
@@ -601,9 +544,6 @@ namespace QuickType
         [JsonProperty("url")]
         public string Url { get; set; }
 
-        [JsonProperty("id")]
-        public long Id { get; set; }
-
         [JsonProperty("html_url")]
         public string HtmlUrl { get; set; }
 
@@ -612,165 +552,27 @@ namespace QuickType
 
         [JsonProperty("patch_url")]
         public string PatchUrl { get; set; }
+    }
 
-        [JsonProperty("issue_url")]
-        public string IssueUrl { get; set; }
-
-        [JsonProperty("number")]
-        public long Number { get; set; }
-
-        [JsonProperty("state")]
-        public string State { get; set; }
-
-        [JsonProperty("locked")]
-        public bool Locked { get; set; }
+    public partial class Page
+    {
+        [JsonProperty("page_name")]
+        public string PageName { get; set; }
 
         [JsonProperty("title")]
         public string Title { get; set; }
 
-        [JsonProperty("user")]
-        public User User { get; set; }
+        [JsonProperty("summary")]
+        public object Summary { get; set; }
 
-        [JsonProperty("body")]
-        public string Body { get; set; }
-
-        [JsonProperty("created_at")]
-        public System.DateTime CreatedAt { get; set; }
-
-        [JsonProperty("updated_at")]
-        public System.DateTime UpdatedAt { get; set; }
-
-        [JsonProperty("closed_at")]
-        public object ClosedAt { get; set; }
-
-        [JsonProperty("merged_at")]
-        public object MergedAt { get; set; }
-
-        [JsonProperty("merge_commit_sha")]
-        public string MergeCommitSha { get; set; }
-
-        [JsonProperty("assignee")]
-        public object Assignee { get; set; }
-
-        [JsonProperty("assignees")]
-        public object[] Assignees { get; set; }
-
-        [JsonProperty("requested_reviewers")]
-        public object[] RequestedReviewers { get; set; }
-
-        [JsonProperty("requested_teams")]
-        public object[] RequestedTeams { get; set; }
-
-        [JsonProperty("milestone")]
-        public object Milestone { get; set; }
-
-        [JsonProperty("commits_url")]
-        public string CommitsUrl { get; set; }
-
-        [JsonProperty("review_comments_url")]
-        public string ReviewCommentsUrl { get; set; }
-
-        [JsonProperty("review_comment_url")]
-        public string ReviewCommentUrl { get; set; }
-
-        [JsonProperty("comments_url")]
-        public string CommentsUrl { get; set; }
-
-        [JsonProperty("statuses_url")]
-        public string StatusesUrl { get; set; }
-
-        [JsonProperty("head")]
-        public Base Head { get; set; }
-
-        [JsonProperty("base")]
-        public Base Base { get; set; }
-
-        [JsonProperty("_links")]
-        public PullRequestLinks Links { get; set; }
-
-        [JsonProperty("author_association")]
-        public string AuthorAssociation { get; set; }
-
-        [JsonProperty("merged")]
-        public bool? Merged { get; set; }
-
-        [JsonProperty("mergeable")]
-        public object Mergeable { get; set; }
-
-        [JsonProperty("rebaseable")]
-        public object Rebaseable { get; set; }
-
-        [JsonProperty("mergeable_state")]
-        public string MergeableState { get; set; }
-
-        [JsonProperty("merged_by")]
-        public object MergedBy { get; set; }
-
-        [JsonProperty("comments")]
-        public long? Comments { get; set; }
-
-        [JsonProperty("review_comments")]
-        public long? ReviewComments { get; set; }
-
-        [JsonProperty("maintainer_can_modify")]
-        public bool? MaintainerCanModify { get; set; }
-
-        [JsonProperty("commits")]
-        public long? Commits { get; set; }
-
-        [JsonProperty("additions")]
-        public long? Additions { get; set; }
-
-        [JsonProperty("deletions")]
-        public long? Deletions { get; set; }
-
-        [JsonProperty("changed_files")]
-        public long? ChangedFiles { get; set; }
-    }
-
-    public partial class Base
-    {
-        [JsonProperty("label")]
-        public string Label { get; set; }
-
-        [JsonProperty("ref")]
-        public string Ref { get; set; }
+        [JsonProperty("action")]
+        public string Action { get; set; }
 
         [JsonProperty("sha")]
         public string Sha { get; set; }
 
-        [JsonProperty("user")]
-        public User User { get; set; }
-
-        [JsonProperty("repo")]
-        public Forkee Repo { get; set; }
-    }
-
-    public partial class PullRequestLinks
-    {
-        [JsonProperty("self")]
-        public Html Self { get; set; }
-
-        [JsonProperty("html")]
-        public Html Html { get; set; }
-
-        [JsonProperty("issue")]
-        public Html Issue { get; set; }
-
-        [JsonProperty("comments")]
-        public Html Comments { get; set; }
-
-        [JsonProperty("review_comments")]
-        public Html ReviewComments { get; set; }
-
-        [JsonProperty("review_comment")]
-        public Html ReviewComment { get; set; }
-
-        [JsonProperty("commits")]
-        public Html Commits { get; set; }
-
-        [JsonProperty("statuses")]
-        public Html Statuses { get; set; }
+        [JsonProperty("html_url")]
+        public string HtmlUrl { get; set; }
     }
 
     public partial class Repo
@@ -809,7 +611,7 @@ namespace QuickType
         public string HtmlUrl { get; set; }
 
         [JsonProperty("files")]
-        public Files Files { get; set; }
+        public Dictionary<string, File> Files { get; set; }
 
         [JsonProperty("public")]
         public bool Public { get; set; }
@@ -839,64 +641,13 @@ namespace QuickType
         public User Owner { get; set; }
     }
 
-    public partial class Files
-    {
-        [JsonProperty("gistfile1.txt")]
-        public Empty Gistfile1Txt { get; set; }
-
-        [JsonProperty("ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_config.json")]
-        public Empty RuwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26ConfigJson { get; set; }
-
-        [JsonProperty("ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_metadata.tsv")]
-        public Empty RuwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26MetadataTsv { get; set; }
-
-        [JsonProperty("ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_tensor.tsv")]
-        public Empty RuwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26TensorTsv { get; set; }
-
-        [JsonProperty("config.json")]
-        public Empty ConfigJson { get; set; }
-
-        [JsonProperty("-")]
-        public Empty Empty { get; set; }
-
-        [JsonProperty("6mnUZy7z")]
-        public Empty The6MnUZy7Z { get; set; }
-
-        [JsonProperty("LEDbreathe.ino")]
-        public Empty LeDbreatheIno { get; set; }
-
-        [JsonProperty("i3blocks-spotify")]
-        public Empty I3BlocksSpotify { get; set; }
-
-        [JsonProperty("_README.md")]
-        public Empty ReadmeMd { get; set; }
-
-        [JsonProperty("decryptFile.sh")]
-        public Empty DecryptFileSh { get; set; }
-
-        [JsonProperty("encryptFile.sh")]
-        public Empty EncryptFileSh { get; set; }
-
-        [JsonProperty("limitedNoOfRecords.java")]
-        public Empty LimitedNoOfRecordsJava { get; set; }
-
-        [JsonProperty("CLIENT APP")]
-        public Empty ClientApp { get; set; }
-
-        [JsonProperty("SERVER AP")]
-        public Empty ServerAp { get; set; }
-
-        [JsonProperty("ruwikiruscorpora_upos_skipgram_300_2_2018_fafdb1f6d6866fb229e806fc354b7458_config.json")]
-        public Empty RuwikiruscorporaUposSkipgram300_2_2018_Fafdb1F6D6866Fb229E806Fc354B7458ConfigJson { get; set; }
-    }
-
-    public partial class Empty
+    public partial class File
     {
         [JsonProperty("filename")]
         public string Filename { get; set; }
 
         [JsonProperty("type")]
-        public PurpleType PurpleType { get; set; }
+        public FileType PurpleType { get; set; }
 
         [JsonProperty("language")]
         public string Language { get; set; }
@@ -931,9 +682,9 @@ namespace QuickType
 
     public enum GravatarId { Empty };
 
-    public enum UserType { Organization, User };
+    public enum UserType { Bot, User };
 
-    public enum PurpleType { ApplicationJson, ApplicationXSh, TextPlain, TextTabSeparatedValues };
+    public enum FileType { ApplicationJavascript, ApplicationJson, ApplicationXml, TextHtml, TextPlain, TextXYaml };
 
     public class ApiData
     {
@@ -994,7 +745,7 @@ namespace QuickType
         {
             switch (str)
             {
-                case "Organization": return UserType.Organization;
+                case "Bot": return UserType.Bot;
                 case "User": return UserType.User;
                 default: return null;
             }
@@ -1012,27 +763,29 @@ namespace QuickType
         {
             switch (value)
             {
-                case UserType.Organization: serializer.Serialize(writer, "Organization"); break;
+                case UserType.Bot: serializer.Serialize(writer, "Bot"); break;
                 case UserType.User: serializer.Serialize(writer, "User"); break;
             }
         }
     }
 
-    static class PurpleTypeExtensions
+    static class FileTypeExtensions
     {
-        public static PurpleType? ValueForString(string str)
+        public static FileType? ValueForString(string str)
         {
             switch (str)
             {
-                case "application/json": return PurpleType.ApplicationJson;
-                case "application/x-sh": return PurpleType.ApplicationXSh;
-                case "text/plain": return PurpleType.TextPlain;
-                case "text/tab-separated-values": return PurpleType.TextTabSeparatedValues;
+                case "application/javascript": return FileType.ApplicationJavascript;
+                case "application/json": return FileType.ApplicationJson;
+                case "application/xml": return FileType.ApplicationXml;
+                case "text/html": return FileType.TextHtml;
+                case "text/plain": return FileType.TextPlain;
+                case "text/x-yaml": return FileType.TextXYaml;
                 default: return null;
             }
         }
 
-        public static PurpleType ReadJson(JsonReader reader, JsonSerializer serializer)
+        public static FileType ReadJson(JsonReader reader, JsonSerializer serializer)
         {
             var str = serializer.Deserialize<string>(reader);
             var maybeValue = ValueForString(str);
@@ -1040,14 +793,16 @@ namespace QuickType
             throw new Exception("Unknown enum case " + str);
         }
 
-        public static void WriteJson(this PurpleType value, JsonWriter writer, JsonSerializer serializer)
+        public static void WriteJson(this FileType value, JsonWriter writer, JsonSerializer serializer)
         {
             switch (value)
             {
-                case PurpleType.ApplicationJson: serializer.Serialize(writer, "application/json"); break;
-                case PurpleType.ApplicationXSh: serializer.Serialize(writer, "application/x-sh"); break;
-                case PurpleType.TextPlain: serializer.Serialize(writer, "text/plain"); break;
-                case PurpleType.TextTabSeparatedValues: serializer.Serialize(writer, "text/tab-separated-values"); break;
+                case FileType.ApplicationJavascript: serializer.Serialize(writer, "application/javascript"); break;
+                case FileType.ApplicationJson: serializer.Serialize(writer, "application/json"); break;
+                case FileType.ApplicationXml: serializer.Serialize(writer, "application/xml"); break;
+                case FileType.TextHtml: serializer.Serialize(writer, "text/html"); break;
+                case FileType.TextPlain: serializer.Serialize(writer, "text/plain"); break;
+                case FileType.TextXYaml: serializer.Serialize(writer, "text/x-yaml"); break;
             }
         }
     }
@@ -1063,7 +818,7 @@ namespace QuickType
 
     public class Converter: JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(GravatarId) || t == typeof(UserType) || t == typeof(PurpleType) || t == typeof(GravatarId?) || t == typeof(UserType?) || t == typeof(PurpleType?);
+        public override bool CanConvert(Type t) => t == typeof(GravatarId) || t == typeof(UserType) || t == typeof(FileType) || t == typeof(GravatarId?) || t == typeof(UserType?) || t == typeof(FileType?);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
@@ -1071,8 +826,8 @@ namespace QuickType
                 return GravatarIdExtensions.ReadJson(reader, serializer);
             if (t == typeof(UserType))
                 return UserTypeExtensions.ReadJson(reader, serializer);
-            if (t == typeof(PurpleType))
-                return PurpleTypeExtensions.ReadJson(reader, serializer);
+            if (t == typeof(FileType))
+                return FileTypeExtensions.ReadJson(reader, serializer);
             if (t == typeof(GravatarId?))
             {
                 if (reader.TokenType == JsonToken.Null) return null;
@@ -1083,10 +838,10 @@ namespace QuickType
                 if (reader.TokenType == JsonToken.Null) return null;
                 return UserTypeExtensions.ReadJson(reader, serializer);
             }
-            if (t == typeof(PurpleType?))
+            if (t == typeof(FileType?))
             {
                 if (reader.TokenType == JsonToken.Null) return null;
-                return PurpleTypeExtensions.ReadJson(reader, serializer);
+                return FileTypeExtensions.ReadJson(reader, serializer);
             }
             throw new Exception("Unknown type");
         }
@@ -1104,9 +859,9 @@ namespace QuickType
                 ((UserType)value).WriteJson(writer, serializer);
                 return;
             }
-            if (t == typeof(PurpleType))
+            if (t == typeof(FileType))
             {
-                ((PurpleType)value).WriteJson(writer, serializer);
+                ((FileType)value).WriteJson(writer, serializer);
                 return;
             }
             throw new Exception("Unknown type");

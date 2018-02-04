@@ -36,53 +36,34 @@ export enum GravatarID {
 }
 
 export interface Payload {
+    action?:        string;
+    issue?:         Issue;
+    comment?:       Comment;
+    push_id?:       number;
+    size?:          number;
+    distinct_size?: number;
     ref?:           string;
+    head?:          string;
+    before?:        string;
+    commits?:       Commit[];
     ref_type?:      string;
     master_branch?: string;
     description?:   string;
     pusher_type?:   string;
-    push_id?:       number;
-    size?:          number;
-    distinct_size?: number;
-    head?:          string;
-    before?:        string;
-    commits?:       Commit[];
     forkee?:        Forkee;
-    action?:        string;
-    issue?:         Issue;
-    number?:        number;
-    pull_request?:  PullRequest;
-    comment?:       Comment;
+    pages?:         Page[];
 }
 
 export interface Comment {
-    url:                    string;
-    pull_request_review_id: number;
-    id:                     number;
-    diff_hunk:              string;
-    path:                   string;
-    position:               number;
-    original_position:      number;
-    commit_id:              string;
-    original_commit_id:     string;
-    user:                   User;
-    body:                   string;
-    created_at:             string;
-    updated_at:             string;
-    html_url:               string;
-    pull_request_url:       string;
-    author_association:     string;
-    _links:                 CommentLinks;
-}
-
-export interface CommentLinks {
-    self:         HTML;
-    html:         HTML;
-    pull_request: HTML;
-}
-
-export interface HTML {
-    href: string;
+    url:                string;
+    html_url:           string;
+    issue_url:          string;
+    id:                 number;
+    user:               User;
+    created_at:         string;
+    updated_at:         string;
+    author_association: string;
+    body:               string;
 }
 
 export interface User {
@@ -106,7 +87,7 @@ export interface User {
 }
 
 export enum UserType {
-    Organization = "Organization",
+    Bot = "Bot",
     User = "User",
 }
 
@@ -130,7 +111,7 @@ export interface Forkee {
     owner:             User;
     private:           boolean;
     html_url:          string;
-    description?:      string;
+    description:       string;
     fork:              boolean;
     url:               string;
     forks_url:         string;
@@ -176,11 +157,11 @@ export interface Forkee {
     ssh_url:           string;
     clone_url:         string;
     svn_url:           string;
-    homepage?:         string;
+    homepage:          string;
     size:              number;
     stargazers_count:  number;
     watchers_count:    number;
-    language?:         string;
+    language:          null;
     has_issues:        boolean;
     has_projects:      boolean;
     has_downloads:     boolean;
@@ -190,19 +171,12 @@ export interface Forkee {
     mirror_url:        null;
     archived:          boolean;
     open_issues_count: number;
-    license?:          License;
+    license:           null;
     forks:             number;
     open_issues:       number;
     watchers:          number;
     default_branch:    string;
-    public?:           boolean;
-}
-
-export interface License {
-    key:      string;
-    name:     string;
-    spdx_id?: string;
-    url?:     string;
+    public:            boolean;
 }
 
 export interface Issue {
@@ -219,14 +193,15 @@ export interface Issue {
     labels:             Label[];
     state:              string;
     locked:             boolean;
-    assignee?:          User;
-    assignees:          User[];
+    assignee:           null;
+    assignees:          any[];
     milestone:          null;
     comments:           number;
     created_at:         string;
     updated_at:         string;
     closed_at?:         string;
     author_association: string;
+    pull_request?:      PullRequest;
     body:               string;
 }
 
@@ -239,68 +214,19 @@ export interface Label {
 }
 
 export interface PullRequest {
-    url:                    string;
-    id:                     number;
-    html_url:               string;
-    diff_url:               string;
-    patch_url:              string;
-    issue_url:              string;
-    number:                 number;
-    state:                  string;
-    locked:                 boolean;
-    title:                  string;
-    user:                   User;
-    body:                   string;
-    created_at:             string;
-    updated_at:             string;
-    closed_at:              null;
-    merged_at:              null;
-    merge_commit_sha?:      string;
-    assignee:               null;
-    assignees:              any[];
-    requested_reviewers:    any[];
-    requested_teams:        any[];
-    milestone:              null;
-    commits_url:            string;
-    review_comments_url:    string;
-    review_comment_url:     string;
-    comments_url:           string;
-    statuses_url:           string;
-    head:                   Base;
-    base:                   Base;
-    _links:                 PullRequestLinks;
-    author_association:     string;
-    merged?:                boolean;
-    mergeable?:             null;
-    rebaseable?:            null;
-    mergeable_state?:       string;
-    merged_by?:             null;
-    comments?:              number;
-    review_comments?:       number;
-    maintainer_can_modify?: boolean;
-    commits?:               number;
-    additions?:             number;
-    deletions?:             number;
-    changed_files?:         number;
+    url:       string;
+    html_url:  string;
+    diff_url:  string;
+    patch_url: string;
 }
 
-export interface PullRequestLinks {
-    self:            HTML;
-    html:            HTML;
-    issue:           HTML;
-    comments:        HTML;
-    review_comments: HTML;
-    review_comment:  HTML;
-    commits:         HTML;
-    statuses:        HTML;
-}
-
-export interface Base {
-    label: string;
-    ref:   string;
-    sha:   string;
-    user:  User;
-    repo:  Forkee;
+export interface Page {
+    page_name: string;
+    title:     string;
+    summary:   null;
+    action:    string;
+    sha:       string;
+    html_url:  string;
 }
 
 export interface Repo {
@@ -317,7 +243,7 @@ export interface Gists {
     git_pull_url: string;
     git_push_url: string;
     html_url:     string;
-    files:        Files;
+    files:        { [key: string]: File };
     public:       boolean;
     created_at:   string;
     updated_at:   string;
@@ -329,38 +255,21 @@ export interface Gists {
     owner?:       User;
 }
 
-export interface Files {
-    "gistfile1.txt"?:                                                                           Empty;
-    "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_config.json"?:  Empty;
-    "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_metadata.tsv"?: Empty;
-    "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_tensor.tsv"?:   Empty;
-    "config.json"?:                                                                             Empty;
-    "-"?:                                                                                       Empty;
-    "6mnUZy7z"?:                                                                                Empty;
-    "LEDbreathe.ino"?:                                                                          Empty;
-    "i3blocks-spotify"?:                                                                        Empty;
-    "_README.md"?:                                                                              Empty;
-    "decryptFile.sh"?:                                                                          Empty;
-    "encryptFile.sh"?:                                                                          Empty;
-    "limitedNoOfRecords.java"?:                                                                 Empty;
-    "CLIENT APP"?:                                                                              Empty;
-    "SERVER AP"?:                                                                               Empty;
-    "ruwikiruscorpora_upos_skipgram_300_2_2018_fafdb1f6d6866fb229e806fc354b7458_config.json"?:  Empty;
-}
-
-export interface Empty {
+export interface File {
     filename:  string;
-    type:      Type;
+    type:      FileType;
     language?: string;
     raw_url:   string;
     size:      number;
 }
 
-export enum Type {
+export enum FileType {
     ApplicationJSON = "application/json",
-    ApplicationXSh = "application/x-sh",
+    ApplicationJavascript = "application/javascript",
+    ApplicationXML = "application/xml",
+    TextHTML = "text/html",
     TextPlain = "text/plain",
-    TextTabSeparatedValues = "text/tab-separated-values",
+    TextXYAML = "text/x-yaml",
 }
 
 export interface User {
@@ -388,7 +297,7 @@ export enum GravatarID {
 }
 
 export enum UserType {
-    Organization = "Organization",
+    Bot = "Bot",
     User = "User",
 }
 
@@ -541,50 +450,33 @@ export module Convert {
             avatar_url: "",
         },
         "Payload": {
+            action: U(null, ""),
+            issue: U(null, O("Issue")),
+            comment: U(null, O("Comment")),
+            push_id: U(null, 0),
+            size: U(null, 0),
+            distinct_size: U(null, 0),
             ref: U(null, ""),
+            head: U(null, ""),
+            before: U(null, ""),
+            commits: U(null, A(O("Commit"))),
             ref_type: U(null, ""),
             master_branch: U(null, ""),
             description: U(null, ""),
             pusher_type: U(null, ""),
-            push_id: U(null, 0),
-            size: U(null, 0),
-            distinct_size: U(null, 0),
-            head: U(null, ""),
-            before: U(null, ""),
-            commits: U(null, A(O("Commit"))),
             forkee: U(null, O("Forkee")),
-            action: U(null, ""),
-            issue: U(null, O("Issue")),
-            number: U(null, 0),
-            pull_request: U(null, O("PullRequest")),
-            comment: U(null, O("Comment")),
+            pages: U(null, A(O("Page"))),
         },
         "Comment": {
             url: "",
-            pull_request_review_id: 0,
+            html_url: "",
+            issue_url: "",
             id: 0,
-            diff_hunk: "",
-            path: "",
-            position: 0,
-            original_position: 0,
-            commit_id: "",
-            original_commit_id: "",
             user: O("User"),
-            body: "",
             created_at: "",
             updated_at: "",
-            html_url: "",
-            pull_request_url: "",
             author_association: "",
-            _links: O("CommentLinks"),
-        },
-        "CommentLinks": {
-            self: O("HTML"),
-            html: O("HTML"),
-            pull_request: O("HTML"),
-        },
-        "HTML": {
-            href: "",
+            body: "",
         },
         "User": {
             login: "",
@@ -623,7 +515,7 @@ export module Convert {
             owner: O("User"),
             private: false,
             html_url: "",
-            description: U(null, ""),
+            description: "",
             fork: false,
             url: "",
             forks_url: "",
@@ -669,11 +561,11 @@ export module Convert {
             ssh_url: "",
             clone_url: "",
             svn_url: "",
-            homepage: U(null, ""),
+            homepage: "",
             size: 0,
             stargazers_count: 0,
             watchers_count: 0,
-            language: U(null, ""),
+            language: null,
             has_issues: false,
             has_projects: false,
             has_downloads: false,
@@ -683,18 +575,12 @@ export module Convert {
             mirror_url: null,
             archived: false,
             open_issues_count: 0,
-            license: U(O("License"), null),
+            license: null,
             forks: 0,
             open_issues: 0,
             watchers: 0,
             default_branch: "",
-            public: U(null, false),
-        },
-        "License": {
-            key: "",
-            name: "",
-            spdx_id: U(null, ""),
-            url: U(null, ""),
+            public: false,
         },
         "Issue": {
             url: "",
@@ -710,14 +596,15 @@ export module Convert {
             labels: A(O("Label")),
             state: "",
             locked: false,
-            assignee: U(O("User"), null),
-            assignees: A(O("User")),
+            assignee: null,
+            assignees: A(undefined),
             milestone: null,
             comments: 0,
             created_at: "",
             updated_at: "",
             closed_at: U(null, ""),
             author_association: "",
+            pull_request: U(null, O("PullRequest")),
             body: "",
         },
         "Label": {
@@ -729,65 +616,17 @@ export module Convert {
         },
         "PullRequest": {
             url: "",
-            id: 0,
             html_url: "",
             diff_url: "",
             patch_url: "",
-            issue_url: "",
-            number: 0,
-            state: "",
-            locked: false,
+        },
+        "Page": {
+            page_name: "",
             title: "",
-            user: O("User"),
-            body: "",
-            created_at: "",
-            updated_at: "",
-            closed_at: null,
-            merged_at: null,
-            merge_commit_sha: U(null, ""),
-            assignee: null,
-            assignees: A(undefined),
-            requested_reviewers: A(undefined),
-            requested_teams: A(undefined),
-            milestone: null,
-            commits_url: "",
-            review_comments_url: "",
-            review_comment_url: "",
-            comments_url: "",
-            statuses_url: "",
-            head: O("Base"),
-            base: O("Base"),
-            _links: O("PullRequestLinks"),
-            author_association: "",
-            merged: U(null, false),
-            mergeable: null,
-            rebaseable: null,
-            mergeable_state: U(null, ""),
-            merged_by: null,
-            comments: U(null, 0),
-            review_comments: U(null, 0),
-            maintainer_can_modify: U(null, false),
-            commits: U(null, 0),
-            additions: U(null, 0),
-            deletions: U(null, 0),
-            changed_files: U(null, 0),
-        },
-        "PullRequestLinks": {
-            self: O("HTML"),
-            html: O("HTML"),
-            issue: O("HTML"),
-            comments: O("HTML"),
-            review_comments: O("HTML"),
-            review_comment: O("HTML"),
-            commits: O("HTML"),
-            statuses: O("HTML"),
-        },
-        "Base": {
-            label: "",
-            ref: "",
+            summary: null,
+            action: "",
             sha: "",
-            user: O("User"),
-            repo: O("Forkee"),
+            html_url: "",
         },
         "Repo": {
             id: 0,
@@ -802,7 +641,7 @@ export module Convert {
             git_pull_url: "",
             git_push_url: "",
             html_url: "",
-            files: O("Files"),
+            files: M(O("File")),
             public: false,
             created_at: "",
             updated_at: "",
@@ -813,27 +652,9 @@ export module Convert {
             truncated: false,
             owner: U(null, O("User")),
         },
-        "Files": {
-            "gistfile1.txt": U(null, O("Empty")),
-            "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_config.json": U(null, O("Empty")),
-            "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_metadata.tsv": U(null, O("Empty")),
-            "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_tensor.tsv": U(null, O("Empty")),
-            "config.json": U(null, O("Empty")),
-            "-": U(null, O("Empty")),
-            "6mnUZy7z": U(null, O("Empty")),
-            "LEDbreathe.ino": U(null, O("Empty")),
-            "i3blocks-spotify": U(null, O("Empty")),
-            "_README.md": U(null, O("Empty")),
-            "decryptFile.sh": U(null, O("Empty")),
-            "encryptFile.sh": U(null, O("Empty")),
-            "limitedNoOfRecords.java": U(null, O("Empty")),
-            "CLIENT APP": U(null, O("Empty")),
-            "SERVER AP": U(null, O("Empty")),
-            "ruwikiruscorpora_upos_skipgram_300_2_2018_fafdb1f6d6866fb229e806fc354b7458_config.json": U(null, O("Empty")),
-        },
-        "Empty": {
+        "File": {
             filename: "",
-            type: E("Type"),
+            type: E("FileType"),
             language: U(null, ""),
             raw_url: "",
             size: 0,
@@ -850,14 +671,16 @@ export module Convert {
             GravatarID.Empty,
         ],
         "UserType": [
-            UserType.Organization,
+            UserType.Bot,
             UserType.User,
         ],
-        "Type": [
-            Type.ApplicationJSON,
-            Type.ApplicationXSh,
-            Type.TextPlain,
-            Type.TextTabSeparatedValues,
+        "FileType": [
+            FileType.ApplicationJSON,
+            FileType.ApplicationJavascript,
+            FileType.ApplicationXML,
+            FileType.TextHTML,
+            FileType.TextPlain,
+            FileType.TextXYAML,
         ],
     };
 }

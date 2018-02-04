@@ -28,16 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)JSONDictionary;
 @end
 
-@interface APICommentLinks (JSONConversion)
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict;
-- (NSDictionary *)JSONDictionary;
-@end
-
-@interface APIHTML (JSONConversion)
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict;
-- (NSDictionary *)JSONDictionary;
-@end
-
 @interface APIUser (JSONConversion)
 + (instancetype)fromJSONDictionary:(NSDictionary *)dict;
 - (NSDictionary *)JSONDictionary;
@@ -58,11 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)JSONDictionary;
 @end
 
-@interface APILicense (JSONConversion)
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict;
-- (NSDictionary *)JSONDictionary;
-@end
-
 @interface APIIssue (JSONConversion)
 + (instancetype)fromJSONDictionary:(NSDictionary *)dict;
 - (NSDictionary *)JSONDictionary;
@@ -78,12 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)JSONDictionary;
 @end
 
-@interface APIBase (JSONConversion)
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict;
-- (NSDictionary *)JSONDictionary;
-@end
-
-@interface APIPullRequestLinks (JSONConversion)
+@interface APIPage (JSONConversion)
 + (instancetype)fromJSONDictionary:(NSDictionary *)dict;
 - (NSDictionary *)JSONDictionary;
 @end
@@ -98,12 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)JSONDictionary;
 @end
 
-@interface APIFiles (JSONConversion)
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict;
-- (NSDictionary *)JSONDictionary;
-@end
-
-@interface APIEmpty (JSONConversion)
+@interface APIFile (JSONConversion)
 + (instancetype)fromJSONDictionary:(NSDictionary *)dict;
 - (NSDictionary *)JSONDictionary;
 @end
@@ -148,12 +123,12 @@ NS_ASSUME_NONNULL_BEGIN
 {
     static NSDictionary<NSString *, APIUserType *> *values;
     return values = values ? values : @{
-        @"Organization": [[APIUserType alloc] initWithValue:@"Organization"],
+        @"Bot": [[APIUserType alloc] initWithValue:@"Bot"],
         @"User": [[APIUserType alloc] initWithValue:@"User"],
     };
 }
 
-+ (APIUserType *)organization { return APIUserType.values[@"Organization"]; }
++ (APIUserType *)bot { return APIUserType.values[@"Bot"]; }
 + (APIUserType *)user { return APIUserType.values[@"User"]; }
 
 + (instancetype _Nullable)withValue:(NSString *)value
@@ -170,26 +145,30 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSUInteger)hash { return _value.hash; }
 @end
 
-@implementation APIType
-+ (NSDictionary<NSString *, APIType *> *)values
+@implementation APIFileType
++ (NSDictionary<NSString *, APIFileType *> *)values
 {
-    static NSDictionary<NSString *, APIType *> *values;
+    static NSDictionary<NSString *, APIFileType *> *values;
     return values = values ? values : @{
-        @"application/json": [[APIType alloc] initWithValue:@"application/json"],
-        @"application/x-sh": [[APIType alloc] initWithValue:@"application/x-sh"],
-        @"text/plain": [[APIType alloc] initWithValue:@"text/plain"],
-        @"text/tab-separated-values": [[APIType alloc] initWithValue:@"text/tab-separated-values"],
+        @"application/json": [[APIFileType alloc] initWithValue:@"application/json"],
+        @"application/javascript": [[APIFileType alloc] initWithValue:@"application/javascript"],
+        @"application/xml": [[APIFileType alloc] initWithValue:@"application/xml"],
+        @"text/html": [[APIFileType alloc] initWithValue:@"text/html"],
+        @"text/plain": [[APIFileType alloc] initWithValue:@"text/plain"],
+        @"text/x-yaml": [[APIFileType alloc] initWithValue:@"text/x-yaml"],
     };
 }
 
-+ (APIType *)applicationJSON { return APIType.values[@"application/json"]; }
-+ (APIType *)applicationXSh { return APIType.values[@"application/x-sh"]; }
-+ (APIType *)textPlain { return APIType.values[@"text/plain"]; }
-+ (APIType *)textTabSeparatedValues { return APIType.values[@"text/tab-separated-values"]; }
++ (APIFileType *)applicationJSON { return APIFileType.values[@"application/json"]; }
++ (APIFileType *)applicationJavascript { return APIFileType.values[@"application/javascript"]; }
++ (APIFileType *)applicationXML { return APIFileType.values[@"application/xml"]; }
++ (APIFileType *)textHTML { return APIFileType.values[@"text/html"]; }
++ (APIFileType *)textPlain { return APIFileType.values[@"text/plain"]; }
++ (APIFileType *)textXYAML { return APIFileType.values[@"text/x-yaml"]; }
 
 + (instancetype _Nullable)withValue:(NSString *)value
 {
-    return APIType.values[value];
+    return APIFileType.values[value];
 }
 
 - (instancetype)initWithValue:(NSString *)value
@@ -505,23 +484,22 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
 {
     static NSDictionary<NSString *, NSString *> *properties;
     return properties = properties ? properties : @{
+        @"action": @"action",
+        @"issue": @"issue",
+        @"comment": @"comment",
+        @"push_id": @"pushID",
+        @"size": @"size",
+        @"distinct_size": @"distinctSize",
         @"ref": @"ref",
+        @"head": @"head",
+        @"before": @"before",
+        @"commits": @"commits",
         @"ref_type": @"refType",
         @"master_branch": @"masterBranch",
         @"description": @"theDescription",
         @"pusher_type": @"pusherType",
-        @"push_id": @"pushID",
-        @"size": @"size",
-        @"distinct_size": @"distinctSize",
-        @"head": @"head",
-        @"before": @"before",
-        @"commits": @"commits",
         @"forkee": @"forkee",
-        @"action": @"action",
-        @"issue": @"issue",
-        @"number": @"number",
-        @"pull_request": @"pullRequest",
-        @"comment": @"comment",
+        @"pages": @"pages",
     };
 }
 
@@ -534,11 +512,11 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
 {
     if (self = [super init]) {
         [self setValuesForKeysWithDictionary:dict];
+        _issue = [APIIssue fromJSONDictionary:(id)_issue];
+        _comment = [APIComment fromJSONDictionary:(id)_comment];
         _commits = map(_commits, λ(id x, [APICommit fromJSONDictionary:x]));
         _forkee = [APIForkee fromJSONDictionary:(id)_forkee];
-        _issue = [APIIssue fromJSONDictionary:(id)_issue];
-        _pullRequest = [APIPullRequest fromJSONDictionary:(id)_pullRequest];
-        _comment = [APIComment fromJSONDictionary:(id)_comment];
+        _pages = map(_pages, λ(id x, [APIPage fromJSONDictionary:x]));
     }
     return self;
 }
@@ -561,11 +539,11 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
     }
 
     [dict addEntriesFromDictionary:@{
+        @"issue": NSNullify([_issue JSONDictionary]),
+        @"comment": NSNullify([_comment JSONDictionary]),
         @"commits": NSNullify(map(_commits, λ(id x, [x JSONDictionary]))),
         @"forkee": NSNullify([_forkee JSONDictionary]),
-        @"issue": NSNullify([_issue JSONDictionary]),
-        @"pull_request": NSNullify([_pullRequest JSONDictionary]),
-        @"comment": NSNullify([_comment JSONDictionary]),
+        @"pages": NSNullify(map(_pages, λ(id x, [x JSONDictionary]))),
     }];
 
     return dict;
@@ -578,22 +556,14 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
     static NSDictionary<NSString *, NSString *> *properties;
     return properties = properties ? properties : @{
         @"url": @"url",
-        @"pull_request_review_id": @"pullRequestReviewID",
+        @"html_url": @"htmlURL",
+        @"issue_url": @"issueURL",
         @"id": @"identifier",
-        @"diff_hunk": @"diffHunk",
-        @"path": @"path",
-        @"position": @"position",
-        @"original_position": @"originalPosition",
-        @"commit_id": @"commitID",
-        @"original_commit_id": @"originalCommitID",
         @"user": @"user",
-        @"body": @"body",
         @"created_at": @"createdAt",
         @"updated_at": @"updatedAt",
-        @"html_url": @"htmlURL",
-        @"pull_request_url": @"pullRequestURL",
         @"author_association": @"authorAssociation",
-        @"_links": @"links",
+        @"body": @"body",
     };
 }
 
@@ -607,7 +577,6 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
     if (self = [super init]) {
         [self setValuesForKeysWithDictionary:dict];
         _user = [APIUser fromJSONDictionary:(id)_user];
-        _links = [APICommentLinks fromJSONDictionary:(id)_links];
     }
     return self;
 }
@@ -631,92 +600,9 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
 
     [dict addEntriesFromDictionary:@{
         @"user": [_user JSONDictionary],
-        @"_links": [_links JSONDictionary],
     }];
 
     return dict;
-}
-@end
-
-@implementation APICommentLinks
-+ (NSDictionary<NSString *, NSString *> *)properties
-{
-    static NSDictionary<NSString *, NSString *> *properties;
-    return properties = properties ? properties : @{
-        @"self": @"self",
-        @"html": @"html",
-        @"pull_request": @"pullRequest",
-    };
-}
-
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict
-{
-    return dict ? [[APICommentLinks alloc] initWithJSONDictionary:dict] : nil;
-}
-
-- (instancetype)initWithJSONDictionary:(NSDictionary *)dict
-{
-    if (self = [super init]) {
-        [self setValuesForKeysWithDictionary:dict];
-        _self = [APIHTML fromJSONDictionary:(id)_self];
-        _html = [APIHTML fromJSONDictionary:(id)_html];
-        _pullRequest = [APIHTML fromJSONDictionary:(id)_pullRequest];
-    }
-    return self;
-}
-
-- (void)setValue:(nullable id)value forKey:(NSString *)key
-{
-    [super setValue:value forKey:APICommentLinks.properties[key]];
-}
-
-- (NSDictionary *)JSONDictionary
-{
-    id dict = [[self dictionaryWithValuesForKeys:APICommentLinks.properties.allValues] mutableCopy];
-
-    for (id jsonName in APICommentLinks.properties) {
-        id propertyName = APICommentLinks.properties[jsonName];
-        if (![jsonName isEqualToString:propertyName]) {
-            dict[jsonName] = dict[propertyName];
-            [dict removeObjectForKey:propertyName];
-        }
-    }
-
-    [dict addEntriesFromDictionary:@{
-        @"self": [_self JSONDictionary],
-        @"html": [_html JSONDictionary],
-        @"pull_request": [_pullRequest JSONDictionary],
-    }];
-
-    return dict;
-}
-@end
-
-@implementation APIHTML
-+ (NSDictionary<NSString *, NSString *> *)properties
-{
-    static NSDictionary<NSString *, NSString *> *properties;
-    return properties = properties ? properties : @{
-        @"href": @"href",
-    };
-}
-
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict
-{
-    return dict ? [[APIHTML alloc] initWithJSONDictionary:dict] : nil;
-}
-
-- (instancetype)initWithJSONDictionary:(NSDictionary *)dict
-{
-    if (self = [super init]) {
-        [self setValuesForKeysWithDictionary:dict];
-    }
-    return self;
-}
-
-- (NSDictionary *)JSONDictionary
-{
-    return [self dictionaryWithValuesForKeys:APIHTML.properties.allValues];
 }
 @end
 
@@ -945,7 +831,7 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
         @"open_issues": @"openIssues",
         @"watchers": @"watchers",
         @"default_branch": @"defaultBranch",
-        @"public": @"public",
+        @"public": @"isPublic",
     };
 }
 
@@ -959,7 +845,6 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
     if (self = [super init]) {
         [self setValuesForKeysWithDictionary:dict];
         _owner = [APIUser fromJSONDictionary:(id)_owner];
-        _license = [APILicense fromJSONDictionary:(id)_license];
     }
     return self;
 }
@@ -991,54 +876,8 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
         @"has_wiki": _hasWiki ? @YES : @NO,
         @"has_pages": _hasPages ? @YES : @NO,
         @"archived": _isArchived ? @YES : @NO,
-        @"license": NSNullify([_license JSONDictionary]),
+        @"public": _isPublic ? @YES : @NO,
     }];
-
-    return dict;
-}
-@end
-
-@implementation APILicense
-+ (NSDictionary<NSString *, NSString *> *)properties
-{
-    static NSDictionary<NSString *, NSString *> *properties;
-    return properties = properties ? properties : @{
-        @"key": @"key",
-        @"name": @"name",
-        @"spdx_id": @"spdxID",
-        @"url": @"url",
-    };
-}
-
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict
-{
-    return dict ? [[APILicense alloc] initWithJSONDictionary:dict] : nil;
-}
-
-- (instancetype)initWithJSONDictionary:(NSDictionary *)dict
-{
-    if (self = [super init]) {
-        [self setValuesForKeysWithDictionary:dict];
-    }
-    return self;
-}
-
-- (void)setValue:(nullable id)value forKey:(NSString *)key
-{
-    [super setValue:value forKey:APILicense.properties[key]];
-}
-
-- (NSDictionary *)JSONDictionary
-{
-    id dict = [[self dictionaryWithValuesForKeys:APILicense.properties.allValues] mutableCopy];
-
-    for (id jsonName in APILicense.properties) {
-        id propertyName = APILicense.properties[jsonName];
-        if (![jsonName isEqualToString:propertyName]) {
-            dict[jsonName] = dict[propertyName];
-            [dict removeObjectForKey:propertyName];
-        }
-    }
 
     return dict;
 }
@@ -1070,6 +909,7 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
         @"updated_at": @"updatedAt",
         @"closed_at": @"closedAt",
         @"author_association": @"authorAssociation",
+        @"pull_request": @"pullRequest",
         @"body": @"body",
     };
 }
@@ -1085,8 +925,7 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
         [self setValuesForKeysWithDictionary:dict];
         _user = [APIUser fromJSONDictionary:(id)_user];
         _labels = map(_labels, λ(id x, [APILabel fromJSONDictionary:x]));
-        _assignee = [APIUser fromJSONDictionary:(id)_assignee];
-        _assignees = map(_assignees, λ(id x, [APIUser fromJSONDictionary:x]));
+        _pullRequest = [APIPullRequest fromJSONDictionary:(id)_pullRequest];
     }
     return self;
 }
@@ -1112,8 +951,7 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
         @"user": [_user JSONDictionary],
         @"labels": map(_labels, λ(id x, [x JSONDictionary])),
         @"locked": _isLocked ? @YES : @NO,
-        @"assignee": NSNullify([_assignee JSONDictionary]),
-        @"assignees": map(_assignees, λ(id x, [x JSONDictionary])),
+        @"pull_request": NSNullify([_pullRequest JSONDictionary]),
     }];
 
     return dict;
@@ -1177,48 +1015,9 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
     static NSDictionary<NSString *, NSString *> *properties;
     return properties = properties ? properties : @{
         @"url": @"url",
-        @"id": @"identifier",
         @"html_url": @"htmlURL",
         @"diff_url": @"diffURL",
         @"patch_url": @"patchURL",
-        @"issue_url": @"issueURL",
-        @"number": @"number",
-        @"state": @"state",
-        @"locked": @"isLocked",
-        @"title": @"title",
-        @"user": @"user",
-        @"body": @"body",
-        @"created_at": @"createdAt",
-        @"updated_at": @"updatedAt",
-        @"closed_at": @"closedAt",
-        @"merged_at": @"mergedAt",
-        @"merge_commit_sha": @"mergeCommitSHA",
-        @"assignee": @"assignee",
-        @"assignees": @"assignees",
-        @"requested_reviewers": @"requestedReviewers",
-        @"requested_teams": @"requestedTeams",
-        @"milestone": @"milestone",
-        @"commits_url": @"commitsURL",
-        @"review_comments_url": @"reviewCommentsURL",
-        @"review_comment_url": @"reviewCommentURL",
-        @"comments_url": @"commentsURL",
-        @"statuses_url": @"statusesURL",
-        @"head": @"head",
-        @"base": @"base",
-        @"_links": @"links",
-        @"author_association": @"authorAssociation",
-        @"merged": @"merged",
-        @"mergeable": @"mergeable",
-        @"rebaseable": @"rebaseable",
-        @"mergeable_state": @"mergeableState",
-        @"merged_by": @"mergedBy",
-        @"comments": @"comments",
-        @"review_comments": @"reviewComments",
-        @"maintainer_can_modify": @"maintainerCanModify",
-        @"commits": @"commits",
-        @"additions": @"additions",
-        @"deletions": @"deletions",
-        @"changed_files": @"changedFiles",
     };
 }
 
@@ -1231,10 +1030,6 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
 {
     if (self = [super init]) {
         [self setValuesForKeysWithDictionary:dict];
-        _user = [APIUser fromJSONDictionary:(id)_user];
-        _head = [APIBase fromJSONDictionary:(id)_head];
-        _base = [APIBase fromJSONDictionary:(id)_base];
-        _links = [APIPullRequestLinks fromJSONDictionary:(id)_links];
     }
     return self;
 }
@@ -1256,123 +1051,53 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
         }
     }
 
-    [dict addEntriesFromDictionary:@{
-        @"locked": _isLocked ? @YES : @NO,
-        @"user": [_user JSONDictionary],
-        @"head": [_head JSONDictionary],
-        @"base": [_base JSONDictionary],
-        @"_links": [_links JSONDictionary],
-    }];
-
     return dict;
 }
 @end
 
-@implementation APIBase
+@implementation APIPage
 + (NSDictionary<NSString *, NSString *> *)properties
 {
     static NSDictionary<NSString *, NSString *> *properties;
     return properties = properties ? properties : @{
-        @"label": @"label",
-        @"ref": @"ref",
+        @"page_name": @"pageName",
+        @"title": @"title",
+        @"summary": @"summary",
+        @"action": @"action",
         @"sha": @"sha",
-        @"user": @"user",
-        @"repo": @"repo",
+        @"html_url": @"htmlURL",
     };
 }
 
 + (instancetype)fromJSONDictionary:(NSDictionary *)dict
 {
-    return dict ? [[APIBase alloc] initWithJSONDictionary:dict] : nil;
+    return dict ? [[APIPage alloc] initWithJSONDictionary:dict] : nil;
 }
 
 - (instancetype)initWithJSONDictionary:(NSDictionary *)dict
 {
     if (self = [super init]) {
         [self setValuesForKeysWithDictionary:dict];
-        _user = [APIUser fromJSONDictionary:(id)_user];
-        _repo = [APIForkee fromJSONDictionary:(id)_repo];
-    }
-    return self;
-}
-
-- (NSDictionary *)JSONDictionary
-{
-    id dict = [[self dictionaryWithValuesForKeys:APIBase.properties.allValues] mutableCopy];
-
-    [dict addEntriesFromDictionary:@{
-        @"user": [_user JSONDictionary],
-        @"repo": [_repo JSONDictionary],
-    }];
-
-    return dict;
-}
-@end
-
-@implementation APIPullRequestLinks
-+ (NSDictionary<NSString *, NSString *> *)properties
-{
-    static NSDictionary<NSString *, NSString *> *properties;
-    return properties = properties ? properties : @{
-        @"self": @"self",
-        @"html": @"html",
-        @"issue": @"issue",
-        @"comments": @"comments",
-        @"review_comments": @"reviewComments",
-        @"review_comment": @"reviewComment",
-        @"commits": @"commits",
-        @"statuses": @"statuses",
-    };
-}
-
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict
-{
-    return dict ? [[APIPullRequestLinks alloc] initWithJSONDictionary:dict] : nil;
-}
-
-- (instancetype)initWithJSONDictionary:(NSDictionary *)dict
-{
-    if (self = [super init]) {
-        [self setValuesForKeysWithDictionary:dict];
-        _self = [APIHTML fromJSONDictionary:(id)_self];
-        _html = [APIHTML fromJSONDictionary:(id)_html];
-        _issue = [APIHTML fromJSONDictionary:(id)_issue];
-        _comments = [APIHTML fromJSONDictionary:(id)_comments];
-        _reviewComments = [APIHTML fromJSONDictionary:(id)_reviewComments];
-        _reviewComment = [APIHTML fromJSONDictionary:(id)_reviewComment];
-        _commits = [APIHTML fromJSONDictionary:(id)_commits];
-        _statuses = [APIHTML fromJSONDictionary:(id)_statuses];
     }
     return self;
 }
 
 - (void)setValue:(nullable id)value forKey:(NSString *)key
 {
-    [super setValue:value forKey:APIPullRequestLinks.properties[key]];
+    [super setValue:value forKey:APIPage.properties[key]];
 }
 
 - (NSDictionary *)JSONDictionary
 {
-    id dict = [[self dictionaryWithValuesForKeys:APIPullRequestLinks.properties.allValues] mutableCopy];
+    id dict = [[self dictionaryWithValuesForKeys:APIPage.properties.allValues] mutableCopy];
 
-    for (id jsonName in APIPullRequestLinks.properties) {
-        id propertyName = APIPullRequestLinks.properties[jsonName];
+    for (id jsonName in APIPage.properties) {
+        id propertyName = APIPage.properties[jsonName];
         if (![jsonName isEqualToString:propertyName]) {
             dict[jsonName] = dict[propertyName];
             [dict removeObjectForKey:propertyName];
         }
     }
-
-    [dict addEntriesFromDictionary:@{
-        @"self": [_self JSONDictionary],
-        @"html": [_html JSONDictionary],
-        @"issue": [_issue JSONDictionary],
-        @"comments": [_comments JSONDictionary],
-        @"review_comments": [_reviewComments JSONDictionary],
-        @"review_comment": [_reviewComment JSONDictionary],
-        @"commits": [_commits JSONDictionary],
-        @"statuses": [_statuses JSONDictionary],
-    }];
 
     return dict;
 }
@@ -1457,7 +1182,7 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
 {
     if (self = [super init]) {
         [self setValuesForKeysWithDictionary:dict];
-        _files = [APIFiles fromJSONDictionary:(id)_files];
+        _files = map(_files, λ(id x, [APIFile fromJSONDictionary:x]));
         _owner = [APIUser fromJSONDictionary:(id)_owner];
     }
     return self;
@@ -1481,7 +1206,7 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
     }
 
     [dict addEntriesFromDictionary:@{
-        @"files": [_files JSONDictionary],
+        @"files": map(_files, λ(id x, [x JSONDictionary])),
         @"public": _isPublic ? @YES : @NO,
         @"truncated": _isTruncated ? @YES : @NO,
         @"owner": NSNullify([_owner JSONDictionary]),
@@ -1491,100 +1216,7 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
 }
 @end
 
-@implementation APIFiles
-+ (NSDictionary<NSString *, NSString *> *)properties
-{
-    static NSDictionary<NSString *, NSString *> *properties;
-    return properties = properties ? properties : @{
-        @"gistfile1.txt": @"gistfile1Txt",
-        @"ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_config.json": @"ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26ConfigJSON",
-        @"ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_metadata.tsv": @"ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26MetadataTsv",
-        @"ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_tensor.tsv": @"ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26TensorTsv",
-        @"config.json": @"configJSON",
-        @"-": @"empty",
-        @"6mnUZy7z": @"the6MnUZy7Z",
-        @"LEDbreathe.ino": @"leDbreatheIno",
-        @"i3blocks-spotify": @"i3BlocksSpotify",
-        @"_README.md": @"readmeMd",
-        @"decryptFile.sh": @"decryptFileSh",
-        @"encryptFile.sh": @"encryptFileSh",
-        @"limitedNoOfRecords.java": @"limitedNoOfRecordsJava",
-        @"CLIENT APP": @"clientApp",
-        @"SERVER AP": @"serverAp",
-        @"ruwikiruscorpora_upos_skipgram_300_2_2018_fafdb1f6d6866fb229e806fc354b7458_config.json": @"ruwikiruscorporaUposSkipgram300_2_2018_Fafdb1F6D6866Fb229E806Fc354B7458ConfigJSON",
-    };
-}
-
-+ (instancetype)fromJSONDictionary:(NSDictionary *)dict
-{
-    return dict ? [[APIFiles alloc] initWithJSONDictionary:dict] : nil;
-}
-
-- (instancetype)initWithJSONDictionary:(NSDictionary *)dict
-{
-    if (self = [super init]) {
-        [self setValuesForKeysWithDictionary:dict];
-        _gistfile1Txt = [APIEmpty fromJSONDictionary:(id)_gistfile1Txt];
-        _ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26ConfigJSON = [APIEmpty fromJSONDictionary:(id)_ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26ConfigJSON];
-        _ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26MetadataTsv = [APIEmpty fromJSONDictionary:(id)_ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26MetadataTsv];
-        _ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26TensorTsv = [APIEmpty fromJSONDictionary:(id)_ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26TensorTsv];
-        _configJSON = [APIEmpty fromJSONDictionary:(id)_configJSON];
-        _empty = [APIEmpty fromJSONDictionary:(id)_empty];
-        _the6MnUZy7Z = [APIEmpty fromJSONDictionary:(id)_the6MnUZy7Z];
-        _leDbreatheIno = [APIEmpty fromJSONDictionary:(id)_leDbreatheIno];
-        _i3BlocksSpotify = [APIEmpty fromJSONDictionary:(id)_i3BlocksSpotify];
-        _readmeMd = [APIEmpty fromJSONDictionary:(id)_readmeMd];
-        _decryptFileSh = [APIEmpty fromJSONDictionary:(id)_decryptFileSh];
-        _encryptFileSh = [APIEmpty fromJSONDictionary:(id)_encryptFileSh];
-        _limitedNoOfRecordsJava = [APIEmpty fromJSONDictionary:(id)_limitedNoOfRecordsJava];
-        _clientApp = [APIEmpty fromJSONDictionary:(id)_clientApp];
-        _serverAp = [APIEmpty fromJSONDictionary:(id)_serverAp];
-        _ruwikiruscorporaUposSkipgram300_2_2018_Fafdb1F6D6866Fb229E806Fc354B7458ConfigJSON = [APIEmpty fromJSONDictionary:(id)_ruwikiruscorporaUposSkipgram300_2_2018_Fafdb1F6D6866Fb229E806Fc354B7458ConfigJSON];
-    }
-    return self;
-}
-
-- (void)setValue:(nullable id)value forKey:(NSString *)key
-{
-    [super setValue:value forKey:APIFiles.properties[key]];
-}
-
-- (NSDictionary *)JSONDictionary
-{
-    id dict = [[self dictionaryWithValuesForKeys:APIFiles.properties.allValues] mutableCopy];
-
-    for (id jsonName in APIFiles.properties) {
-        id propertyName = APIFiles.properties[jsonName];
-        if (![jsonName isEqualToString:propertyName]) {
-            dict[jsonName] = dict[propertyName];
-            [dict removeObjectForKey:propertyName];
-        }
-    }
-
-    [dict addEntriesFromDictionary:@{
-        @"gistfile1.txt": NSNullify([_gistfile1Txt JSONDictionary]),
-        @"ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_config.json": NSNullify([_ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26ConfigJSON JSONDictionary]),
-        @"ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_metadata.tsv": NSNullify([_ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26MetadataTsv JSONDictionary]),
-        @"ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_tensor.tsv": NSNullify([_ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26TensorTsv JSONDictionary]),
-        @"config.json": NSNullify([_configJSON JSONDictionary]),
-        @"-": NSNullify([_empty JSONDictionary]),
-        @"6mnUZy7z": NSNullify([_the6MnUZy7Z JSONDictionary]),
-        @"LEDbreathe.ino": NSNullify([_leDbreatheIno JSONDictionary]),
-        @"i3blocks-spotify": NSNullify([_i3BlocksSpotify JSONDictionary]),
-        @"_README.md": NSNullify([_readmeMd JSONDictionary]),
-        @"decryptFile.sh": NSNullify([_decryptFileSh JSONDictionary]),
-        @"encryptFile.sh": NSNullify([_encryptFileSh JSONDictionary]),
-        @"limitedNoOfRecords.java": NSNullify([_limitedNoOfRecordsJava JSONDictionary]),
-        @"CLIENT APP": NSNullify([_clientApp JSONDictionary]),
-        @"SERVER AP": NSNullify([_serverAp JSONDictionary]),
-        @"ruwikiruscorpora_upos_skipgram_300_2_2018_fafdb1f6d6866fb229e806fc354b7458_config.json": NSNullify([_ruwikiruscorporaUposSkipgram300_2_2018_Fafdb1F6D6866Fb229E806Fc354B7458ConfigJSON JSONDictionary]),
-    }];
-
-    return dict;
-}
-@end
-
-@implementation APIEmpty
+@implementation APIFile
 + (NSDictionary<NSString *, NSString *> *)properties
 {
     static NSDictionary<NSString *, NSString *> *properties;
@@ -1599,29 +1231,29 @@ NSString *_Nullable APIMetaToJSON(APIMeta *meta, NSStringEncoding encoding, NSEr
 
 + (instancetype)fromJSONDictionary:(NSDictionary *)dict
 {
-    return dict ? [[APIEmpty alloc] initWithJSONDictionary:dict] : nil;
+    return dict ? [[APIFile alloc] initWithJSONDictionary:dict] : nil;
 }
 
 - (instancetype)initWithJSONDictionary:(NSDictionary *)dict
 {
     if (self = [super init]) {
         [self setValuesForKeysWithDictionary:dict];
-        _type = [APIType withValue:(id)_type];
+        _type = [APIFileType withValue:(id)_type];
     }
     return self;
 }
 
 - (void)setValue:(nullable id)value forKey:(NSString *)key
 {
-    [super setValue:value forKey:APIEmpty.properties[key]];
+    [super setValue:value forKey:APIFile.properties[key]];
 }
 
 - (NSDictionary *)JSONDictionary
 {
-    id dict = [[self dictionaryWithValuesForKeys:APIEmpty.properties.allValues] mutableCopy];
+    id dict = [[self dictionaryWithValuesForKeys:APIFile.properties.allValues] mutableCopy];
 
-    for (id jsonName in APIEmpty.properties) {
-        id propertyName = APIEmpty.properties[jsonName];
+    for (id jsonName in APIFile.properties) {
+        id propertyName = APIFile.properties[jsonName];
         if (![jsonName isEqualToString:propertyName]) {
             dict[jsonName] = dict[propertyName];
             [dict removeObjectForKey:propertyName];

@@ -1,0 +1,350 @@
+class Events {
+    id: String
+    type: String
+    actor: Actor
+    repo: Repo
+    payload: Payload
+    public: Bool
+    createdAt: DateTime
+    org?: Actor
+}
+
+class Actor {
+    id: Int
+    login: String
+    displayLogin?: String
+    gravatarID: GravatarID
+    url: String
+    avatarURL: String
+}
+
+class Payload {
+    ref?: Maybe<String>
+    refType?: String
+    masterBranch?: String
+    description?: Maybe<String>
+    pusherType?: String
+    pushID?: Int
+    size?: Int
+    distinctSize?: Int
+    head?: String
+    before?: String
+    commits?: List<Commit>
+    forkee?: Forkee
+    action?: String
+    issue?: Issue
+    number?: Int
+    pullRequest?: PullRequest
+    comment?: Comment
+}
+
+class Comment {
+    url: String
+    pullRequestReviewID: Int
+    id: Int
+    diffHunk: String
+    path: String
+    position: Int
+    originalPosition: Int
+    commitID: String
+    originalCommitID: String
+    user: User
+    body: String
+    createdAt: DateTime
+    updatedAt: DateTime
+    htmlURL: String
+    pullRequestURL: String
+    authorAssociation: String
+    links: CommentLinks
+}
+
+class CommentLinks {
+    self: HTML
+    html: HTML
+    pullRequest: HTML
+}
+
+class HTML {
+    href: String
+}
+
+class User {
+    login: String
+    id: Int
+    avatarURL: String
+    gravatarID: GravatarID
+    url: String
+    htmlURL: String
+    followersURL: String
+    followingURL: String
+    gistsURL: String
+    starredURL: String
+    subscriptionsURL: String
+    organizationsURL: String
+    reposURL: String
+    eventsURL: String
+    receivedEventsURL: String
+    type: UserType
+    siteAdmin: Bool
+}
+
+class Commit {
+    sha: String
+    author: Author
+    message: String
+    distinct: Bool
+    url: String
+}
+
+class Author {
+    email: String
+    name: String
+}
+
+class Forkee {
+    id: Int
+    name: String
+    fullName: String
+    owner: User
+    private: Bool
+    htmlURL: String
+    description: Maybe<String>
+    fork: Bool
+    url: String
+    forksURL: String
+    keysURL: String
+    collaboratorsURL: String
+    teamsURL: String
+    hooksURL: String
+    issueEventsURL: String
+    eventsURL: String
+    assigneesURL: String
+    branchesURL: String
+    tagsURL: String
+    blobsURL: String
+    gitTagsURL: String
+    gitRefsURL: String
+    treesURL: String
+    statusesURL: String
+    languagesURL: String
+    stargazersURL: String
+    contributorsURL: String
+    subscribersURL: String
+    subscriptionURL: String
+    commitsURL: String
+    gitCommitsURL: String
+    commentsURL: String
+    issueCommentURL: String
+    contentsURL: String
+    compareURL: String
+    mergesURL: String
+    archiveURL: String
+    downloadsURL: String
+    issuesURL: String
+    pullsURL: String
+    milestonesURL: String
+    notificationsURL: String
+    labelsURL: String
+    releasesURL: String
+    deploymentsURL: String
+    createdAt: DateTime
+    updatedAt: DateTime
+    pushedAt: DateTime
+    gitURL: String
+    sshURL: String
+    cloneURL: String
+    svnURL: String
+    homepage: Maybe<String>
+    size: Int
+    stargazersCount: Int
+    watchersCount: Int
+    language: Maybe<String>
+    hasIssues: Bool
+    hasProjects: Bool
+    hasDownloads: Bool
+    hasWiki: Bool
+    hasPages: Bool
+    forksCount: Int
+    mirrorURL: Null
+    archived: Bool
+    openIssuesCount: Int
+    license: Maybe<License>
+    forks: Int
+    openIssues: Int
+    watchers: Int
+    defaultBranch: String
+    public?: Bool
+}
+
+class License {
+    key: String
+    name: String
+    spdxID: Maybe<String>
+    url: Maybe<String>
+}
+
+class Issue {
+    url: String
+    repositoryURL: String
+    labelsURL: String
+    commentsURL: String
+    eventsURL: String
+    htmlURL: String
+    id: Int
+    number: Int
+    title: String
+    user: User
+    labels: List<Label>
+    state: String
+    locked: Bool
+    assignee: Maybe<User>
+    assignees: List<User>
+    milestone: Null
+    comments: Int
+    createdAt: DateTime
+    updatedAt: DateTime
+    closedAt: Maybe<DateTime>
+    authorAssociation: String
+    body: String
+}
+
+class Label {
+    id: Int
+    url: String
+    name: String
+    color: String
+    default: Bool
+}
+
+class PullRequest {
+    url: String
+    id: Int
+    htmlURL: String
+    diffURL: String
+    patchURL: String
+    issueURL: String
+    number: Int
+    state: String
+    locked: Bool
+    title: String
+    user: User
+    body: String
+    createdAt: DateTime
+    updatedAt: DateTime
+    closedAt: Null
+    mergedAt: Null
+    mergeCommitSHA: Maybe<String>
+    assignee: Null
+    assignees: List<Any>
+    requestedReviewers: List<Any>
+    requestedTeams: List<Any>
+    milestone: Null
+    commitsURL: String
+    reviewCommentsURL: String
+    reviewCommentURL: String
+    commentsURL: String
+    statusesURL: String
+    head: Base
+    base: Base
+    links: PullRequestLinks
+    authorAssociation: String
+    merged?: Bool
+    mergeable?: Null
+    rebaseable?: Null
+    mergeableState?: String
+    mergedBy?: Null
+    comments?: Int
+    reviewComments?: Int
+    maintainerCanModify?: Bool
+    commits?: Int
+    additions?: Int
+    deletions?: Int
+    changedFiles?: Int
+}
+
+class Base {
+    label: String
+    ref: String
+    sha: String
+    user: User
+    repo: Forkee
+}
+
+class PullRequestLinks {
+    self: HTML
+    html: HTML
+    issue: HTML
+    comments: HTML
+    reviewComments: HTML
+    reviewComment: HTML
+    commits: HTML
+    statuses: HTML
+}
+
+class Repo {
+    id: Int
+    name: String
+    url: String
+}
+
+class Gists {
+    url: String
+    forksURL: String
+    commitsURL: String
+    id: String
+    gitPullURL: String
+    gitPushURL: String
+    htmlURL: String
+    files: Files
+    public: Bool
+    createdAt: DateTime
+    updatedAt: DateTime
+    description: Maybe<String>
+    comments: Int
+    user: Null
+    commentsURL: String
+    truncated: Bool
+    owner?: User
+}
+
+class Files {
+    gistfile1Txt?: Empty
+    ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26ConfigJSON?: Empty
+    ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26MetadataTsv?: Empty
+    ruwikiruscorporaUposSkipgram300_2_2018_B2B090A678A3D66B62Ddf890Eefe5F26TensorTsv?: Empty
+    configJSON?: Empty
+    empty?: Empty
+    the6MnUZy7Z?: Empty
+    leDbreatheIno?: Empty
+    i3BlocksSpotify?: Empty
+    readmeMd?: Empty
+    decryptFileSh?: Empty
+    encryptFileSh?: Empty
+    limitedNoOfRecordsJava?: Empty
+    clientApp?: Empty
+    serverAp?: Empty
+    ruwikiruscorporaUposSkipgram300_2_2018_Fafdb1F6D6866Fb229E806Fc354B7458ConfigJSON?: Empty
+}
+
+class Empty {
+    filename: String
+    type: Type
+    language: Maybe<String>
+    rawURL: String
+    size: Int
+}
+
+class Meta {
+    verifiablePasswordAuthentication: Bool
+    githubServicesSHA: String
+    hooks: List<String>
+    git: List<String>
+    pages: List<String>
+    importer: List<String>
+}
+
+enum GravatarID = Empty
+
+enum UserType = Organization | User
+
+enum Type = ApplicationJSON | ApplicationXSh | TextPlain | TextTabSeparatedValues

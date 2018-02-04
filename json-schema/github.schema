@@ -1,0 +1,1475 @@
+{
+    "oneOf": [
+        [
+            "APIData",
+            {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            }
+        ],
+        [
+            "Emojis",
+            {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            }
+        ],
+        [
+            "Events",
+            {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/Event"
+                }
+            }
+        ],
+        [
+            "Gists",
+            {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/Gist"
+                }
+            }
+        ],
+        [
+            "Meta",
+            {
+                "$ref": "#/definitions/Meta"
+            }
+        ]
+    ],
+    "definitions": {
+        "Actor": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "display_login": {
+                    "type": "string"
+                },
+                "gravatar_id": {
+                    "type": "string",
+                    "enum": [
+                        ""
+                    ],
+                    "title": "gravatar_id"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "avatar_url": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "avatar_url",
+                "gravatar_id",
+                "id",
+                "login",
+                "url"
+            ],
+            "title": "actor"
+        },
+        "Repo": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "name",
+                "url"
+            ],
+            "title": "repo"
+        },
+        "Author": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "email",
+                "name"
+            ],
+            "title": "author"
+        },
+        "Commit": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "sha": {
+                    "type": "string"
+                },
+                "author": {
+                    "$ref": "#/definitions/Author"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "distinct": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "author",
+                "distinct",
+                "message",
+                "sha",
+                "url"
+            ],
+            "title": "commit"
+        },
+        "License": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "spdx_id": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "url": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                }
+            },
+            "required": [
+                "key",
+                "name",
+                "spdx_id",
+                "url"
+            ],
+            "title": "license"
+        },
+        "Forkee": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "$ref": "#/definitions/User"
+                },
+                "private": {
+                    "type": "boolean"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "fork": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "forks_url": {
+                    "type": "string"
+                },
+                "keys_url": {
+                    "type": "string"
+                },
+                "collaborators_url": {
+                    "type": "string"
+                },
+                "teams_url": {
+                    "type": "string"
+                },
+                "hooks_url": {
+                    "type": "string"
+                },
+                "issue_events_url": {
+                    "type": "string"
+                },
+                "events_url": {
+                    "type": "string"
+                },
+                "assignees_url": {
+                    "type": "string"
+                },
+                "branches_url": {
+                    "type": "string"
+                },
+                "tags_url": {
+                    "type": "string"
+                },
+                "blobs_url": {
+                    "type": "string"
+                },
+                "git_tags_url": {
+                    "type": "string"
+                },
+                "git_refs_url": {
+                    "type": "string"
+                },
+                "trees_url": {
+                    "type": "string"
+                },
+                "statuses_url": {
+                    "type": "string"
+                },
+                "languages_url": {
+                    "type": "string"
+                },
+                "stargazers_url": {
+                    "type": "string"
+                },
+                "contributors_url": {
+                    "type": "string"
+                },
+                "subscribers_url": {
+                    "type": "string"
+                },
+                "subscription_url": {
+                    "type": "string"
+                },
+                "commits_url": {
+                    "type": "string"
+                },
+                "git_commits_url": {
+                    "type": "string"
+                },
+                "comments_url": {
+                    "type": "string"
+                },
+                "issue_comment_url": {
+                    "type": "string"
+                },
+                "contents_url": {
+                    "type": "string"
+                },
+                "compare_url": {
+                    "type": "string"
+                },
+                "merges_url": {
+                    "type": "string"
+                },
+                "archive_url": {
+                    "type": "string"
+                },
+                "downloads_url": {
+                    "type": "string"
+                },
+                "issues_url": {
+                    "type": "string"
+                },
+                "pulls_url": {
+                    "type": "string"
+                },
+                "milestones_url": {
+                    "type": "string"
+                },
+                "notifications_url": {
+                    "type": "string"
+                },
+                "labels_url": {
+                    "type": "string"
+                },
+                "releases_url": {
+                    "type": "string"
+                },
+                "deployments_url": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "pushed_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "git_url": {
+                    "type": "string"
+                },
+                "ssh_url": {
+                    "type": "string"
+                },
+                "clone_url": {
+                    "type": "string"
+                },
+                "svn_url": {
+                    "type": "string"
+                },
+                "homepage": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "stargazers_count": {
+                    "type": "integer"
+                },
+                "watchers_count": {
+                    "type": "integer"
+                },
+                "language": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "has_issues": {
+                    "type": "boolean"
+                },
+                "has_projects": {
+                    "type": "boolean"
+                },
+                "has_downloads": {
+                    "type": "boolean"
+                },
+                "has_wiki": {
+                    "type": "boolean"
+                },
+                "has_pages": {
+                    "type": "boolean"
+                },
+                "forks_count": {
+                    "type": "integer"
+                },
+                "mirror_url": {
+                    "type": "null"
+                },
+                "archived": {
+                    "type": "boolean"
+                },
+                "open_issues_count": {
+                    "type": "integer"
+                },
+                "license": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/License"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "license"
+                },
+                "forks": {
+                    "type": "integer"
+                },
+                "open_issues": {
+                    "type": "integer"
+                },
+                "watchers": {
+                    "type": "integer"
+                },
+                "default_branch": {
+                    "type": "string"
+                },
+                "public": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "archive_url",
+                "archived",
+                "assignees_url",
+                "blobs_url",
+                "branches_url",
+                "clone_url",
+                "collaborators_url",
+                "comments_url",
+                "commits_url",
+                "compare_url",
+                "contents_url",
+                "contributors_url",
+                "created_at",
+                "default_branch",
+                "deployments_url",
+                "description",
+                "downloads_url",
+                "events_url",
+                "fork",
+                "forks",
+                "forks_count",
+                "forks_url",
+                "full_name",
+                "git_commits_url",
+                "git_refs_url",
+                "git_tags_url",
+                "git_url",
+                "has_downloads",
+                "has_issues",
+                "has_pages",
+                "has_projects",
+                "has_wiki",
+                "homepage",
+                "hooks_url",
+                "html_url",
+                "id",
+                "issue_comment_url",
+                "issue_events_url",
+                "issues_url",
+                "keys_url",
+                "labels_url",
+                "language",
+                "languages_url",
+                "license",
+                "merges_url",
+                "milestones_url",
+                "mirror_url",
+                "name",
+                "notifications_url",
+                "open_issues",
+                "open_issues_count",
+                "owner",
+                "private",
+                "pulls_url",
+                "pushed_at",
+                "releases_url",
+                "size",
+                "ssh_url",
+                "stargazers_count",
+                "stargazers_url",
+                "statuses_url",
+                "subscribers_url",
+                "subscription_url",
+                "svn_url",
+                "tags_url",
+                "teams_url",
+                "trees_url",
+                "updated_at",
+                "url",
+                "watchers",
+                "watchers_count"
+            ],
+            "title": "forkee"
+        },
+        "Label": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "default": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "color",
+                "default",
+                "id",
+                "name",
+                "url"
+            ],
+            "title": "label"
+        },
+        "User": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "avatar_url": {
+                    "type": "string"
+                },
+                "gravatar_id": {
+                    "type": "string",
+                    "enum": [
+                        ""
+                    ],
+                    "title": "gravatar_id"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "followers_url": {
+                    "type": "string"
+                },
+                "following_url": {
+                    "type": "string"
+                },
+                "gists_url": {
+                    "type": "string"
+                },
+                "starred_url": {
+                    "type": "string"
+                },
+                "subscriptions_url": {
+                    "type": "string"
+                },
+                "organizations_url": {
+                    "type": "string"
+                },
+                "repos_url": {
+                    "type": "string"
+                },
+                "events_url": {
+                    "type": "string"
+                },
+                "received_events_url": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "User",
+                        "Organization"
+                    ],
+                    "title": "type"
+                },
+                "site_admin": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "avatar_url",
+                "events_url",
+                "followers_url",
+                "following_url",
+                "gists_url",
+                "gravatar_id",
+                "html_url",
+                "id",
+                "login",
+                "organizations_url",
+                "received_events_url",
+                "repos_url",
+                "site_admin",
+                "starred_url",
+                "subscriptions_url",
+                "type",
+                "url"
+            ],
+            "title": "user"
+        },
+        "Issue": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "repository_url": {
+                    "type": "string"
+                },
+                "labels_url": {
+                    "type": "string"
+                },
+                "comments_url": {
+                    "type": "string"
+                },
+                "events_url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Label"
+                    }
+                },
+                "state": {
+                    "type": "string"
+                },
+                "locked": {
+                    "type": "boolean"
+                },
+                "assignee": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/User"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "assignee"
+                },
+                "assignees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/User"
+                    }
+                },
+                "milestone": {
+                    "type": "null"
+                },
+                "comments": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "closed_at": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "closed_at"
+                },
+                "author_association": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assignee",
+                "assignees",
+                "author_association",
+                "body",
+                "closed_at",
+                "comments",
+                "comments_url",
+                "created_at",
+                "events_url",
+                "html_url",
+                "id",
+                "labels",
+                "labels_url",
+                "locked",
+                "milestone",
+                "number",
+                "repository_url",
+                "state",
+                "title",
+                "updated_at",
+                "url",
+                "user"
+            ],
+            "title": "issue"
+        },
+        "Base": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "label": {
+                    "type": "string"
+                },
+                "ref": {
+                    "type": "string"
+                },
+                "sha": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "repo": {
+                    "$ref": "#/definitions/Forkee"
+                }
+            },
+            "required": [
+                "label",
+                "ref",
+                "repo",
+                "sha",
+                "user"
+            ],
+            "title": "base"
+        },
+        "HTML": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "href": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "href"
+            ],
+            "title": "html"
+        },
+        "PullRequestLinks": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "self": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "html": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "issue": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "comments": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "review_comments": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "review_comment": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "commits": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "statuses": {
+                    "$ref": "#/definitions/HTML"
+                }
+            },
+            "required": [
+                "comments",
+                "commits",
+                "html",
+                "issue",
+                "review_comment",
+                "review_comments",
+                "self",
+                "statuses"
+            ],
+            "title": "_links"
+        },
+        "PullRequest": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "diff_url": {
+                    "type": "string"
+                },
+                "patch_url": {
+                    "type": "string"
+                },
+                "issue_url": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "locked": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "closed_at": {
+                    "type": "null"
+                },
+                "merged_at": {
+                    "type": "null"
+                },
+                "merge_commit_sha": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "assignee": {
+                    "type": "null"
+                },
+                "assignees": {
+                    "type": "array",
+                    "items": {}
+                },
+                "requested_reviewers": {
+                    "type": "array",
+                    "items": {}
+                },
+                "requested_teams": {
+                    "type": "array",
+                    "items": {}
+                },
+                "milestone": {
+                    "type": "null"
+                },
+                "commits_url": {
+                    "type": "string"
+                },
+                "review_comments_url": {
+                    "type": "string"
+                },
+                "review_comment_url": {
+                    "type": "string"
+                },
+                "comments_url": {
+                    "type": "string"
+                },
+                "statuses_url": {
+                    "type": "string"
+                },
+                "head": {
+                    "$ref": "#/definitions/Base"
+                },
+                "base": {
+                    "$ref": "#/definitions/Base"
+                },
+                "_links": {
+                    "$ref": "#/definitions/PullRequestLinks"
+                },
+                "author_association": {
+                    "type": "string"
+                },
+                "merged": {
+                    "type": "boolean"
+                },
+                "mergeable": {
+                    "type": "null"
+                },
+                "rebaseable": {
+                    "type": "null"
+                },
+                "mergeable_state": {
+                    "type": "string"
+                },
+                "merged_by": {
+                    "type": "null"
+                },
+                "comments": {
+                    "type": "integer"
+                },
+                "review_comments": {
+                    "type": "integer"
+                },
+                "maintainer_can_modify": {
+                    "type": "boolean"
+                },
+                "commits": {
+                    "type": "integer"
+                },
+                "additions": {
+                    "type": "integer"
+                },
+                "deletions": {
+                    "type": "integer"
+                },
+                "changed_files": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "_links",
+                "assignee",
+                "assignees",
+                "author_association",
+                "base",
+                "body",
+                "closed_at",
+                "comments_url",
+                "commits_url",
+                "created_at",
+                "diff_url",
+                "head",
+                "html_url",
+                "id",
+                "issue_url",
+                "locked",
+                "merge_commit_sha",
+                "merged_at",
+                "milestone",
+                "number",
+                "patch_url",
+                "requested_reviewers",
+                "requested_teams",
+                "review_comment_url",
+                "review_comments_url",
+                "state",
+                "statuses_url",
+                "title",
+                "updated_at",
+                "url",
+                "user"
+            ],
+            "title": "pull_request"
+        },
+        "CommentLinks": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "self": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "html": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "pull_request": {
+                    "$ref": "#/definitions/HTML"
+                }
+            },
+            "required": [
+                "html",
+                "pull_request",
+                "self"
+            ],
+            "title": "_links"
+        },
+        "Comment": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "pull_request_review_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "diff_hunk": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "original_position": {
+                    "type": "integer"
+                },
+                "commit_id": {
+                    "type": "string"
+                },
+                "original_commit_id": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "pull_request_url": {
+                    "type": "string"
+                },
+                "author_association": {
+                    "type": "string"
+                },
+                "_links": {
+                    "$ref": "#/definitions/CommentLinks"
+                }
+            },
+            "required": [
+                "_links",
+                "author_association",
+                "body",
+                "commit_id",
+                "created_at",
+                "diff_hunk",
+                "html_url",
+                "id",
+                "original_commit_id",
+                "original_position",
+                "path",
+                "position",
+                "pull_request_review_id",
+                "pull_request_url",
+                "updated_at",
+                "url",
+                "user"
+            ],
+            "title": "comment"
+        },
+        "Payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "ref": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "ref_type": {
+                    "type": "string"
+                },
+                "master_branch": {
+                    "type": "string"
+                },
+                "description": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "pusher_type": {
+                    "type": "string"
+                },
+                "push_id": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "distinct_size": {
+                    "type": "integer"
+                },
+                "head": {
+                    "type": "string"
+                },
+                "before": {
+                    "type": "string"
+                },
+                "commits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Commit"
+                    }
+                },
+                "forkee": {
+                    "$ref": "#/definitions/Forkee"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "issue": {
+                    "$ref": "#/definitions/Issue"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "pull_request": {
+                    "$ref": "#/definitions/PullRequest"
+                },
+                "comment": {
+                    "$ref": "#/definitions/Comment"
+                }
+            },
+            "required": [],
+            "title": "payload"
+        },
+        "Event": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "actor": {
+                    "$ref": "#/definitions/Actor"
+                },
+                "repo": {
+                    "$ref": "#/definitions/Repo"
+                },
+                "payload": {
+                    "$ref": "#/definitions/Payload"
+                },
+                "public": {
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "org": {
+                    "$ref": "#/definitions/Actor"
+                }
+            },
+            "required": [
+                "actor",
+                "created_at",
+                "id",
+                "payload",
+                "public",
+                "repo",
+                "type"
+            ],
+            "title": "Event"
+        },
+        "Empty": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "text/plain",
+                        "application/json",
+                        "application/x-sh",
+                        "text/tab-separated-values"
+                    ],
+                    "title": "type"
+                },
+                "language": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "raw_url": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "filename",
+                "language",
+                "raw_url",
+                "size",
+                "type"
+            ],
+            "title": "-"
+        },
+        "Files": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "gistfile1.txt": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_config.json": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_metadata.tsv": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "ruwikiruscorpora_upos_skipgram_300_2_2018_b2b090a678a3d66b62ddf890eefe5f26_tensor.tsv": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "config.json": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "-": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "6mnUZy7z": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "LEDbreathe.ino": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "i3blocks-spotify": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "_README.md": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "decryptFile.sh": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "encryptFile.sh": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "limitedNoOfRecords.java": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "CLIENT APP": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "SERVER AP": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "ruwikiruscorpora_upos_skipgram_300_2_2018_fafdb1f6d6866fb229e806fc354b7458_config.json": {
+                    "$ref": "#/definitions/Empty"
+                }
+            },
+            "required": [],
+            "title": "files"
+        },
+        "Gist": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "forks_url": {
+                    "type": "string"
+                },
+                "commits_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "git_pull_url": {
+                    "type": "string"
+                },
+                "git_push_url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "files": {
+                    "$ref": "#/definitions/Files"
+                },
+                "public": {
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "description": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
+                },
+                "comments": {
+                    "type": "integer"
+                },
+                "user": {
+                    "type": "null"
+                },
+                "comments_url": {
+                    "type": "string"
+                },
+                "truncated": {
+                    "type": "boolean"
+                },
+                "owner": {
+                    "$ref": "#/definitions/User"
+                }
+            },
+            "required": [
+                "comments",
+                "comments_url",
+                "commits_url",
+                "created_at",
+                "description",
+                "files",
+                "forks_url",
+                "git_pull_url",
+                "git_push_url",
+                "html_url",
+                "id",
+                "public",
+                "truncated",
+                "updated_at",
+                "url",
+                "user"
+            ],
+            "title": "Gist"
+        },
+        "Meta": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "verifiable_password_authentication": {
+                    "type": "boolean"
+                },
+                "github_services_sha": {
+                    "type": "string"
+                },
+                "hooks": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "git": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "importer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "git",
+                "github_services_sha",
+                "hooks",
+                "importer",
+                "pages",
+                "verifiable_password_authentication"
+            ],
+            "title": "Meta"
+        }
+    }
+}

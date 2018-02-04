@@ -80,7 +80,7 @@
             ],
             "title": "actor"
         },
-        "EventRepo": {
+        "Repo": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -100,52 +100,6 @@
                 "url"
             ],
             "title": "repo"
-        },
-        "Author": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "email",
-                "name"
-            ],
-            "title": "author"
-        },
-        "Commit": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "sha": {
-                    "type": "string"
-                },
-                "author": {
-                    "$ref": "#/definitions/Author"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "distinct": {
-                    "type": "boolean"
-                },
-                "url": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "author",
-                "distinct",
-                "message",
-                "sha",
-                "url"
-            ],
-            "title": "commit"
         },
         "User": {
             "type": "object",
@@ -203,7 +157,8 @@
                 "type": {
                     "type": "string",
                     "enum": [
-                        "User"
+                        "User",
+                        "Organization"
                     ],
                     "title": "type"
                 },
@@ -232,236 +187,6 @@
             ],
             "title": "user"
         },
-        "Issue": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "url": {
-                    "type": "string"
-                },
-                "repository_url": {
-                    "type": "string"
-                },
-                "labels_url": {
-                    "type": "string"
-                },
-                "comments_url": {
-                    "type": "string"
-                },
-                "events_url": {
-                    "type": "string"
-                },
-                "html_url": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "number": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/User"
-                },
-                "labels": {
-                    "type": "array",
-                    "items": {}
-                },
-                "state": {
-                    "type": "string"
-                },
-                "locked": {
-                    "type": "boolean"
-                },
-                "assignee": {
-                    "oneOf": [
-                        {
-                            "$ref": "#/definitions/User"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "assignee"
-                },
-                "assignees": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/User"
-                    }
-                },
-                "milestone": {
-                    "type": "null"
-                },
-                "comments": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "closed_at": {
-                    "oneOf": [
-                        {
-                            "type": "string",
-                            "format": "date-time"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "closed_at"
-                },
-                "author_association": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "assignee",
-                "assignees",
-                "author_association",
-                "body",
-                "closed_at",
-                "comments",
-                "comments_url",
-                "created_at",
-                "events_url",
-                "html_url",
-                "id",
-                "labels",
-                "labels_url",
-                "locked",
-                "milestone",
-                "number",
-                "repository_url",
-                "state",
-                "title",
-                "updated_at",
-                "url",
-                "user"
-            ],
-            "title": "issue"
-        },
-        "HTML": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "href": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "href"
-            ],
-            "title": "html"
-        },
-        "CommentLinks": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "self": {
-                    "$ref": "#/definitions/HTML"
-                },
-                "html": {
-                    "$ref": "#/definitions/HTML"
-                },
-                "pull_request": {
-                    "$ref": "#/definitions/HTML"
-                }
-            },
-            "required": [
-                "html",
-                "pull_request",
-                "self"
-            ],
-            "title": "_links"
-        },
-        "Comment": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "url": {
-                    "type": "string"
-                },
-                "html_url": {
-                    "type": "string"
-                },
-                "issue_url": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/User"
-                },
-                "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "author_association": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "pull_request_review_id": {
-                    "type": "integer"
-                },
-                "diff_hunk": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "position": {
-                    "type": "integer"
-                },
-                "original_position": {
-                    "type": "integer"
-                },
-                "commit_id": {
-                    "type": "string"
-                },
-                "original_commit_id": {
-                    "type": "string"
-                },
-                "pull_request_url": {
-                    "type": "string"
-                },
-                "_links": {
-                    "$ref": "#/definitions/CommentLinks"
-                },
-                "in_reply_to_id": {
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "author_association",
-                "body",
-                "created_at",
-                "html_url",
-                "id",
-                "updated_at",
-                "url",
-                "user"
-            ],
-            "title": "comment"
-        },
         "License": {
             "type": "object",
             "additionalProperties": false,
@@ -487,7 +212,7 @@
             ],
             "title": "license"
         },
-        "BaseRepo": {
+        "Forkee": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -510,7 +235,15 @@
                     "type": "string"
                 },
                 "description": {
-                    "type": "string"
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
                 },
                 "fork": {
                     "type": "boolean"
@@ -651,7 +384,20 @@
                     "type": "string"
                 },
                 "homepage": {
-                    "type": "null"
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "",
+                                "https://valloric.github.io/ycmd/"
+                            ],
+                            "title": "homepage"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "homepage"
                 },
                 "size": {
                     "type": "integer"
@@ -663,7 +409,15 @@
                     "type": "integer"
                 },
                 "language": {
-                    "type": "string"
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
                 },
                 "has_issues": {
                     "type": "boolean"
@@ -693,7 +447,15 @@
                     "type": "integer"
                 },
                 "license": {
-                    "$ref": "#/definitions/License"
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/License"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "license"
                 },
                 "forks": {
                     "type": "integer"
@@ -705,7 +467,14 @@
                     "type": "integer"
                 },
                 "default_branch": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "master"
+                    ],
+                    "title": "default_branch"
+                },
+                "public": {
+                    "type": "boolean"
                 }
             },
             "required": [
@@ -781,7 +550,7 @@
                 "watchers",
                 "watchers_count"
             ],
-            "title": "repo"
+            "title": "forkee"
         },
         "Base": {
             "type": "object",
@@ -800,7 +569,7 @@
                     "$ref": "#/definitions/User"
                 },
                 "repo": {
-                    "$ref": "#/definitions/BaseRepo"
+                    "$ref": "#/definitions/Forkee"
                 }
             },
             "required": [
@@ -811,6 +580,19 @@
                 "user"
             ],
             "title": "base"
+        },
+        "HTML": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "href": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "href"
+            ],
+            "title": "html"
         },
         "PullRequestLinks": {
             "type": "object",
@@ -853,7 +635,7 @@
             ],
             "title": "_links"
         },
-        "PullRequest": {
+        "PayloadPullRequest": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -902,24 +684,37 @@
                     "format": "date-time"
                 },
                 "closed_at": {
-                    "type": "string",
-                    "format": "date-time"
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "closed_at"
                 },
                 "merged_at": {
-                    "type": "string",
-                    "format": "date-time"
+                    "type": "null"
                 },
                 "merge_commit_sha": {
-                    "type": "string"
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "title": "description"
                 },
                 "assignee": {
-                    "$ref": "#/definitions/User"
+                    "type": "null"
                 },
                 "assignees": {
                     "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/User"
-                    }
+                    "items": {}
                 },
                 "requested_reviewers": {
                     "type": "array",
@@ -958,6 +753,58 @@
                 },
                 "author_association": {
                     "type": "string"
+                },
+                "merged": {
+                    "type": "boolean"
+                },
+                "mergeable": {
+                    "oneOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "eable"
+                },
+                "rebaseable": {
+                    "oneOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "eable"
+                },
+                "mergeable_state": {
+                    "type": "string"
+                },
+                "merged_by": {
+                    "type": "null"
+                },
+                "comments": {
+                    "type": "integer"
+                },
+                "review_comments": {
+                    "type": "integer"
+                },
+                "maintainer_can_modify": {
+                    "type": "boolean"
+                },
+                "commits": {
+                    "type": "integer"
+                },
+                "additions": {
+                    "type": "integer"
+                },
+                "deletions": {
+                    "type": "integer"
+                },
+                "changed_files": {
+                    "type": "integer"
                 }
             },
             "required": [
@@ -995,18 +842,409 @@
             ],
             "title": "pull_request"
         },
+        "Author": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "email",
+                "name"
+            ],
+            "title": "author"
+        },
+        "Commit": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "sha": {
+                    "type": "string"
+                },
+                "author": {
+                    "$ref": "#/definitions/Author"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "distinct": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "author",
+                "distinct",
+                "message",
+                "sha",
+                "url"
+            ],
+            "title": "commit"
+        },
+        "Label": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "default": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "color",
+                "default",
+                "id",
+                "name",
+                "url"
+            ],
+            "title": "label"
+        },
+        "Milestone": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "labels_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "null"
+                },
+                "creator": {
+                    "$ref": "#/definitions/User"
+                },
+                "open_issues": {
+                    "type": "integer"
+                },
+                "closed_issues": {
+                    "type": "integer"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "due_on": {
+                    "type": "null"
+                },
+                "closed_at": {
+                    "type": "null"
+                }
+            },
+            "required": [
+                "closed_at",
+                "closed_issues",
+                "created_at",
+                "creator",
+                "description",
+                "due_on",
+                "html_url",
+                "id",
+                "labels_url",
+                "number",
+                "open_issues",
+                "state",
+                "title",
+                "updated_at",
+                "url"
+            ],
+            "title": "milestone"
+        },
+        "IssuePullRequest": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "diff_url": {
+                    "type": "string"
+                },
+                "patch_url": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "diff_url",
+                "html_url",
+                "patch_url",
+                "url"
+            ],
+            "title": "pull_request"
+        },
+        "Issue": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "repository_url": {
+                    "type": "string"
+                },
+                "labels_url": {
+                    "type": "string"
+                },
+                "comments_url": {
+                    "type": "string"
+                },
+                "events_url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Label"
+                    }
+                },
+                "state": {
+                    "type": "string"
+                },
+                "locked": {
+                    "type": "boolean"
+                },
+                "assignee": {
+                    "type": "null"
+                },
+                "assignees": {
+                    "type": "array",
+                    "items": {}
+                },
+                "milestone": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Milestone"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "milestone"
+                },
+                "comments": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "closed_at": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "closed_at"
+                },
+                "author_association": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "pull_request": {
+                    "$ref": "#/definitions/IssuePullRequest"
+                }
+            },
+            "required": [
+                "assignee",
+                "assignees",
+                "author_association",
+                "body",
+                "closed_at",
+                "comments",
+                "comments_url",
+                "created_at",
+                "events_url",
+                "html_url",
+                "id",
+                "labels",
+                "labels_url",
+                "locked",
+                "milestone",
+                "number",
+                "repository_url",
+                "state",
+                "title",
+                "updated_at",
+                "url",
+                "user"
+            ],
+            "title": "issue"
+        },
+        "CommentLinks": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "self": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "html": {
+                    "$ref": "#/definitions/HTML"
+                },
+                "pull_request": {
+                    "$ref": "#/definitions/HTML"
+                }
+            },
+            "required": [
+                "html",
+                "pull_request",
+                "self"
+            ],
+            "title": "_links"
+        },
+        "Comment": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "issue_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "author_association": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "pull_request_review_id": {
+                    "type": "integer"
+                },
+                "diff_hunk": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "original_position": {
+                    "type": "integer"
+                },
+                "commit_id": {
+                    "type": "string"
+                },
+                "original_commit_id": {
+                    "type": "string"
+                },
+                "pull_request_url": {
+                    "type": "string"
+                },
+                "_links": {
+                    "$ref": "#/definitions/CommentLinks"
+                }
+            },
+            "required": [
+                "author_association",
+                "body",
+                "created_at",
+                "html_url",
+                "id",
+                "updated_at",
+                "url",
+                "user"
+            ],
+            "title": "comment"
+        },
         "Payload": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "push_id": {
+                "action": {
+                    "type": "string"
+                },
+                "number": {
                     "type": "integer"
                 },
-                "size": {
-                    "type": "integer"
+                "pull_request": {
+                    "$ref": "#/definitions/PayloadPullRequest"
                 },
-                "distinct_size": {
-                    "type": "integer"
+                "forkee": {
+                    "$ref": "#/definitions/Forkee"
                 },
                 "ref": {
                     "oneOf": [
@@ -1018,6 +1256,21 @@
                         }
                     ],
                     "title": "description"
+                },
+                "ref_type": {
+                    "type": "string"
+                },
+                "pusher_type": {
+                    "type": "string"
+                },
+                "push_id": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "distinct_size": {
+                    "type": "integer"
                 },
                 "head": {
                     "type": "string"
@@ -1031,8 +1284,8 @@
                         "$ref": "#/definitions/Commit"
                     }
                 },
-                "ref_type": {
-                    "type": "string"
+                "issue": {
+                    "$ref": "#/definitions/Issue"
                 },
                 "master_branch": {
                     "type": "string"
@@ -1048,20 +1301,8 @@
                     ],
                     "title": "description"
                 },
-                "pusher_type": {
-                    "type": "string"
-                },
-                "action": {
-                    "type": "string"
-                },
-                "issue": {
-                    "$ref": "#/definitions/Issue"
-                },
                 "comment": {
                     "$ref": "#/definitions/Comment"
-                },
-                "pull_request": {
-                    "$ref": "#/definitions/PullRequest"
                 }
             },
             "required": [],
@@ -1081,7 +1322,7 @@
                     "$ref": "#/definitions/Actor"
                 },
                 "repo": {
-                    "$ref": "#/definitions/EventRepo"
+                    "$ref": "#/definitions/Repo"
                 },
                 "payload": {
                     "$ref": "#/definitions/Payload"
@@ -1108,7 +1349,7 @@
             ],
             "title": "Event"
         },
-        "Empty": {
+        "File": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -1116,7 +1357,15 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "text/plain",
+                        "text/css",
+                        "application/json",
+                        "application/javascript",
+                        "text/html"
+                    ],
+                    "title": "type"
                 },
                 "language": {
                     "oneOf": [
@@ -1143,63 +1392,7 @@
                 "size",
                 "type"
             ],
-            "title": "-"
-        },
-        "Files": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "online Free 2018": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "gistfile1.txt": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "file.cs": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "-": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "squarespace_orange.css": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "test.js": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "output_log.txt": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "test1.md": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "remove-orphan-raws.py": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "sample.pony": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "app.js": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "openpanzer-save.json": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "showrss.py": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "sanitize_sql_like.rb": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "65-noto.conf": {
-                    "$ref": "#/definitions/Empty"
-                },
-                "run.sh": {
-                    "$ref": "#/definitions/Empty"
-                }
-            },
-            "required": [],
-            "title": "files"
+            "title": "file"
         },
         "Gist": {
             "type": "object",
@@ -1227,7 +1420,10 @@
                     "type": "string"
                 },
                 "files": {
-                    "$ref": "#/definitions/Files"
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/File"
+                    }
                 },
                 "public": {
                     "type": "boolean"

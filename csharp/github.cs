@@ -32,7 +32,7 @@ namespace QuickType
         public Actor Actor { get; set; }
 
         [JsonProperty("repo")]
-        public EventRepo Repo { get; set; }
+        public Repo Repo { get; set; }
 
         [JsonProperty("payload")]
         public Payload Payload { get; set; }
@@ -70,6 +70,27 @@ namespace QuickType
 
     public partial class Payload
     {
+        [JsonProperty("action")]
+        public string Action { get; set; }
+
+        [JsonProperty("number")]
+        public long? Number { get; set; }
+
+        [JsonProperty("pull_request")]
+        public PayloadPullRequest PullRequest { get; set; }
+
+        [JsonProperty("forkee")]
+        public Forkee Forkee { get; set; }
+
+        [JsonProperty("ref")]
+        public string Ref { get; set; }
+
+        [JsonProperty("ref_type")]
+        public string RefType { get; set; }
+
+        [JsonProperty("pusher_type")]
+        public string PusherType { get; set; }
+
         [JsonProperty("push_id")]
         public long? PushId { get; set; }
 
@@ -78,9 +99,6 @@ namespace QuickType
 
         [JsonProperty("distinct_size")]
         public long? DistinctSize { get; set; }
-
-        [JsonProperty("ref")]
-        public string Ref { get; set; }
 
         [JsonProperty("head")]
         public string Head { get; set; }
@@ -91,8 +109,8 @@ namespace QuickType
         [JsonProperty("commits")]
         public Commit[] Commits { get; set; }
 
-        [JsonProperty("ref_type")]
-        public string RefType { get; set; }
+        [JsonProperty("issue")]
+        public Issue Issue { get; set; }
 
         [JsonProperty("master_branch")]
         public string MasterBranch { get; set; }
@@ -100,20 +118,8 @@ namespace QuickType
         [JsonProperty("description")]
         public string Description { get; set; }
 
-        [JsonProperty("pusher_type")]
-        public string PusherType { get; set; }
-
-        [JsonProperty("action")]
-        public string Action { get; set; }
-
-        [JsonProperty("issue")]
-        public Issue Issue { get; set; }
-
         [JsonProperty("comment")]
         public Comment Comment { get; set; }
-
-        [JsonProperty("pull_request")]
-        public PullRequest PullRequest { get; set; }
     }
 
     public partial class Comment
@@ -171,9 +177,6 @@ namespace QuickType
 
         [JsonProperty("_links")]
         public CommentLinks Links { get; set; }
-
-        [JsonProperty("in_reply_to_id")]
-        public long? InReplyToId { get; set; }
     }
 
     public partial class CommentLinks
@@ -242,7 +245,7 @@ namespace QuickType
         public string ReceivedEventsUrl { get; set; }
 
         [JsonProperty("type")]
-        public PurpleType PurpleType { get; set; }
+        public UserType PurpleType { get; set; }
 
         [JsonProperty("site_admin")]
         public bool SiteAdmin { get; set; }
@@ -275,190 +278,7 @@ namespace QuickType
         public string Name { get; set; }
     }
 
-    public partial class Issue
-    {
-        [JsonProperty("url")]
-        public string Url { get; set; }
-
-        [JsonProperty("repository_url")]
-        public string RepositoryUrl { get; set; }
-
-        [JsonProperty("labels_url")]
-        public string LabelsUrl { get; set; }
-
-        [JsonProperty("comments_url")]
-        public string CommentsUrl { get; set; }
-
-        [JsonProperty("events_url")]
-        public string EventsUrl { get; set; }
-
-        [JsonProperty("html_url")]
-        public string HtmlUrl { get; set; }
-
-        [JsonProperty("id")]
-        public long Id { get; set; }
-
-        [JsonProperty("number")]
-        public long Number { get; set; }
-
-        [JsonProperty("title")]
-        public string Title { get; set; }
-
-        [JsonProperty("user")]
-        public User User { get; set; }
-
-        [JsonProperty("labels")]
-        public object[] Labels { get; set; }
-
-        [JsonProperty("state")]
-        public string State { get; set; }
-
-        [JsonProperty("locked")]
-        public bool Locked { get; set; }
-
-        [JsonProperty("assignee")]
-        public User Assignee { get; set; }
-
-        [JsonProperty("assignees")]
-        public User[] Assignees { get; set; }
-
-        [JsonProperty("milestone")]
-        public object Milestone { get; set; }
-
-        [JsonProperty("comments")]
-        public long Comments { get; set; }
-
-        [JsonProperty("created_at")]
-        public System.DateTime CreatedAt { get; set; }
-
-        [JsonProperty("updated_at")]
-        public System.DateTime UpdatedAt { get; set; }
-
-        [JsonProperty("closed_at")]
-        public System.DateTime? ClosedAt { get; set; }
-
-        [JsonProperty("author_association")]
-        public string AuthorAssociation { get; set; }
-
-        [JsonProperty("body")]
-        public string Body { get; set; }
-    }
-
-    public partial class PullRequest
-    {
-        [JsonProperty("url")]
-        public string Url { get; set; }
-
-        [JsonProperty("id")]
-        public long Id { get; set; }
-
-        [JsonProperty("html_url")]
-        public string HtmlUrl { get; set; }
-
-        [JsonProperty("diff_url")]
-        public string DiffUrl { get; set; }
-
-        [JsonProperty("patch_url")]
-        public string PatchUrl { get; set; }
-
-        [JsonProperty("issue_url")]
-        public string IssueUrl { get; set; }
-
-        [JsonProperty("number")]
-        public long Number { get; set; }
-
-        [JsonProperty("state")]
-        public string State { get; set; }
-
-        [JsonProperty("locked")]
-        public bool Locked { get; set; }
-
-        [JsonProperty("title")]
-        public string Title { get; set; }
-
-        [JsonProperty("user")]
-        public User User { get; set; }
-
-        [JsonProperty("body")]
-        public string Body { get; set; }
-
-        [JsonProperty("created_at")]
-        public System.DateTime CreatedAt { get; set; }
-
-        [JsonProperty("updated_at")]
-        public System.DateTime UpdatedAt { get; set; }
-
-        [JsonProperty("closed_at")]
-        public System.DateTime ClosedAt { get; set; }
-
-        [JsonProperty("merged_at")]
-        public System.DateTime MergedAt { get; set; }
-
-        [JsonProperty("merge_commit_sha")]
-        public string MergeCommitSha { get; set; }
-
-        [JsonProperty("assignee")]
-        public User Assignee { get; set; }
-
-        [JsonProperty("assignees")]
-        public User[] Assignees { get; set; }
-
-        [JsonProperty("requested_reviewers")]
-        public object[] RequestedReviewers { get; set; }
-
-        [JsonProperty("requested_teams")]
-        public object[] RequestedTeams { get; set; }
-
-        [JsonProperty("milestone")]
-        public object Milestone { get; set; }
-
-        [JsonProperty("commits_url")]
-        public string CommitsUrl { get; set; }
-
-        [JsonProperty("review_comments_url")]
-        public string ReviewCommentsUrl { get; set; }
-
-        [JsonProperty("review_comment_url")]
-        public string ReviewCommentUrl { get; set; }
-
-        [JsonProperty("comments_url")]
-        public string CommentsUrl { get; set; }
-
-        [JsonProperty("statuses_url")]
-        public string StatusesUrl { get; set; }
-
-        [JsonProperty("head")]
-        public Base Head { get; set; }
-
-        [JsonProperty("base")]
-        public Base Base { get; set; }
-
-        [JsonProperty("_links")]
-        public PullRequestLinks Links { get; set; }
-
-        [JsonProperty("author_association")]
-        public string AuthorAssociation { get; set; }
-    }
-
-    public partial class Base
-    {
-        [JsonProperty("label")]
-        public string Label { get; set; }
-
-        [JsonProperty("ref")]
-        public string Ref { get; set; }
-
-        [JsonProperty("sha")]
-        public string Sha { get; set; }
-
-        [JsonProperty("user")]
-        public User User { get; set; }
-
-        [JsonProperty("repo")]
-        public BaseRepo Repo { get; set; }
-    }
-
-    public partial class BaseRepo
+    public partial class Forkee
     {
         [JsonProperty("id")]
         public long Id { get; set; }
@@ -617,7 +437,7 @@ namespace QuickType
         public string SvnUrl { get; set; }
 
         [JsonProperty("homepage")]
-        public object Homepage { get; set; }
+        public Homepage? Homepage { get; set; }
 
         [JsonProperty("size")]
         public long Size { get; set; }
@@ -671,7 +491,10 @@ namespace QuickType
         public long Watchers { get; set; }
 
         [JsonProperty("default_branch")]
-        public string DefaultBranch { get; set; }
+        public DefaultBranch DefaultBranch { get; set; }
+
+        [JsonProperty("public")]
+        public bool? Public { get; set; }
     }
 
     public partial class License
@@ -687,6 +510,309 @@ namespace QuickType
 
         [JsonProperty("url")]
         public string Url { get; set; }
+    }
+
+    public partial class Issue
+    {
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("repository_url")]
+        public string RepositoryUrl { get; set; }
+
+        [JsonProperty("labels_url")]
+        public string LabelsUrl { get; set; }
+
+        [JsonProperty("comments_url")]
+        public string CommentsUrl { get; set; }
+
+        [JsonProperty("events_url")]
+        public string EventsUrl { get; set; }
+
+        [JsonProperty("html_url")]
+        public string HtmlUrl { get; set; }
+
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("number")]
+        public long Number { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("user")]
+        public User User { get; set; }
+
+        [JsonProperty("labels")]
+        public Label[] Labels { get; set; }
+
+        [JsonProperty("state")]
+        public string State { get; set; }
+
+        [JsonProperty("locked")]
+        public bool Locked { get; set; }
+
+        [JsonProperty("assignee")]
+        public object Assignee { get; set; }
+
+        [JsonProperty("assignees")]
+        public object[] Assignees { get; set; }
+
+        [JsonProperty("milestone")]
+        public Milestone Milestone { get; set; }
+
+        [JsonProperty("comments")]
+        public long Comments { get; set; }
+
+        [JsonProperty("created_at")]
+        public System.DateTime CreatedAt { get; set; }
+
+        [JsonProperty("updated_at")]
+        public System.DateTime UpdatedAt { get; set; }
+
+        [JsonProperty("closed_at")]
+        public System.DateTime? ClosedAt { get; set; }
+
+        [JsonProperty("author_association")]
+        public string AuthorAssociation { get; set; }
+
+        [JsonProperty("body")]
+        public string Body { get; set; }
+
+        [JsonProperty("pull_request")]
+        public IssuePullRequest PullRequest { get; set; }
+    }
+
+    public partial class Label
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("color")]
+        public string Color { get; set; }
+
+        [JsonProperty("default")]
+        public bool Default { get; set; }
+    }
+
+    public partial class Milestone
+    {
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("html_url")]
+        public string HtmlUrl { get; set; }
+
+        [JsonProperty("labels_url")]
+        public string LabelsUrl { get; set; }
+
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("number")]
+        public long Number { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("description")]
+        public object Description { get; set; }
+
+        [JsonProperty("creator")]
+        public User Creator { get; set; }
+
+        [JsonProperty("open_issues")]
+        public long OpenIssues { get; set; }
+
+        [JsonProperty("closed_issues")]
+        public long ClosedIssues { get; set; }
+
+        [JsonProperty("state")]
+        public string State { get; set; }
+
+        [JsonProperty("created_at")]
+        public System.DateTime CreatedAt { get; set; }
+
+        [JsonProperty("updated_at")]
+        public System.DateTime UpdatedAt { get; set; }
+
+        [JsonProperty("due_on")]
+        public object DueOn { get; set; }
+
+        [JsonProperty("closed_at")]
+        public object ClosedAt { get; set; }
+    }
+
+    public partial class IssuePullRequest
+    {
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("html_url")]
+        public string HtmlUrl { get; set; }
+
+        [JsonProperty("diff_url")]
+        public string DiffUrl { get; set; }
+
+        [JsonProperty("patch_url")]
+        public string PatchUrl { get; set; }
+    }
+
+    public partial class PayloadPullRequest
+    {
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("html_url")]
+        public string HtmlUrl { get; set; }
+
+        [JsonProperty("diff_url")]
+        public string DiffUrl { get; set; }
+
+        [JsonProperty("patch_url")]
+        public string PatchUrl { get; set; }
+
+        [JsonProperty("issue_url")]
+        public string IssueUrl { get; set; }
+
+        [JsonProperty("number")]
+        public long Number { get; set; }
+
+        [JsonProperty("state")]
+        public string State { get; set; }
+
+        [JsonProperty("locked")]
+        public bool Locked { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("user")]
+        public User User { get; set; }
+
+        [JsonProperty("body")]
+        public string Body { get; set; }
+
+        [JsonProperty("created_at")]
+        public System.DateTime CreatedAt { get; set; }
+
+        [JsonProperty("updated_at")]
+        public System.DateTime UpdatedAt { get; set; }
+
+        [JsonProperty("closed_at")]
+        public System.DateTime? ClosedAt { get; set; }
+
+        [JsonProperty("merged_at")]
+        public object MergedAt { get; set; }
+
+        [JsonProperty("merge_commit_sha")]
+        public string MergeCommitSha { get; set; }
+
+        [JsonProperty("assignee")]
+        public object Assignee { get; set; }
+
+        [JsonProperty("assignees")]
+        public object[] Assignees { get; set; }
+
+        [JsonProperty("requested_reviewers")]
+        public object[] RequestedReviewers { get; set; }
+
+        [JsonProperty("requested_teams")]
+        public object[] RequestedTeams { get; set; }
+
+        [JsonProperty("milestone")]
+        public object Milestone { get; set; }
+
+        [JsonProperty("commits_url")]
+        public string CommitsUrl { get; set; }
+
+        [JsonProperty("review_comments_url")]
+        public string ReviewCommentsUrl { get; set; }
+
+        [JsonProperty("review_comment_url")]
+        public string ReviewCommentUrl { get; set; }
+
+        [JsonProperty("comments_url")]
+        public string CommentsUrl { get; set; }
+
+        [JsonProperty("statuses_url")]
+        public string StatusesUrl { get; set; }
+
+        [JsonProperty("head")]
+        public Base Head { get; set; }
+
+        [JsonProperty("base")]
+        public Base Base { get; set; }
+
+        [JsonProperty("_links")]
+        public PullRequestLinks Links { get; set; }
+
+        [JsonProperty("author_association")]
+        public string AuthorAssociation { get; set; }
+
+        [JsonProperty("merged")]
+        public bool? Merged { get; set; }
+
+        [JsonProperty("mergeable")]
+        public bool? Mergeable { get; set; }
+
+        [JsonProperty("rebaseable")]
+        public bool? Rebaseable { get; set; }
+
+        [JsonProperty("mergeable_state")]
+        public string MergeableState { get; set; }
+
+        [JsonProperty("merged_by")]
+        public object MergedBy { get; set; }
+
+        [JsonProperty("comments")]
+        public long? Comments { get; set; }
+
+        [JsonProperty("review_comments")]
+        public long? ReviewComments { get; set; }
+
+        [JsonProperty("maintainer_can_modify")]
+        public bool? MaintainerCanModify { get; set; }
+
+        [JsonProperty("commits")]
+        public long? Commits { get; set; }
+
+        [JsonProperty("additions")]
+        public long? Additions { get; set; }
+
+        [JsonProperty("deletions")]
+        public long? Deletions { get; set; }
+
+        [JsonProperty("changed_files")]
+        public long? ChangedFiles { get; set; }
+    }
+
+    public partial class Base
+    {
+        [JsonProperty("label")]
+        public string Label { get; set; }
+
+        [JsonProperty("ref")]
+        public string Ref { get; set; }
+
+        [JsonProperty("sha")]
+        public string Sha { get; set; }
+
+        [JsonProperty("user")]
+        public User User { get; set; }
+
+        [JsonProperty("repo")]
+        public Forkee Repo { get; set; }
     }
 
     public partial class PullRequestLinks
@@ -716,7 +842,7 @@ namespace QuickType
         public Html Statuses { get; set; }
     }
 
-    public partial class EventRepo
+    public partial class Repo
     {
         [JsonProperty("id")]
         public long Id { get; set; }
@@ -752,7 +878,7 @@ namespace QuickType
         public string HtmlUrl { get; set; }
 
         [JsonProperty("files")]
-        public Files Files { get; set; }
+        public Dictionary<string, File> Files { get; set; }
 
         [JsonProperty("public")]
         public bool Public { get; set; }
@@ -782,64 +908,13 @@ namespace QuickType
         public User Owner { get; set; }
     }
 
-    public partial class Files
-    {
-        [JsonProperty("online Free 2018")]
-        public Empty OnlineFree2018 { get; set; }
-
-        [JsonProperty("gistfile1.txt")]
-        public Empty Gistfile1Txt { get; set; }
-
-        [JsonProperty("file.cs")]
-        public Empty FileCs { get; set; }
-
-        [JsonProperty("-")]
-        public Empty Empty { get; set; }
-
-        [JsonProperty("squarespace_orange.css")]
-        public Empty SquarespaceOrangeCss { get; set; }
-
-        [JsonProperty("test.js")]
-        public Empty TestJs { get; set; }
-
-        [JsonProperty("output_log.txt")]
-        public Empty OutputLogTxt { get; set; }
-
-        [JsonProperty("test1.md")]
-        public Empty Test1Md { get; set; }
-
-        [JsonProperty("remove-orphan-raws.py")]
-        public Empty RemoveOrphanRawsPy { get; set; }
-
-        [JsonProperty("sample.pony")]
-        public Empty SamplePony { get; set; }
-
-        [JsonProperty("app.js")]
-        public Empty AppJs { get; set; }
-
-        [JsonProperty("openpanzer-save.json")]
-        public Empty OpenpanzerSaveJson { get; set; }
-
-        [JsonProperty("showrss.py")]
-        public Empty ShowrssPy { get; set; }
-
-        [JsonProperty("sanitize_sql_like.rb")]
-        public Empty SanitizeSqlLikeRb { get; set; }
-
-        [JsonProperty("65-noto.conf")]
-        public Empty The65NotoConf { get; set; }
-
-        [JsonProperty("run.sh")]
-        public Empty RunSh { get; set; }
-    }
-
-    public partial class Empty
+    public partial class File
     {
         [JsonProperty("filename")]
         public string Filename { get; set; }
 
         [JsonProperty("type")]
-        public string PurpleType { get; set; }
+        public FileType PurpleType { get; set; }
 
         [JsonProperty("language")]
         public string Language { get; set; }
@@ -874,7 +949,13 @@ namespace QuickType
 
     public enum GravatarId { Empty };
 
-    public enum PurpleType { User };
+    public enum UserType { Organization, User };
+
+    public enum DefaultBranch { Master };
+
+    public enum Homepage { Empty, HttpsValloricGithubIoYcmd };
+
+    public enum FileType { ApplicationJavascript, ApplicationJson, TextCss, TextHtml, TextPlain };
 
     public class ApiData
     {
@@ -929,18 +1010,19 @@ namespace QuickType
         }
     }
 
-    static class PurpleTypeExtensions
+    static class UserTypeExtensions
     {
-        public static PurpleType? ValueForString(string str)
+        public static UserType? ValueForString(string str)
         {
             switch (str)
             {
-                case "User": return PurpleType.User;
+                case "Organization": return UserType.Organization;
+                case "User": return UserType.User;
                 default: return null;
             }
         }
 
-        public static PurpleType ReadJson(JsonReader reader, JsonSerializer serializer)
+        public static UserType ReadJson(JsonReader reader, JsonSerializer serializer)
         {
             var str = serializer.Deserialize<string>(reader);
             var maybeValue = ValueForString(str);
@@ -948,11 +1030,106 @@ namespace QuickType
             throw new Exception("Unknown enum case " + str);
         }
 
-        public static void WriteJson(this PurpleType value, JsonWriter writer, JsonSerializer serializer)
+        public static void WriteJson(this UserType value, JsonWriter writer, JsonSerializer serializer)
         {
             switch (value)
             {
-                case PurpleType.User: serializer.Serialize(writer, "User"); break;
+                case UserType.Organization: serializer.Serialize(writer, "Organization"); break;
+                case UserType.User: serializer.Serialize(writer, "User"); break;
+            }
+        }
+    }
+
+    static class DefaultBranchExtensions
+    {
+        public static DefaultBranch? ValueForString(string str)
+        {
+            switch (str)
+            {
+                case "master": return DefaultBranch.Master;
+                default: return null;
+            }
+        }
+
+        public static DefaultBranch ReadJson(JsonReader reader, JsonSerializer serializer)
+        {
+            var str = serializer.Deserialize<string>(reader);
+            var maybeValue = ValueForString(str);
+            if (maybeValue.HasValue) return maybeValue.Value;
+            throw new Exception("Unknown enum case " + str);
+        }
+
+        public static void WriteJson(this DefaultBranch value, JsonWriter writer, JsonSerializer serializer)
+        {
+            switch (value)
+            {
+                case DefaultBranch.Master: serializer.Serialize(writer, "master"); break;
+            }
+        }
+    }
+
+    static class HomepageExtensions
+    {
+        public static Homepage? ValueForString(string str)
+        {
+            switch (str)
+            {
+                case "": return Homepage.Empty;
+                case "https://valloric.github.io/ycmd/": return Homepage.HttpsValloricGithubIoYcmd;
+                default: return null;
+            }
+        }
+
+        public static Homepage ReadJson(JsonReader reader, JsonSerializer serializer)
+        {
+            var str = serializer.Deserialize<string>(reader);
+            var maybeValue = ValueForString(str);
+            if (maybeValue.HasValue) return maybeValue.Value;
+            throw new Exception("Unknown enum case " + str);
+        }
+
+        public static void WriteJson(this Homepage value, JsonWriter writer, JsonSerializer serializer)
+        {
+            switch (value)
+            {
+                case Homepage.Empty: serializer.Serialize(writer, ""); break;
+                case Homepage.HttpsValloricGithubIoYcmd: serializer.Serialize(writer, "https://valloric.github.io/ycmd/"); break;
+            }
+        }
+    }
+
+    static class FileTypeExtensions
+    {
+        public static FileType? ValueForString(string str)
+        {
+            switch (str)
+            {
+                case "application/javascript": return FileType.ApplicationJavascript;
+                case "application/json": return FileType.ApplicationJson;
+                case "text/css": return FileType.TextCss;
+                case "text/html": return FileType.TextHtml;
+                case "text/plain": return FileType.TextPlain;
+                default: return null;
+            }
+        }
+
+        public static FileType ReadJson(JsonReader reader, JsonSerializer serializer)
+        {
+            var str = serializer.Deserialize<string>(reader);
+            var maybeValue = ValueForString(str);
+            if (maybeValue.HasValue) return maybeValue.Value;
+            throw new Exception("Unknown enum case " + str);
+        }
+
+        public static void WriteJson(this FileType value, JsonWriter writer, JsonSerializer serializer)
+        {
+            switch (value)
+            {
+                case FileType.ApplicationJavascript: serializer.Serialize(writer, "application/javascript"); break;
+                case FileType.ApplicationJson: serializer.Serialize(writer, "application/json"); break;
+                case FileType.TextCss: serializer.Serialize(writer, "text/css"); break;
+                case FileType.TextHtml: serializer.Serialize(writer, "text/html"); break;
+                case FileType.TextPlain: serializer.Serialize(writer, "text/plain"); break;
             }
         }
     }
@@ -968,23 +1145,44 @@ namespace QuickType
 
     public class Converter: JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(GravatarId) || t == typeof(PurpleType) || t == typeof(GravatarId?) || t == typeof(PurpleType?);
+        public override bool CanConvert(Type t) => t == typeof(GravatarId) || t == typeof(UserType) || t == typeof(DefaultBranch) || t == typeof(Homepage) || t == typeof(FileType) || t == typeof(GravatarId?) || t == typeof(UserType?) || t == typeof(DefaultBranch?) || t == typeof(Homepage?) || t == typeof(FileType?);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
             if (t == typeof(GravatarId))
                 return GravatarIdExtensions.ReadJson(reader, serializer);
-            if (t == typeof(PurpleType))
-                return PurpleTypeExtensions.ReadJson(reader, serializer);
+            if (t == typeof(UserType))
+                return UserTypeExtensions.ReadJson(reader, serializer);
+            if (t == typeof(DefaultBranch))
+                return DefaultBranchExtensions.ReadJson(reader, serializer);
+            if (t == typeof(Homepage))
+                return HomepageExtensions.ReadJson(reader, serializer);
+            if (t == typeof(FileType))
+                return FileTypeExtensions.ReadJson(reader, serializer);
             if (t == typeof(GravatarId?))
             {
                 if (reader.TokenType == JsonToken.Null) return null;
                 return GravatarIdExtensions.ReadJson(reader, serializer);
             }
-            if (t == typeof(PurpleType?))
+            if (t == typeof(UserType?))
             {
                 if (reader.TokenType == JsonToken.Null) return null;
-                return PurpleTypeExtensions.ReadJson(reader, serializer);
+                return UserTypeExtensions.ReadJson(reader, serializer);
+            }
+            if (t == typeof(DefaultBranch?))
+            {
+                if (reader.TokenType == JsonToken.Null) return null;
+                return DefaultBranchExtensions.ReadJson(reader, serializer);
+            }
+            if (t == typeof(Homepage?))
+            {
+                if (reader.TokenType == JsonToken.Null) return null;
+                return HomepageExtensions.ReadJson(reader, serializer);
+            }
+            if (t == typeof(FileType?))
+            {
+                if (reader.TokenType == JsonToken.Null) return null;
+                return FileTypeExtensions.ReadJson(reader, serializer);
             }
             throw new Exception("Unknown type");
         }
@@ -997,9 +1195,24 @@ namespace QuickType
                 ((GravatarId)value).WriteJson(writer, serializer);
                 return;
             }
-            if (t == typeof(PurpleType))
+            if (t == typeof(UserType))
             {
-                ((PurpleType)value).WriteJson(writer, serializer);
+                ((UserType)value).WriteJson(writer, serializer);
+                return;
+            }
+            if (t == typeof(DefaultBranch))
+            {
+                ((DefaultBranch)value).WriteJson(writer, serializer);
+                return;
+            }
+            if (t == typeof(Homepage))
+            {
+                ((Homepage)value).WriteJson(writer, serializer);
+                return;
+            }
+            if (t == typeof(FileType))
+            {
+                ((FileType)value).WriteJson(writer, serializer);
                 return;
             }
             throw new Exception("Unknown type");

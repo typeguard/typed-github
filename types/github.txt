@@ -2,7 +2,7 @@ class Events {
     id: String
     type: String
     actor: Actor
-    repo: EventRepo
+    repo: Repo
     payload: Payload
     public: Bool
     createdAt: DateTime
@@ -19,21 +19,23 @@ class Actor {
 }
 
 class Payload {
+    action?: String
+    number?: Int
+    pullRequest?: PayloadPullRequest
+    forkee?: Forkee
+    ref?: Maybe<String>
+    refType?: String
+    pusherType?: String
     pushID?: Int
     size?: Int
     distinctSize?: Int
-    ref?: Maybe<String>
     head?: String
     before?: String
     commits?: List<Commit>
-    refType?: String
+    issue?: Issue
     masterBranch?: String
     description?: Maybe<String>
-    pusherType?: String
-    action?: String
-    issue?: Issue
     comment?: Comment
-    pullRequest?: PullRequest
 }
 
 class Comment {
@@ -55,7 +57,6 @@ class Comment {
     originalCommitID?: String
     pullRequestURL?: String
     links?: CommentLinks
-    inReplyToID?: Int
 }
 
 class CommentLinks {
@@ -84,7 +85,7 @@ class User {
     reposURL: String
     eventsURL: String
     receivedEventsURL: String
-    type: Type
+    type: UserType
     siteAdmin: Bool
 }
 
@@ -101,81 +102,14 @@ class Author {
     name: String
 }
 
-class Issue {
-    url: String
-    repositoryURL: String
-    labelsURL: String
-    commentsURL: String
-    eventsURL: String
-    htmlURL: String
-    id: Int
-    number: Int
-    title: String
-    user: User
-    labels: List<Any>
-    state: String
-    locked: Bool
-    assignee: Maybe<User>
-    assignees: List<User>
-    milestone: Null
-    comments: Int
-    createdAt: DateTime
-    updatedAt: DateTime
-    closedAt: Maybe<DateTime>
-    authorAssociation: String
-    body: String
-}
-
-class PullRequest {
-    url: String
-    id: Int
-    htmlURL: String
-    diffURL: String
-    patchURL: String
-    issueURL: String
-    number: Int
-    state: String
-    locked: Bool
-    title: String
-    user: User
-    body: String
-    createdAt: DateTime
-    updatedAt: DateTime
-    closedAt: DateTime
-    mergedAt: DateTime
-    mergeCommitSHA: String
-    assignee: User
-    assignees: List<User>
-    requestedReviewers: List<Any>
-    requestedTeams: List<Any>
-    milestone: Null
-    commitsURL: String
-    reviewCommentsURL: String
-    reviewCommentURL: String
-    commentsURL: String
-    statusesURL: String
-    head: Base
-    base: Base
-    links: PullRequestLinks
-    authorAssociation: String
-}
-
-class Base {
-    label: String
-    ref: String
-    sha: String
-    user: User
-    repo: BaseRepo
-}
-
-class BaseRepo {
+class Forkee {
     id: Int
     name: String
     fullName: String
     owner: User
     private: Bool
     htmlURL: String
-    description: String
+    description: Maybe<String>
     fork: Bool
     url: String
     forksURL: String
@@ -221,11 +155,11 @@ class BaseRepo {
     sshURL: String
     cloneURL: String
     svnURL: String
-    homepage: Null
+    homepage: Maybe<Homepage>
     size: Int
     stargazersCount: Int
     watchersCount: Int
-    language: String
+    language: Maybe<String>
     hasIssues: Bool
     hasProjects: Bool
     hasDownloads: Bool
@@ -235,11 +169,12 @@ class BaseRepo {
     mirrorURL: Null
     archived: Bool
     openIssuesCount: Int
-    license: License
+    license: Maybe<License>
     forks: Int
     openIssues: Int
     watchers: Int
-    defaultBranch: String
+    defaultBranch: DefaultBranch
+    public?: Bool
 }
 
 class License {
@@ -247,6 +182,119 @@ class License {
     name: String
     spdxID: String
     url: String
+}
+
+class Issue {
+    url: String
+    repositoryURL: String
+    labelsURL: String
+    commentsURL: String
+    eventsURL: String
+    htmlURL: String
+    id: Int
+    number: Int
+    title: String
+    user: User
+    labels: List<Label>
+    state: String
+    locked: Bool
+    assignee: Null
+    assignees: List<Any>
+    milestone: Maybe<Milestone>
+    comments: Int
+    createdAt: DateTime
+    updatedAt: DateTime
+    closedAt: Maybe<DateTime>
+    authorAssociation: String
+    body: String
+    pullRequest?: IssuePullRequest
+}
+
+class Label {
+    id: Int
+    url: String
+    name: String
+    color: String
+    default: Bool
+}
+
+class Milestone {
+    url: String
+    htmlURL: String
+    labelsURL: String
+    id: Int
+    number: Int
+    title: String
+    description: Null
+    creator: User
+    openIssues: Int
+    closedIssues: Int
+    state: String
+    createdAt: DateTime
+    updatedAt: DateTime
+    dueOn: Null
+    closedAt: Null
+}
+
+class IssuePullRequest {
+    url: String
+    htmlURL: String
+    diffURL: String
+    patchURL: String
+}
+
+class PayloadPullRequest {
+    url: String
+    id: Int
+    htmlURL: String
+    diffURL: String
+    patchURL: String
+    issueURL: String
+    number: Int
+    state: String
+    locked: Bool
+    title: String
+    user: User
+    body: String
+    createdAt: DateTime
+    updatedAt: DateTime
+    closedAt: Maybe<DateTime>
+    mergedAt: Null
+    mergeCommitSHA: Maybe<String>
+    assignee: Null
+    assignees: List<Any>
+    requestedReviewers: List<Any>
+    requestedTeams: List<Any>
+    milestone: Null
+    commitsURL: String
+    reviewCommentsURL: String
+    reviewCommentURL: String
+    commentsURL: String
+    statusesURL: String
+    head: Base
+    base: Base
+    links: PullRequestLinks
+    authorAssociation: String
+    merged?: Bool
+    mergeable?: Maybe<Bool>
+    rebaseable?: Maybe<Bool>
+    mergeableState?: String
+    mergedBy?: Null
+    comments?: Int
+    reviewComments?: Int
+    maintainerCanModify?: Bool
+    commits?: Int
+    additions?: Int
+    deletions?: Int
+    changedFiles?: Int
+}
+
+class Base {
+    label: String
+    ref: String
+    sha: String
+    user: User
+    repo: Forkee
 }
 
 class PullRequestLinks {
@@ -260,7 +308,7 @@ class PullRequestLinks {
     statuses: HTML
 }
 
-class EventRepo {
+class Repo {
     id: Int
     name: String
     url: String
@@ -274,7 +322,7 @@ class Gists {
     gitPullURL: String
     gitPushURL: String
     htmlURL: String
-    files: Files
+    files: Map<String, File>
     public: Bool
     createdAt: DateTime
     updatedAt: DateTime
@@ -286,28 +334,9 @@ class Gists {
     owner?: User
 }
 
-class Files {
-    onlineFree2018?: Empty
-    gistfile1Txt?: Empty
-    fileCS?: Empty
-    empty?: Empty
-    squarespaceOrangeCSS?: Empty
-    testJS?: Empty
-    outputLogTxt?: Empty
-    test1Md?: Empty
-    removeOrphanRawsPy?: Empty
-    samplePony?: Empty
-    appJS?: Empty
-    openpanzerSaveJSON?: Empty
-    showrssPy?: Empty
-    sanitizeSQLLikeRb?: Empty
-    the65NotoConf?: Empty
-    runSh?: Empty
-}
-
-class Empty {
+class File {
     filename: String
-    type: String
+    type: FileType
     language: Maybe<String>
     rawURL: String
     size: Int
@@ -324,4 +353,10 @@ class Meta {
 
 enum GravatarID = Empty
 
-enum Type = User
+enum UserType = Organization | User
+
+enum DefaultBranch = Master
+
+enum Homepage = Empty | HTTPSValloricGithubIoYcmd
+
+enum FileType = ApplicationJSON | ApplicationJavascript | TextCSS | TextHTML | TextPlain

@@ -2,7 +2,7 @@ class Events {
     id: String
     type: String
     actor: Actor
-    repo: Repo
+    repo: EventRepo
     payload: Payload
     public: Bool
     createdAt: DateTime
@@ -19,9 +19,6 @@ class Actor {
 }
 
 class Payload {
-    action?: String
-    issue?: Issue
-    comment?: Comment
     pushID?: Int
     size?: Int
     distinctSize?: Int
@@ -33,9 +30,10 @@ class Payload {
     masterBranch?: String
     description?: Maybe<String>
     pusherType?: String
-    number?: Int
+    action?: String
+    issue?: Issue
+    comment?: Comment
     pullRequest?: PullRequest
-    forkee?: Forkee
 }
 
 class Comment {
@@ -86,7 +84,7 @@ class User {
     reposURL: String
     eventsURL: String
     receivedEventsURL: String
-    type: UserType
+    type: Type
     siteAdmin: Bool
 }
 
@@ -103,14 +101,81 @@ class Author {
     name: String
 }
 
-class Forkee {
+class Issue {
+    url: String
+    repositoryURL: String
+    labelsURL: String
+    commentsURL: String
+    eventsURL: String
+    htmlURL: String
+    id: Int
+    number: Int
+    title: String
+    user: User
+    labels: List<Any>
+    state: String
+    locked: Bool
+    assignee: Maybe<User>
+    assignees: List<User>
+    milestone: Null
+    comments: Int
+    createdAt: DateTime
+    updatedAt: DateTime
+    closedAt: Maybe<DateTime>
+    authorAssociation: String
+    body: String
+}
+
+class PullRequest {
+    url: String
+    id: Int
+    htmlURL: String
+    diffURL: String
+    patchURL: String
+    issueURL: String
+    number: Int
+    state: String
+    locked: Bool
+    title: String
+    user: User
+    body: String
+    createdAt: DateTime
+    updatedAt: DateTime
+    closedAt: DateTime
+    mergedAt: DateTime
+    mergeCommitSHA: String
+    assignee: User
+    assignees: List<User>
+    requestedReviewers: List<Any>
+    requestedTeams: List<Any>
+    milestone: Null
+    commitsURL: String
+    reviewCommentsURL: String
+    reviewCommentURL: String
+    commentsURL: String
+    statusesURL: String
+    head: Base
+    base: Base
+    links: PullRequestLinks
+    authorAssociation: String
+}
+
+class Base {
+    label: String
+    ref: String
+    sha: String
+    user: User
+    repo: BaseRepo
+}
+
+class BaseRepo {
     id: Int
     name: String
     fullName: String
     owner: User
     private: Bool
     htmlURL: String
-    description: Maybe<String>
+    description: String
     fork: Bool
     url: String
     forksURL: String
@@ -156,11 +221,11 @@ class Forkee {
     sshURL: String
     cloneURL: String
     svnURL: String
-    homepage: Maybe<GravatarID>
+    homepage: Null
     size: Int
     stargazersCount: Int
     watchersCount: Int
-    language: Maybe<ForkeeLanguage>
+    language: String
     hasIssues: Bool
     hasProjects: Bool
     hasDownloads: Bool
@@ -170,99 +235,18 @@ class Forkee {
     mirrorURL: Null
     archived: Bool
     openIssuesCount: Int
-    license: Null
+    license: License
     forks: Int
     openIssues: Int
     watchers: Int
-    defaultBranch: DefaultBranch
-    public?: Bool
+    defaultBranch: String
 }
 
-class Issue {
-    url: String
-    repositoryURL: String
-    labelsURL: String
-    commentsURL: String
-    eventsURL: String
-    htmlURL: String
-    id: Int
-    number: Int
-    title: String
-    user: User
-    labels: List<Label>
-    state: String
-    locked: Bool
-    assignee: Null
-    assignees: List<Any>
-    milestone: Null
-    comments: Int
-    createdAt: DateTime
-    updatedAt: DateTime
-    closedAt: DateTime
-    authorAssociation: String
-    body: String
-}
-
-class Label {
-    id: Int
-    url: String
+class License {
+    key: String
     name: String
-    color: String
-    default: Bool
-}
-
-class PullRequest {
+    spdxID: String
     url: String
-    id: Int
-    htmlURL: String
-    diffURL: String
-    patchURL: String
-    issueURL: String
-    number: Int
-    state: String
-    locked: Bool
-    title: String
-    user: User
-    body: String
-    createdAt: DateTime
-    updatedAt: DateTime
-    closedAt: Null
-    mergedAt: Null
-    mergeCommitSHA: Maybe<String>
-    assignee: Null
-    assignees: List<Any>
-    requestedReviewers: List<Any>
-    requestedTeams: List<Any>
-    milestone: Null
-    commitsURL: String
-    reviewCommentsURL: String
-    reviewCommentURL: String
-    commentsURL: String
-    statusesURL: String
-    head: Base
-    base: Base
-    links: PullRequestLinks
-    authorAssociation: String
-    merged?: Bool
-    mergeable?: Null
-    rebaseable?: Null
-    mergeableState?: String
-    mergedBy?: Null
-    comments?: Int
-    reviewComments?: Int
-    maintainerCanModify?: Bool
-    commits?: Int
-    additions?: Int
-    deletions?: Int
-    changedFiles?: Int
-}
-
-class Base {
-    label: String
-    ref: String
-    sha: String
-    user: User
-    repo: Forkee
 }
 
 class PullRequestLinks {
@@ -276,7 +260,7 @@ class PullRequestLinks {
     statuses: HTML
 }
 
-class Repo {
+class EventRepo {
     id: Int
     name: String
     url: String
@@ -303,21 +287,28 @@ class Gists {
 }
 
 class Files {
+    onlineFree2018?: Empty
     gistfile1Txt?: Empty
-    entity404Mojang?: Empty
+    fileCS?: Empty
     empty?: Empty
-    mazeRunnerTheDeathCure2018?: Empty
-    dataShowFragmentKt?: Empty
-    mainStylesCSS?: Empty
-    configJSON?: Empty
+    squarespaceOrangeCSS?: Empty
+    testJS?: Empty
+    outputLogTxt?: Empty
+    test1Md?: Empty
+    removeOrphanRawsPy?: Empty
+    samplePony?: Empty
     appJS?: Empty
-    serverTxt?: Empty
+    openpanzerSaveJSON?: Empty
+    showrssPy?: Empty
+    sanitizeSQLLikeRb?: Empty
+    the65NotoConf?: Empty
+    runSh?: Empty
 }
 
 class Empty {
     filename: String
-    type: Type
-    language: Maybe<Language>
+    type: String
+    language: Maybe<String>
     rawURL: String
     size: Int
 }
@@ -333,12 +324,4 @@ class Meta {
 
 enum GravatarID = Empty
 
-enum UserType = User
-
-enum DefaultBranch = Master
-
-enum ForkeeLanguage = Go | HTML | JavaScript
-
-enum Language = CSS | JSON | JavaScript | Kotlin | Text
-
-enum Type = ApplicationJSON | ApplicationJavascript | TextCSS | TextPlain
+enum Type = User

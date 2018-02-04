@@ -78,14 +78,14 @@ func (r *Meta) Marshal() ([]byte, error) {
 }
 
 type Event struct {
-	ID        string  `json:"id"`
-	Type      string  `json:"type"`
-	Actor     Actor   `json:"actor"`
-	Repo      Repo    `json:"repo"`
-	Payload   Payload `json:"payload"`
-	Public    bool    `json:"public"`
-	CreatedAt string  `json:"created_at"`
-	Org       *Actor  `json:"org"`
+	ID        string    `json:"id"`
+	Type      string    `json:"type"`
+	Actor     Actor     `json:"actor"`
+	Repo      EventRepo `json:"repo"`
+	Payload   Payload   `json:"payload"`
+	Public    bool      `json:"public"`
+	CreatedAt string    `json:"created_at"`
+	Org       *Actor    `json:"org"`
 }
 
 type Actor struct {
@@ -98,9 +98,6 @@ type Actor struct {
 }
 
 type Payload struct {
-	Action       *string      `json:"action"`
-	Issue        *Issue       `json:"issue"`
-	Comment      *Comment     `json:"comment"`
 	PushID       *int64       `json:"push_id"`
 	Size         *int64       `json:"size"`
 	DistinctSize *int64       `json:"distinct_size"`
@@ -112,9 +109,10 @@ type Payload struct {
 	MasterBranch *string      `json:"master_branch"`
 	Description  *string      `json:"description"`
 	PusherType   *string      `json:"pusher_type"`
-	Number       *int64       `json:"number"`
+	Action       *string      `json:"action"`
+	Issue        *Issue       `json:"issue"`
+	Comment      *Comment     `json:"comment"`
 	PullRequest  *PullRequest `json:"pull_request"`
-	Forkee       *Forkee      `json:"forkee"`
 }
 
 type Comment struct {
@@ -165,7 +163,7 @@ type User struct {
 	ReposURL          string     `json:"repos_url"`
 	EventsURL         string     `json:"events_url"`
 	ReceivedEventsURL string     `json:"received_events_url"`
-	Type              UserType   `json:"type"`
+	Type              Type       `json:"type"`
 	SiteAdmin         bool       `json:"site_admin"`
 }
 
@@ -182,81 +180,6 @@ type Author struct {
 	Name  string `json:"name"`
 }
 
-type Forkee struct {
-	ID               int64           `json:"id"`
-	Name             string          `json:"name"`
-	FullName         string          `json:"full_name"`
-	Owner            User            `json:"owner"`
-	Private          bool            `json:"private"`
-	HTMLURL          string          `json:"html_url"`
-	Description      *string         `json:"description"`
-	Fork             bool            `json:"fork"`
-	URL              string          `json:"url"`
-	ForksURL         string          `json:"forks_url"`
-	KeysURL          string          `json:"keys_url"`
-	CollaboratorsURL string          `json:"collaborators_url"`
-	TeamsURL         string          `json:"teams_url"`
-	HooksURL         string          `json:"hooks_url"`
-	IssueEventsURL   string          `json:"issue_events_url"`
-	EventsURL        string          `json:"events_url"`
-	AssigneesURL     string          `json:"assignees_url"`
-	BranchesURL      string          `json:"branches_url"`
-	TagsURL          string          `json:"tags_url"`
-	BlobsURL         string          `json:"blobs_url"`
-	GitTagsURL       string          `json:"git_tags_url"`
-	GitRefsURL       string          `json:"git_refs_url"`
-	TreesURL         string          `json:"trees_url"`
-	StatusesURL      string          `json:"statuses_url"`
-	LanguagesURL     string          `json:"languages_url"`
-	StargazersURL    string          `json:"stargazers_url"`
-	ContributorsURL  string          `json:"contributors_url"`
-	SubscribersURL   string          `json:"subscribers_url"`
-	SubscriptionURL  string          `json:"subscription_url"`
-	CommitsURL       string          `json:"commits_url"`
-	GitCommitsURL    string          `json:"git_commits_url"`
-	CommentsURL      string          `json:"comments_url"`
-	IssueCommentURL  string          `json:"issue_comment_url"`
-	ContentsURL      string          `json:"contents_url"`
-	CompareURL       string          `json:"compare_url"`
-	MergesURL        string          `json:"merges_url"`
-	ArchiveURL       string          `json:"archive_url"`
-	DownloadsURL     string          `json:"downloads_url"`
-	IssuesURL        string          `json:"issues_url"`
-	PullsURL         string          `json:"pulls_url"`
-	MilestonesURL    string          `json:"milestones_url"`
-	NotificationsURL string          `json:"notifications_url"`
-	LabelsURL        string          `json:"labels_url"`
-	ReleasesURL      string          `json:"releases_url"`
-	DeploymentsURL   string          `json:"deployments_url"`
-	CreatedAt        string          `json:"created_at"`
-	UpdatedAt        string          `json:"updated_at"`
-	PushedAt         string          `json:"pushed_at"`
-	GitURL           string          `json:"git_url"`
-	SSHURL           string          `json:"ssh_url"`
-	CloneURL         string          `json:"clone_url"`
-	SvnURL           string          `json:"svn_url"`
-	Homepage         *GravatarID     `json:"homepage"`
-	Size             int64           `json:"size"`
-	StargazersCount  int64           `json:"stargazers_count"`
-	WatchersCount    int64           `json:"watchers_count"`
-	Language         *ForkeeLanguage `json:"language"`
-	HasIssues        bool            `json:"has_issues"`
-	HasProjects      bool            `json:"has_projects"`
-	HasDownloads     bool            `json:"has_downloads"`
-	HasWiki          bool            `json:"has_wiki"`
-	HasPages         bool            `json:"has_pages"`
-	ForksCount       int64           `json:"forks_count"`
-	MirrorURL        interface{}     `json:"mirror_url"`
-	Archived         bool            `json:"archived"`
-	OpenIssuesCount  int64           `json:"open_issues_count"`
-	License          interface{}     `json:"license"`
-	Forks            int64           `json:"forks"`
-	OpenIssues       int64           `json:"open_issues"`
-	Watchers         int64           `json:"watchers"`
-	DefaultBranch    DefaultBranch   `json:"default_branch"`
-	Public           *bool           `json:"public"`
-}
-
 type Issue struct {
 	URL               string        `json:"url"`
 	RepositoryURL     string        `json:"repository_url"`
@@ -268,80 +191,141 @@ type Issue struct {
 	Number            int64         `json:"number"`
 	Title             string        `json:"title"`
 	User              User          `json:"user"`
-	Labels            []Label       `json:"labels"`
+	Labels            []interface{} `json:"labels"`
 	State             string        `json:"state"`
 	Locked            bool          `json:"locked"`
-	Assignee          interface{}   `json:"assignee"`
-	Assignees         []interface{} `json:"assignees"`
+	Assignee          *User         `json:"assignee"`
+	Assignees         []User        `json:"assignees"`
 	Milestone         interface{}   `json:"milestone"`
 	Comments          int64         `json:"comments"`
 	CreatedAt         string        `json:"created_at"`
 	UpdatedAt         string        `json:"updated_at"`
-	ClosedAt          string        `json:"closed_at"`
+	ClosedAt          *string       `json:"closed_at"`
 	AuthorAssociation string        `json:"author_association"`
 	Body              string        `json:"body"`
 }
 
-type Label struct {
-	ID      int64  `json:"id"`
-	URL     string `json:"url"`
-	Name    string `json:"name"`
-	Color   string `json:"color"`
-	Default bool   `json:"default"`
-}
-
 type PullRequest struct {
-	URL                 string           `json:"url"`
-	ID                  int64            `json:"id"`
-	HTMLURL             string           `json:"html_url"`
-	DiffURL             string           `json:"diff_url"`
-	PatchURL            string           `json:"patch_url"`
-	IssueURL            string           `json:"issue_url"`
-	Number              int64            `json:"number"`
-	State               string           `json:"state"`
-	Locked              bool             `json:"locked"`
-	Title               string           `json:"title"`
-	User                User             `json:"user"`
-	Body                string           `json:"body"`
-	CreatedAt           string           `json:"created_at"`
-	UpdatedAt           string           `json:"updated_at"`
-	ClosedAt            interface{}      `json:"closed_at"`
-	MergedAt            interface{}      `json:"merged_at"`
-	MergeCommitSHA      *string          `json:"merge_commit_sha"`
-	Assignee            interface{}      `json:"assignee"`
-	Assignees           []interface{}    `json:"assignees"`
-	RequestedReviewers  []interface{}    `json:"requested_reviewers"`
-	RequestedTeams      []interface{}    `json:"requested_teams"`
-	Milestone           interface{}      `json:"milestone"`
-	CommitsURL          string           `json:"commits_url"`
-	ReviewCommentsURL   string           `json:"review_comments_url"`
-	ReviewCommentURL    string           `json:"review_comment_url"`
-	CommentsURL         string           `json:"comments_url"`
-	StatusesURL         string           `json:"statuses_url"`
-	Head                Base             `json:"head"`
-	Base                Base             `json:"base"`
-	Links               PullRequestLinks `json:"_links"`
-	AuthorAssociation   string           `json:"author_association"`
-	Merged              *bool            `json:"merged"`
-	Mergeable           interface{}      `json:"mergeable"`
-	Rebaseable          interface{}      `json:"rebaseable"`
-	MergeableState      *string          `json:"mergeable_state"`
-	MergedBy            interface{}      `json:"merged_by"`
-	Comments            *int64           `json:"comments"`
-	ReviewComments      *int64           `json:"review_comments"`
-	MaintainerCanModify *bool            `json:"maintainer_can_modify"`
-	Commits             *int64           `json:"commits"`
-	Additions           *int64           `json:"additions"`
-	Deletions           *int64           `json:"deletions"`
-	ChangedFiles        *int64           `json:"changed_files"`
+	URL                string           `json:"url"`
+	ID                 int64            `json:"id"`
+	HTMLURL            string           `json:"html_url"`
+	DiffURL            string           `json:"diff_url"`
+	PatchURL           string           `json:"patch_url"`
+	IssueURL           string           `json:"issue_url"`
+	Number             int64            `json:"number"`
+	State              string           `json:"state"`
+	Locked             bool             `json:"locked"`
+	Title              string           `json:"title"`
+	User               User             `json:"user"`
+	Body               string           `json:"body"`
+	CreatedAt          string           `json:"created_at"`
+	UpdatedAt          string           `json:"updated_at"`
+	ClosedAt           string           `json:"closed_at"`
+	MergedAt           string           `json:"merged_at"`
+	MergeCommitSHA     string           `json:"merge_commit_sha"`
+	Assignee           User             `json:"assignee"`
+	Assignees          []User           `json:"assignees"`
+	RequestedReviewers []interface{}    `json:"requested_reviewers"`
+	RequestedTeams     []interface{}    `json:"requested_teams"`
+	Milestone          interface{}      `json:"milestone"`
+	CommitsURL         string           `json:"commits_url"`
+	ReviewCommentsURL  string           `json:"review_comments_url"`
+	ReviewCommentURL   string           `json:"review_comment_url"`
+	CommentsURL        string           `json:"comments_url"`
+	StatusesURL        string           `json:"statuses_url"`
+	Head               Base             `json:"head"`
+	Base               Base             `json:"base"`
+	Links              PullRequestLinks `json:"_links"`
+	AuthorAssociation  string           `json:"author_association"`
 }
 
 type Base struct {
-	Label string `json:"label"`
-	Ref   string `json:"ref"`
-	SHA   string `json:"sha"`
-	User  User   `json:"user"`
-	Repo  Forkee `json:"repo"`
+	Label string   `json:"label"`
+	Ref   string   `json:"ref"`
+	SHA   string   `json:"sha"`
+	User  User     `json:"user"`
+	Repo  BaseRepo `json:"repo"`
+}
+
+type BaseRepo struct {
+	ID               int64       `json:"id"`
+	Name             string      `json:"name"`
+	FullName         string      `json:"full_name"`
+	Owner            User        `json:"owner"`
+	Private          bool        `json:"private"`
+	HTMLURL          string      `json:"html_url"`
+	Description      string      `json:"description"`
+	Fork             bool        `json:"fork"`
+	URL              string      `json:"url"`
+	ForksURL         string      `json:"forks_url"`
+	KeysURL          string      `json:"keys_url"`
+	CollaboratorsURL string      `json:"collaborators_url"`
+	TeamsURL         string      `json:"teams_url"`
+	HooksURL         string      `json:"hooks_url"`
+	IssueEventsURL   string      `json:"issue_events_url"`
+	EventsURL        string      `json:"events_url"`
+	AssigneesURL     string      `json:"assignees_url"`
+	BranchesURL      string      `json:"branches_url"`
+	TagsURL          string      `json:"tags_url"`
+	BlobsURL         string      `json:"blobs_url"`
+	GitTagsURL       string      `json:"git_tags_url"`
+	GitRefsURL       string      `json:"git_refs_url"`
+	TreesURL         string      `json:"trees_url"`
+	StatusesURL      string      `json:"statuses_url"`
+	LanguagesURL     string      `json:"languages_url"`
+	StargazersURL    string      `json:"stargazers_url"`
+	ContributorsURL  string      `json:"contributors_url"`
+	SubscribersURL   string      `json:"subscribers_url"`
+	SubscriptionURL  string      `json:"subscription_url"`
+	CommitsURL       string      `json:"commits_url"`
+	GitCommitsURL    string      `json:"git_commits_url"`
+	CommentsURL      string      `json:"comments_url"`
+	IssueCommentURL  string      `json:"issue_comment_url"`
+	ContentsURL      string      `json:"contents_url"`
+	CompareURL       string      `json:"compare_url"`
+	MergesURL        string      `json:"merges_url"`
+	ArchiveURL       string      `json:"archive_url"`
+	DownloadsURL     string      `json:"downloads_url"`
+	IssuesURL        string      `json:"issues_url"`
+	PullsURL         string      `json:"pulls_url"`
+	MilestonesURL    string      `json:"milestones_url"`
+	NotificationsURL string      `json:"notifications_url"`
+	LabelsURL        string      `json:"labels_url"`
+	ReleasesURL      string      `json:"releases_url"`
+	DeploymentsURL   string      `json:"deployments_url"`
+	CreatedAt        string      `json:"created_at"`
+	UpdatedAt        string      `json:"updated_at"`
+	PushedAt         string      `json:"pushed_at"`
+	GitURL           string      `json:"git_url"`
+	SSHURL           string      `json:"ssh_url"`
+	CloneURL         string      `json:"clone_url"`
+	SvnURL           string      `json:"svn_url"`
+	Homepage         interface{} `json:"homepage"`
+	Size             int64       `json:"size"`
+	StargazersCount  int64       `json:"stargazers_count"`
+	WatchersCount    int64       `json:"watchers_count"`
+	Language         string      `json:"language"`
+	HasIssues        bool        `json:"has_issues"`
+	HasProjects      bool        `json:"has_projects"`
+	HasDownloads     bool        `json:"has_downloads"`
+	HasWiki          bool        `json:"has_wiki"`
+	HasPages         bool        `json:"has_pages"`
+	ForksCount       int64       `json:"forks_count"`
+	MirrorURL        interface{} `json:"mirror_url"`
+	Archived         bool        `json:"archived"`
+	OpenIssuesCount  int64       `json:"open_issues_count"`
+	License          License     `json:"license"`
+	Forks            int64       `json:"forks"`
+	OpenIssues       int64       `json:"open_issues"`
+	Watchers         int64       `json:"watchers"`
+	DefaultBranch    string      `json:"default_branch"`
+}
+
+type License struct {
+	Key    string `json:"key"`
+	Name   string `json:"name"`
+	SpdxID string `json:"spdx_id"`
+	URL    string `json:"url"`
 }
 
 type PullRequestLinks struct {
@@ -355,7 +339,7 @@ type PullRequestLinks struct {
 	Statuses       HTML `json:"statuses"`
 }
 
-type Repo struct {
+type EventRepo struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 	URL  string `json:"url"`
@@ -382,23 +366,30 @@ type Gist struct {
 }
 
 type Files struct {
-	Gistfile1Txt               *Empty `json:"gistfile1.txt"`
-	Entity404Mojang            *Empty `json:"entity404.mojang"`
-	Empty                      *Empty `json:"-"`
-	MazeRunnerTheDeathCure2018 *Empty `json:"Maze Runner: The Death Cure (2018)"`
-	DataShowFragmentKt         *Empty `json:"DataShowFragment.kt"`
-	MainStylesCSS              *Empty `json:"main-styles.css"`
-	ConfigJSON                 *Empty `json:"config.json"`
-	AppJS                      *Empty `json:"app.js"`
-	ServerTxt                  *Empty `json:"server.txt"`
+	OnlineFree2018       *Empty `json:"online Free 2018"`
+	Gistfile1Txt         *Empty `json:"gistfile1.txt"`
+	FileCS               *Empty `json:"file.cs"`
+	Empty                *Empty `json:"-"`
+	SquarespaceOrangeCSS *Empty `json:"squarespace_orange.css"`
+	TestJS               *Empty `json:"test.js"`
+	OutputLogTxt         *Empty `json:"output_log.txt"`
+	Test1Md              *Empty `json:"test1.md"`
+	RemoveOrphanRawsPy   *Empty `json:"remove-orphan-raws.py"`
+	SamplePony           *Empty `json:"sample.pony"`
+	AppJS                *Empty `json:"app.js"`
+	OpenpanzerSaveJSON   *Empty `json:"openpanzer-save.json"`
+	ShowrssPy            *Empty `json:"showrss.py"`
+	SanitizeSQLLikeRb    *Empty `json:"sanitize_sql_like.rb"`
+	The65NotoConf        *Empty `json:"65-noto.conf"`
+	RunSh                *Empty `json:"run.sh"`
 }
 
 type Empty struct {
-	Filename string    `json:"filename"`
-	Type     Type      `json:"type"`
-	Language *Language `json:"language"`
-	RawURL   string    `json:"raw_url"`
-	Size     int64     `json:"size"`
+	Filename string  `json:"filename"`
+	Type     string  `json:"type"`
+	Language *string `json:"language"`
+	RawURL   string  `json:"raw_url"`
+	Size     int64   `json:"size"`
 }
 
 type Meta struct {
@@ -415,36 +406,7 @@ const (
 	Purple GravatarID = ""
 )
 
-type UserType string
-const (
-	PurpleUser UserType = "User"
-)
-
-type DefaultBranch string
-const (
-	Master DefaultBranch = "master"
-)
-
-type ForkeeLanguage string
-const (
-	Go ForkeeLanguage = "Go"
-	PurpleHTML ForkeeLanguage = "HTML"
-	PurpleJavaScript ForkeeLanguage = "JavaScript"
-)
-
-type Language string
-const (
-	CSS Language = "CSS"
-	FluffyJavaScript Language = "JavaScript"
-	JSON Language = "JSON"
-	Kotlin Language = "Kotlin"
-	Text Language = "Text"
-)
-
 type Type string
 const (
-	ApplicationJSON Type = "application/json"
-	ApplicationJavascript Type = "application/javascript"
-	TextCSS Type = "text/css"
-	TextPlain Type = "text/plain"
+	PurpleUser Type = "User"
 )

@@ -15,7 +15,7 @@ export interface Events {
     id:         string;
     type:       string;
     actor:      Actor;
-    repo:       Repo;
+    repo:       EventRepo;
     payload:    Payload;
     public:     boolean;
     created_at: string;
@@ -36,9 +36,6 @@ export enum GravatarID {
 }
 
 export interface Payload {
-    action?:        string;
-    issue?:         Issue;
-    comment?:       Comment;
     push_id?:       number;
     size?:          number;
     distinct_size?: number;
@@ -50,9 +47,10 @@ export interface Payload {
     master_branch?: string;
     description?:   string;
     pusher_type?:   string;
-    number?:        number;
+    action?:        string;
+    issue?:         Issue;
+    comment?:       Comment;
     pull_request?:  PullRequest;
-    forkee?:        Forkee;
 }
 
 export interface Comment {
@@ -103,11 +101,11 @@ export interface User {
     repos_url:           string;
     events_url:          string;
     received_events_url: string;
-    type:                UserType;
+    type:                Type;
     site_admin:          boolean;
 }
 
-export enum UserType {
+export enum Type {
     User = "User",
 }
 
@@ -124,14 +122,92 @@ export interface Author {
     name:  string;
 }
 
-export interface Forkee {
+export interface Issue {
+    url:                string;
+    repository_url:     string;
+    labels_url:         string;
+    comments_url:       string;
+    events_url:         string;
+    html_url:           string;
+    id:                 number;
+    number:             number;
+    title:              string;
+    user:               User;
+    labels:             any[];
+    state:              string;
+    locked:             boolean;
+    assignee?:          User;
+    assignees:          User[];
+    milestone:          null;
+    comments:           number;
+    created_at:         string;
+    updated_at:         string;
+    closed_at?:         string;
+    author_association: string;
+    body:               string;
+}
+
+export interface PullRequest {
+    url:                 string;
+    id:                  number;
+    html_url:            string;
+    diff_url:            string;
+    patch_url:           string;
+    issue_url:           string;
+    number:              number;
+    state:               string;
+    locked:              boolean;
+    title:               string;
+    user:                User;
+    body:                string;
+    created_at:          string;
+    updated_at:          string;
+    closed_at:           string;
+    merged_at:           string;
+    merge_commit_sha:    string;
+    assignee:            User;
+    assignees:           User[];
+    requested_reviewers: any[];
+    requested_teams:     any[];
+    milestone:           null;
+    commits_url:         string;
+    review_comments_url: string;
+    review_comment_url:  string;
+    comments_url:        string;
+    statuses_url:        string;
+    head:                Base;
+    base:                Base;
+    _links:              PullRequestLinks;
+    author_association:  string;
+}
+
+export interface PullRequestLinks {
+    self:            HTML;
+    html:            HTML;
+    issue:           HTML;
+    comments:        HTML;
+    review_comments: HTML;
+    review_comment:  HTML;
+    commits:         HTML;
+    statuses:        HTML;
+}
+
+export interface Base {
+    label: string;
+    ref:   string;
+    sha:   string;
+    user:  User;
+    repo:  BaseRepo;
+}
+
+export interface BaseRepo {
     id:                number;
     name:              string;
     full_name:         string;
     owner:             User;
     private:           boolean;
     html_url:          string;
-    description?:      string;
+    description:       string;
     fork:              boolean;
     url:               string;
     forks_url:         string;
@@ -177,11 +253,11 @@ export interface Forkee {
     ssh_url:           string;
     clone_url:         string;
     svn_url:           string;
-    homepage?:         GravatarID;
+    homepage:          null;
     size:              number;
     stargazers_count:  number;
     watchers_count:    number;
-    language?:         ForkeeLanguage;
+    language:          string;
     has_issues:        boolean;
     has_projects:      boolean;
     has_downloads:     boolean;
@@ -191,123 +267,21 @@ export interface Forkee {
     mirror_url:        null;
     archived:          boolean;
     open_issues_count: number;
-    license:           null;
+    license:           License;
     forks:             number;
     open_issues:       number;
     watchers:          number;
-    default_branch:    DefaultBranch;
-    public?:           boolean;
+    default_branch:    string;
 }
 
-export enum DefaultBranch {
-    Master = "master",
-}
-
-export enum ForkeeLanguage {
-    Go = "Go",
-    HTML = "HTML",
-    JavaScript = "JavaScript",
-}
-
-export interface Issue {
-    url:                string;
-    repository_url:     string;
-    labels_url:         string;
-    comments_url:       string;
-    events_url:         string;
-    html_url:           string;
-    id:                 number;
-    number:             number;
-    title:              string;
-    user:               User;
-    labels:             Label[];
-    state:              string;
-    locked:             boolean;
-    assignee:           null;
-    assignees:          any[];
-    milestone:          null;
-    comments:           number;
-    created_at:         string;
-    updated_at:         string;
-    closed_at:          string;
-    author_association: string;
-    body:               string;
-}
-
-export interface Label {
-    id:      number;
-    url:     string;
+export interface License {
+    key:     string;
     name:    string;
-    color:   string;
-    default: boolean;
+    spdx_id: string;
+    url:     string;
 }
 
-export interface PullRequest {
-    url:                    string;
-    id:                     number;
-    html_url:               string;
-    diff_url:               string;
-    patch_url:              string;
-    issue_url:              string;
-    number:                 number;
-    state:                  string;
-    locked:                 boolean;
-    title:                  string;
-    user:                   User;
-    body:                   string;
-    created_at:             string;
-    updated_at:             string;
-    closed_at:              null;
-    merged_at:              null;
-    merge_commit_sha?:      string;
-    assignee:               null;
-    assignees:              any[];
-    requested_reviewers:    any[];
-    requested_teams:        any[];
-    milestone:              null;
-    commits_url:            string;
-    review_comments_url:    string;
-    review_comment_url:     string;
-    comments_url:           string;
-    statuses_url:           string;
-    head:                   Base;
-    base:                   Base;
-    _links:                 PullRequestLinks;
-    author_association:     string;
-    merged?:                boolean;
-    mergeable?:             null;
-    rebaseable?:            null;
-    mergeable_state?:       string;
-    merged_by?:             null;
-    comments?:              number;
-    review_comments?:       number;
-    maintainer_can_modify?: boolean;
-    commits?:               number;
-    additions?:             number;
-    deletions?:             number;
-    changed_files?:         number;
-}
-
-export interface PullRequestLinks {
-    self:            HTML;
-    html:            HTML;
-    issue:           HTML;
-    comments:        HTML;
-    review_comments: HTML;
-    review_comment:  HTML;
-    commits:         HTML;
-    statuses:        HTML;
-}
-
-export interface Base {
-    label: string;
-    ref:   string;
-    sha:   string;
-    user:  User;
-    repo:  Forkee;
-}
-
-export interface Repo {
+export interface EventRepo {
     id:   number;
     name: string;
     url:  string;
@@ -334,38 +308,30 @@ export interface Gists {
 }
 
 export interface Files {
-    "gistfile1.txt"?:                      Empty;
-    "entity404.mojang"?:                   Empty;
-    "-"?:                                  Empty;
-    "Maze Runner: The Death Cure (2018)"?: Empty;
-    "DataShowFragment.kt"?:                Empty;
-    "main-styles.css"?:                    Empty;
-    "config.json"?:                        Empty;
-    "app.js"?:                             Empty;
-    "server.txt"?:                         Empty;
+    "online Free 2018"?:       Empty;
+    "gistfile1.txt"?:          Empty;
+    "file.cs"?:                Empty;
+    "-"?:                      Empty;
+    "squarespace_orange.css"?: Empty;
+    "test.js"?:                Empty;
+    "output_log.txt"?:         Empty;
+    "test1.md"?:               Empty;
+    "remove-orphan-raws.py"?:  Empty;
+    "sample.pony"?:            Empty;
+    "app.js"?:                 Empty;
+    "openpanzer-save.json"?:   Empty;
+    "showrss.py"?:             Empty;
+    "sanitize_sql_like.rb"?:   Empty;
+    "65-noto.conf"?:           Empty;
+    "run.sh"?:                 Empty;
 }
 
 export interface Empty {
     filename:  string;
-    type:      Type;
-    language?: Language;
+    type:      string;
+    language?: string;
     raw_url:   string;
     size:      number;
-}
-
-export enum Language {
-    CSS = "CSS",
-    JSON = "JSON",
-    JavaScript = "JavaScript",
-    Kotlin = "Kotlin",
-    Text = "Text",
-}
-
-export enum Type {
-    ApplicationJSON = "application/json",
-    ApplicationJavascript = "application/javascript",
-    TextCSS = "text/css",
-    TextPlain = "text/plain",
 }
 
 export interface User {
@@ -384,7 +350,7 @@ export interface User {
     repos_url:           string;
     events_url:          string;
     received_events_url: string;
-    type:                UserType;
+    type:                Type;
     site_admin:          boolean;
 }
 
@@ -392,7 +358,7 @@ export enum GravatarID {
     Empty = "",
 }
 
-export enum UserType {
+export enum Type {
     User = "User",
 }
 
@@ -530,7 +496,7 @@ export module Convert {
             id: "",
             type: "",
             actor: O("Actor"),
-            repo: O("Repo"),
+            repo: O("EventRepo"),
             payload: O("Payload"),
             public: false,
             created_at: "",
@@ -545,9 +511,6 @@ export module Convert {
             avatar_url: "",
         },
         "Payload": {
-            action: U(null, ""),
-            issue: U(null, O("Issue")),
-            comment: U(null, O("Comment")),
             push_id: U(null, 0),
             size: U(null, 0),
             distinct_size: U(null, 0),
@@ -559,9 +522,10 @@ export module Convert {
             master_branch: U(null, ""),
             description: U(null, ""),
             pusher_type: U(null, ""),
-            number: U(null, 0),
+            action: U(null, ""),
+            issue: U(null, O("Issue")),
+            comment: U(null, O("Comment")),
             pull_request: U(null, O("PullRequest")),
-            forkee: U(null, O("Forkee")),
         },
         "Comment": {
             url: "",
@@ -608,7 +572,7 @@ export module Convert {
             repos_url: "",
             events_url: "",
             received_events_url: "",
-            type: E("UserType"),
+            type: E("Type"),
             site_admin: false,
         },
         "Commit": {
@@ -622,14 +586,88 @@ export module Convert {
             email: "",
             name: "",
         },
-        "Forkee": {
+        "Issue": {
+            url: "",
+            repository_url: "",
+            labels_url: "",
+            comments_url: "",
+            events_url: "",
+            html_url: "",
+            id: 0,
+            number: 0,
+            title: "",
+            user: O("User"),
+            labels: A(undefined),
+            state: "",
+            locked: false,
+            assignee: U(O("User"), null),
+            assignees: A(O("User")),
+            milestone: null,
+            comments: 0,
+            created_at: "",
+            updated_at: "",
+            closed_at: U(null, ""),
+            author_association: "",
+            body: "",
+        },
+        "PullRequest": {
+            url: "",
+            id: 0,
+            html_url: "",
+            diff_url: "",
+            patch_url: "",
+            issue_url: "",
+            number: 0,
+            state: "",
+            locked: false,
+            title: "",
+            user: O("User"),
+            body: "",
+            created_at: "",
+            updated_at: "",
+            closed_at: "",
+            merged_at: "",
+            merge_commit_sha: "",
+            assignee: O("User"),
+            assignees: A(O("User")),
+            requested_reviewers: A(undefined),
+            requested_teams: A(undefined),
+            milestone: null,
+            commits_url: "",
+            review_comments_url: "",
+            review_comment_url: "",
+            comments_url: "",
+            statuses_url: "",
+            head: O("Base"),
+            base: O("Base"),
+            _links: O("PullRequestLinks"),
+            author_association: "",
+        },
+        "PullRequestLinks": {
+            self: O("HTML"),
+            html: O("HTML"),
+            issue: O("HTML"),
+            comments: O("HTML"),
+            review_comments: O("HTML"),
+            review_comment: O("HTML"),
+            commits: O("HTML"),
+            statuses: O("HTML"),
+        },
+        "Base": {
+            label: "",
+            ref: "",
+            sha: "",
+            user: O("User"),
+            repo: O("BaseRepo"),
+        },
+        "BaseRepo": {
             id: 0,
             name: "",
             full_name: "",
             owner: O("User"),
             private: false,
             html_url: "",
-            description: U(null, ""),
+            description: "",
             fork: false,
             url: "",
             forks_url: "",
@@ -675,11 +713,11 @@ export module Convert {
             ssh_url: "",
             clone_url: "",
             svn_url: "",
-            homepage: U(E("GravatarID"), null),
+            homepage: null,
             size: 0,
             stargazers_count: 0,
             watchers_count: 0,
-            language: U(E("ForkeeLanguage"), null),
+            language: "",
             has_issues: false,
             has_projects: false,
             has_downloads: false,
@@ -689,107 +727,19 @@ export module Convert {
             mirror_url: null,
             archived: false,
             open_issues_count: 0,
-            license: null,
+            license: O("License"),
             forks: 0,
             open_issues: 0,
             watchers: 0,
-            default_branch: E("DefaultBranch"),
-            public: U(null, false),
+            default_branch: "",
         },
-        "Issue": {
-            url: "",
-            repository_url: "",
-            labels_url: "",
-            comments_url: "",
-            events_url: "",
-            html_url: "",
-            id: 0,
-            number: 0,
-            title: "",
-            user: O("User"),
-            labels: A(O("Label")),
-            state: "",
-            locked: false,
-            assignee: null,
-            assignees: A(undefined),
-            milestone: null,
-            comments: 0,
-            created_at: "",
-            updated_at: "",
-            closed_at: "",
-            author_association: "",
-            body: "",
-        },
-        "Label": {
-            id: 0,
-            url: "",
+        "License": {
+            key: "",
             name: "",
-            color: "",
-            default: false,
-        },
-        "PullRequest": {
+            spdx_id: "",
             url: "",
-            id: 0,
-            html_url: "",
-            diff_url: "",
-            patch_url: "",
-            issue_url: "",
-            number: 0,
-            state: "",
-            locked: false,
-            title: "",
-            user: O("User"),
-            body: "",
-            created_at: "",
-            updated_at: "",
-            closed_at: null,
-            merged_at: null,
-            merge_commit_sha: U(null, ""),
-            assignee: null,
-            assignees: A(undefined),
-            requested_reviewers: A(undefined),
-            requested_teams: A(undefined),
-            milestone: null,
-            commits_url: "",
-            review_comments_url: "",
-            review_comment_url: "",
-            comments_url: "",
-            statuses_url: "",
-            head: O("Base"),
-            base: O("Base"),
-            _links: O("PullRequestLinks"),
-            author_association: "",
-            merged: U(null, false),
-            mergeable: null,
-            rebaseable: null,
-            mergeable_state: U(null, ""),
-            merged_by: null,
-            comments: U(null, 0),
-            review_comments: U(null, 0),
-            maintainer_can_modify: U(null, false),
-            commits: U(null, 0),
-            additions: U(null, 0),
-            deletions: U(null, 0),
-            changed_files: U(null, 0),
         },
-        "PullRequestLinks": {
-            self: O("HTML"),
-            html: O("HTML"),
-            issue: O("HTML"),
-            comments: O("HTML"),
-            review_comments: O("HTML"),
-            review_comment: O("HTML"),
-            commits: O("HTML"),
-            statuses: O("HTML"),
-        },
-        "Base": {
-            label: "",
-            ref: "",
-            sha: "",
-            user: O("User"),
-            repo: O("Forkee"),
-        },
-        "Repo": {
+        "EventRepo": {
             id: 0,
             name: "",
             url: "",
@@ -814,20 +764,27 @@ export module Convert {
             owner: U(null, O("User")),
         },
         "Files": {
+            "online Free 2018": U(null, O("Empty")),
             "gistfile1.txt": U(null, O("Empty")),
-            "entity404.mojang": U(null, O("Empty")),
+            "file.cs": U(null, O("Empty")),
             "-": U(null, O("Empty")),
-            "Maze Runner: The Death Cure (2018)": U(null, O("Empty")),
-            "DataShowFragment.kt": U(null, O("Empty")),
-            "main-styles.css": U(null, O("Empty")),
-            "config.json": U(null, O("Empty")),
+            "squarespace_orange.css": U(null, O("Empty")),
+            "test.js": U(null, O("Empty")),
+            "output_log.txt": U(null, O("Empty")),
+            "test1.md": U(null, O("Empty")),
+            "remove-orphan-raws.py": U(null, O("Empty")),
+            "sample.pony": U(null, O("Empty")),
             "app.js": U(null, O("Empty")),
-            "server.txt": U(null, O("Empty")),
+            "openpanzer-save.json": U(null, O("Empty")),
+            "showrss.py": U(null, O("Empty")),
+            "sanitize_sql_like.rb": U(null, O("Empty")),
+            "65-noto.conf": U(null, O("Empty")),
+            "run.sh": U(null, O("Empty")),
         },
         "Empty": {
             filename: "",
-            type: E("Type"),
-            language: U(E("Language"), null),
+            type: "",
+            language: U(null, ""),
             raw_url: "",
             size: 0,
         },
@@ -842,29 +799,8 @@ export module Convert {
         "GravatarID": [
             GravatarID.Empty,
         ],
-        "UserType": [
-            UserType.User,
-        ],
-        "DefaultBranch": [
-            DefaultBranch.Master,
-        ],
-        "ForkeeLanguage": [
-            ForkeeLanguage.Go,
-            ForkeeLanguage.HTML,
-            ForkeeLanguage.JavaScript,
-        ],
-        "Language": [
-            Language.CSS,
-            Language.JSON,
-            Language.JavaScript,
-            Language.Kotlin,
-            Language.Text,
-        ],
         "Type": [
-            Type.ApplicationJSON,
-            Type.ApplicationJavascript,
-            Type.TextCSS,
-            Type.TextPlain,
+            Type.User,
         ],
     };
 }

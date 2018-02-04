@@ -80,7 +80,7 @@
             ],
             "title": "actor"
         },
-        "Repo": {
+        "EventRepo": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -100,6 +100,52 @@
                 "url"
             ],
             "title": "repo"
+        },
+        "Author": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "email",
+                "name"
+            ],
+            "title": "author"
+        },
+        "Commit": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "sha": {
+                    "type": "string"
+                },
+                "author": {
+                    "$ref": "#/definitions/Author"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "distinct": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "author",
+                "distinct",
+                "message",
+                "sha",
+                "url"
+            ],
+            "title": "commit"
         },
         "User": {
             "type": "object",
@@ -186,35 +232,6 @@
             ],
             "title": "user"
         },
-        "Label": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "color": {
-                    "type": "string"
-                },
-                "default": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "color",
-                "default",
-                "id",
-                "name",
-                "url"
-            ],
-            "title": "label"
-        },
         "Issue": {
             "type": "object",
             "additionalProperties": false,
@@ -251,9 +268,7 @@
                 },
                 "labels": {
                     "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Label"
-                    }
+                    "items": {}
                 },
                 "state": {
                     "type": "string"
@@ -262,11 +277,21 @@
                     "type": "boolean"
                 },
                 "assignee": {
-                    "type": "null"
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/User"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "assignee"
                 },
                 "assignees": {
                     "type": "array",
-                    "items": {}
+                    "items": {
+                        "$ref": "#/definitions/User"
+                    }
                 },
                 "milestone": {
                     "type": "null"
@@ -283,8 +308,16 @@
                     "format": "date-time"
                 },
                 "closed_at": {
-                    "type": "string",
-                    "format": "date-time"
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "closed_at"
                 },
                 "author_association": {
                     "type": "string"
@@ -429,53 +462,32 @@
             ],
             "title": "comment"
         },
-        "Author": {
+        "License": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "email": {
+                "key": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
-                }
-            },
-            "required": [
-                "email",
-                "name"
-            ],
-            "title": "author"
-        },
-        "Commit": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "sha": {
+                },
+                "spdx_id": {
                     "type": "string"
-                },
-                "author": {
-                    "$ref": "#/definitions/Author"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "distinct": {
-                    "type": "boolean"
                 },
                 "url": {
                     "type": "string"
                 }
             },
             "required": [
-                "author",
-                "distinct",
-                "message",
-                "sha",
+                "key",
+                "name",
+                "spdx_id",
                 "url"
             ],
-            "title": "commit"
+            "title": "license"
         },
-        "Forkee": {
+        "BaseRepo": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -498,15 +510,7 @@
                     "type": "string"
                 },
                 "description": {
-                    "oneOf": [
-                        {
-                            "type": "null"
-                        },
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "title": "description"
+                    "type": "string"
                 },
                 "fork": {
                     "type": "boolean"
@@ -647,19 +651,7 @@
                     "type": "string"
                 },
                 "homepage": {
-                    "oneOf": [
-                        {
-                            "type": "string",
-                            "enum": [
-                                ""
-                            ],
-                            "title": "gravatar_id"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "homepage"
+                    "type": "null"
                 },
                 "size": {
                     "type": "integer"
@@ -671,21 +663,7 @@
                     "type": "integer"
                 },
                 "language": {
-                    "oneOf": [
-                        {
-                            "type": "string",
-                            "enum": [
-                                "JavaScript",
-                                "HTML",
-                                "Go"
-                            ],
-                            "title": "language"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "language"
+                    "type": "string"
                 },
                 "has_issues": {
                     "type": "boolean"
@@ -715,7 +693,7 @@
                     "type": "integer"
                 },
                 "license": {
-                    "type": "null"
+                    "$ref": "#/definitions/License"
                 },
                 "forks": {
                     "type": "integer"
@@ -727,14 +705,7 @@
                     "type": "integer"
                 },
                 "default_branch": {
-                    "type": "string",
-                    "enum": [
-                        "master"
-                    ],
-                    "title": "default_branch"
-                },
-                "public": {
-                    "type": "boolean"
+                    "type": "string"
                 }
             },
             "required": [
@@ -810,7 +781,7 @@
                 "watchers",
                 "watchers_count"
             ],
-            "title": "forkee"
+            "title": "repo"
         },
         "Base": {
             "type": "object",
@@ -829,7 +800,7 @@
                     "$ref": "#/definitions/User"
                 },
                 "repo": {
-                    "$ref": "#/definitions/Forkee"
+                    "$ref": "#/definitions/BaseRepo"
                 }
             },
             "required": [
@@ -931,28 +902,24 @@
                     "format": "date-time"
                 },
                 "closed_at": {
-                    "type": "null"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "merged_at": {
-                    "type": "null"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "merge_commit_sha": {
-                    "oneOf": [
-                        {
-                            "type": "null"
-                        },
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "title": "description"
+                    "type": "string"
                 },
                 "assignee": {
-                    "type": "null"
+                    "$ref": "#/definitions/User"
                 },
                 "assignees": {
                     "type": "array",
-                    "items": {}
+                    "items": {
+                        "$ref": "#/definitions/User"
+                    }
                 },
                 "requested_reviewers": {
                     "type": "array",
@@ -991,42 +958,6 @@
                 },
                 "author_association": {
                     "type": "string"
-                },
-                "merged": {
-                    "type": "boolean"
-                },
-                "mergeable": {
-                    "type": "null"
-                },
-                "rebaseable": {
-                    "type": "null"
-                },
-                "mergeable_state": {
-                    "type": "string"
-                },
-                "merged_by": {
-                    "type": "null"
-                },
-                "comments": {
-                    "type": "integer"
-                },
-                "review_comments": {
-                    "type": "integer"
-                },
-                "maintainer_can_modify": {
-                    "type": "boolean"
-                },
-                "commits": {
-                    "type": "integer"
-                },
-                "additions": {
-                    "type": "integer"
-                },
-                "deletions": {
-                    "type": "integer"
-                },
-                "changed_files": {
-                    "type": "integer"
                 }
             },
             "required": [
@@ -1068,15 +999,6 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "issue": {
-                    "$ref": "#/definitions/Issue"
-                },
-                "comment": {
-                    "$ref": "#/definitions/Comment"
-                },
                 "push_id": {
                     "type": "integer"
                 },
@@ -1129,14 +1051,17 @@
                 "pusher_type": {
                     "type": "string"
                 },
-                "number": {
-                    "type": "integer"
+                "action": {
+                    "type": "string"
+                },
+                "issue": {
+                    "$ref": "#/definitions/Issue"
+                },
+                "comment": {
+                    "$ref": "#/definitions/Comment"
                 },
                 "pull_request": {
                     "$ref": "#/definitions/PullRequest"
-                },
-                "forkee": {
-                    "$ref": "#/definitions/Forkee"
                 }
             },
             "required": [],
@@ -1156,7 +1081,7 @@
                     "$ref": "#/definitions/Actor"
                 },
                 "repo": {
-                    "$ref": "#/definitions/Repo"
+                    "$ref": "#/definitions/EventRepo"
                 },
                 "payload": {
                     "$ref": "#/definitions/Payload"
@@ -1191,33 +1116,18 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string",
-                    "enum": [
-                        "application/json",
-                        "application/javascript",
-                        "text/plain",
-                        "text/css"
-                    ],
-                    "title": "type"
+                    "type": "string"
                 },
                 "language": {
                     "oneOf": [
                         {
-                            "type": "string",
-                            "enum": [
-                                "CSS",
-                                "JSON",
-                                "JavaScript",
-                                "Text",
-                                "Kotlin"
-                            ],
-                            "title": "language"
+                            "type": "null"
                         },
                         {
-                            "type": "null"
+                            "type": "string"
                         }
                     ],
-                    "title": "language"
+                    "title": "description"
                 },
                 "raw_url": {
                     "type": "string"
@@ -1239,31 +1149,52 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+                "online Free 2018": {
+                    "$ref": "#/definitions/Empty"
+                },
                 "gistfile1.txt": {
                     "$ref": "#/definitions/Empty"
                 },
-                "entity404.mojang": {
+                "file.cs": {
                     "$ref": "#/definitions/Empty"
                 },
                 "-": {
                     "$ref": "#/definitions/Empty"
                 },
-                "Maze Runner: The Death Cure (2018)": {
+                "squarespace_orange.css": {
                     "$ref": "#/definitions/Empty"
                 },
-                "DataShowFragment.kt": {
+                "test.js": {
                     "$ref": "#/definitions/Empty"
                 },
-                "main-styles.css": {
+                "output_log.txt": {
                     "$ref": "#/definitions/Empty"
                 },
-                "config.json": {
+                "test1.md": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "remove-orphan-raws.py": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "sample.pony": {
                     "$ref": "#/definitions/Empty"
                 },
                 "app.js": {
                     "$ref": "#/definitions/Empty"
                 },
-                "server.txt": {
+                "openpanzer-save.json": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "showrss.py": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "sanitize_sql_like.rb": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "65-noto.conf": {
+                    "$ref": "#/definitions/Empty"
+                },
+                "run.sh": {
                     "$ref": "#/definitions/Empty"
                 }
             },

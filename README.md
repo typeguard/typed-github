@@ -1,4 +1,4 @@
-# Typed GitHub API
+# GitHub API – Typed JSON API
 
 > Data about gists, events, emoji, and more.
 

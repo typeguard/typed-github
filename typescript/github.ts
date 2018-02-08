@@ -15,7 +15,7 @@ export interface Events {
     id:         string;
     type:       string;
     actor:      Actor;
-    repo:       Repo;
+    repo:       EventRepo;
     payload:    Payload;
     public:     boolean;
     created_at: string;
@@ -36,13 +36,12 @@ export enum GravatarID {
 }
 
 export interface Payload {
-    action?:        string;
-    number?:        number;
-    pull_request?:  PayloadPullRequest;
-    forkee?:        Forkee;
     ref?:           string;
     ref_type?:      string;
     pusher_type?:   string;
+    action?:        string;
+    number?:        number;
+    pull_request?:  PayloadPullRequest;
     push_id?:       number;
     size?:          number;
     distinct_size?: number;
@@ -50,40 +49,25 @@ export interface Payload {
     before?:        string;
     commits?:       Commit[];
     issue?:         Issue;
+    comment?:       Comment;
     master_branch?: string;
     description?:   string;
-    comment?:       Comment;
 }
 
 export interface Comment {
-    url:                     string;
-    html_url:                string;
-    issue_url?:              string;
-    id:                      number;
-    user:                    User;
-    created_at:              string;
-    updated_at:              string;
-    author_association:      string;
-    body:                    string;
-    pull_request_review_id?: number;
-    diff_hunk?:              string;
-    path?:                   string;
-    position?:               number;
-    original_position?:      number;
-    commit_id?:              string;
-    original_commit_id?:     string;
-    pull_request_url?:       string;
-    _links?:                 CommentLinks;
-}
-
-export interface CommentLinks {
-    self:         HTML;
-    html:         HTML;
-    pull_request: HTML;
-}
-
-export interface HTML {
-    href: string;
+    url:                string;
+    html_url:           string;
+    issue_url?:         string;
+    id:                 number;
+    user:               User;
+    created_at:         string;
+    updated_at:         string;
+    author_association: string;
+    body:               string;
+    position?:          number;
+    line?:              number;
+    path?:              string;
+    commit_id?:         string;
 }
 
 export interface User {
@@ -102,12 +86,11 @@ export interface User {
     repos_url:           string;
     events_url:          string;
     received_events_url: string;
-    type:                UserType;
+    type:                Type;
     site_admin:          boolean;
 }
 
-export enum UserType {
-    Organization = "Organization",
+export enum Type {
     User = "User",
 }
 
@@ -124,7 +107,109 @@ export interface Author {
     name:  string;
 }
 
-export interface Forkee {
+export interface Issue {
+    url:                string;
+    repository_url:     string;
+    labels_url:         string;
+    comments_url:       string;
+    events_url:         string;
+    html_url:           string;
+    id:                 number;
+    number:             number;
+    title:              string;
+    user:               User;
+    labels:             any[];
+    state:              string;
+    locked:             boolean;
+    assignee:           null;
+    assignees:          any[];
+    milestone:          null;
+    comments:           number;
+    created_at:         string;
+    updated_at:         string;
+    closed_at:          null;
+    author_association: string;
+    body:               string;
+    pull_request?:      IssuePullRequest;
+}
+
+export interface IssuePullRequest {
+    url:       string;
+    html_url:  string;
+    diff_url:  string;
+    patch_url: string;
+}
+
+export interface PayloadPullRequest {
+    url:                   string;
+    id:                    number;
+    html_url:              string;
+    diff_url:              string;
+    patch_url:             string;
+    issue_url:             string;
+    number:                number;
+    state:                 string;
+    locked:                boolean;
+    title:                 string;
+    user:                  User;
+    body:                  string;
+    created_at:            string;
+    updated_at:            string;
+    closed_at:             null;
+    merged_at:             null;
+    merge_commit_sha:      null;
+    assignee:              null;
+    assignees:             any[];
+    requested_reviewers:   any[];
+    requested_teams:       any[];
+    milestone:             null;
+    commits_url:           string;
+    review_comments_url:   string;
+    review_comment_url:    string;
+    comments_url:          string;
+    statuses_url:          string;
+    head:                  Base;
+    base:                  Base;
+    _links:                Links;
+    author_association:    string;
+    merged:                boolean;
+    mergeable:             null;
+    rebaseable:            null;
+    mergeable_state:       string;
+    merged_by:             null;
+    comments:              number;
+    review_comments:       number;
+    maintainer_can_modify: boolean;
+    commits:               number;
+    additions:             number;
+    deletions:             number;
+    changed_files:         number;
+}
+
+export interface Links {
+    self:            Comments;
+    html:            Comments;
+    issue:           Comments;
+    comments:        Comments;
+    review_comments: Comments;
+    review_comment:  Comments;
+    commits:         Comments;
+    statuses:        Comments;
+}
+
+export interface Comments {
+    href: string;
+}
+
+export interface Base {
+    label: string;
+    ref:   string;
+    sha:   string;
+    user:  User;
+    repo:  BaseRepo;
+}
+
+export interface BaseRepo {
     id:                number;
     name:              string;
     full_name:         string;
@@ -177,7 +262,7 @@ export interface Forkee {
     ssh_url:           string;
     clone_url:         string;
     svn_url:           string;
-    homepage?:         Homepage;
+    homepage:          null;
     size:              number;
     stargazers_count:  number;
     watchers_count:    number;
@@ -191,155 +276,14 @@ export interface Forkee {
     mirror_url:        null;
     archived:          boolean;
     open_issues_count: number;
-    license?:          License;
+    license:           null;
     forks:             number;
     open_issues:       number;
     watchers:          number;
-    default_branch:    DefaultBranch;
-    public?:           boolean;
+    default_branch:    string;
 }
 
-export enum DefaultBranch {
-    Master = "master",
-}
-
-export enum Homepage {
-    Empty = "",
-    HTTPSValloricGithubIoYcmd = "https://valloric.github.io/ycmd/",
-}
-
-export interface License {
-    key:     string;
-    name:    string;
-    spdx_id: string;
-    url:     string;
-}
-
-export interface Issue {
-    url:                string;
-    repository_url:     string;
-    labels_url:         string;
-    comments_url:       string;
-    events_url:         string;
-    html_url:           string;
-    id:                 number;
-    number:             number;
-    title:              string;
-    user:               User;
-    labels:             Label[];
-    state:              string;
-    locked:             boolean;
-    assignee:           null;
-    assignees:          any[];
-    milestone?:         Milestone;
-    comments:           number;
-    created_at:         string;
-    updated_at:         string;
-    closed_at?:         string;
-    author_association: string;
-    body:               string;
-    pull_request?:      IssuePullRequest;
-}
-
-export interface Label {
-    id:      number;
-    url:     string;
-    name:    string;
-    color:   string;
-    default: boolean;
-}
-
-export interface Milestone {
-    url:           string;
-    html_url:      string;
-    labels_url:    string;
-    id:            number;
-    number:        number;
-    title:         string;
-    description:   null;
-    creator:       User;
-    open_issues:   number;
-    closed_issues: number;
-    state:         string;
-    created_at:    string;
-    updated_at:    string;
-    due_on:        null;
-    closed_at:     null;
-}
-
-export interface IssuePullRequest {
-    url:       string;
-    html_url:  string;
-    diff_url:  string;
-    patch_url: string;
-}
-
-export interface PayloadPullRequest {
-    url:                    string;
-    id:                     number;
-    html_url:               string;
-    diff_url:               string;
-    patch_url:              string;
-    issue_url:              string;
-    number:                 number;
-    state:                  string;
-    locked:                 boolean;
-    title:                  string;
-    user:                   User;
-    body:                   string;
-    created_at:             string;
-    updated_at:             string;
-    closed_at?:             string;
-    merged_at:              null;
-    merge_commit_sha?:      string;
-    assignee:               null;
-    assignees:              any[];
-    requested_reviewers:    any[];
-    requested_teams:        any[];
-    milestone:              null;
-    commits_url:            string;
-    review_comments_url:    string;
-    review_comment_url:     string;
-    comments_url:           string;
-    statuses_url:           string;
-    head:                   Base;
-    base:                   Base;
-    _links:                 PullRequestLinks;
-    author_association:     string;
-    merged?:                boolean;
-    mergeable?:             boolean;
-    rebaseable?:            boolean;
-    mergeable_state?:       string;
-    merged_by?:             null;
-    comments?:              number;
-    review_comments?:       number;
-    maintainer_can_modify?: boolean;
-    commits?:               number;
-    additions?:             number;
-    deletions?:             number;
-    changed_files?:         number;
-}
-
-export interface PullRequestLinks {
-    self:            HTML;
-    html:            HTML;
-    issue:           HTML;
-    comments:        HTML;
-    review_comments: HTML;
-    review_comment:  HTML;
-    commits:         HTML;
-    statuses:        HTML;
-}
-
-export interface Base {
-    label: string;
-    ref:   string;
-    sha:   string;
-    user:  User;
-    repo:  Forkee;
-}
-
-export interface Repo {
+export interface EventRepo {
     id:   number;
     name: string;
     url:  string;
@@ -361,53 +305,16 @@ export interface Gists {
     comments:     number;
     user:         null;
     comments_url: string;
-    truncated:    boolean;
     owner?:       User;
+    truncated:    boolean;
 }
 
 export interface File {
     filename:  string;
-    type:      FileType;
+    type:      string;
     language?: string;
     raw_url:   string;
     size:      number;
-}
-
-export enum FileType {
-    ApplicationJSON = "application/json",
-    ApplicationJavascript = "application/javascript",
-    TextCSS = "text/css",
-    TextHTML = "text/html",
-    TextPlain = "text/plain",
-}
-
-export interface User {
-    login:               string;
-    id:                  number;
-    avatar_url:          string;
-    gravatar_id:         GravatarID;
-    url:                 string;
-    html_url:            string;
-    followers_url:       string;
-    following_url:       string;
-    gists_url:           string;
-    starred_url:         string;
-    subscriptions_url:   string;
-    organizations_url:   string;
-    repos_url:           string;
-    events_url:          string;
-    received_events_url: string;
-    type:                UserType;
-    site_admin:          boolean;
-}
-
-export enum GravatarID {
-    Empty = "",
-}
-
-export enum UserType {
-    Organization = "Organization",
-    User = "User",
 }
 
 export interface Meta {
@@ -544,7 +451,7 @@ export module Convert {
             id: "",
             type: "",
             actor: O("Actor"),
-            repo: O("Repo"),
+            repo: O("EventRepo"),
             payload: O("Payload"),
             public: false,
             created_at: "",
@@ -559,13 +466,12 @@ export module Convert {
             avatar_url: "",
         },
         "Payload": {
-            action: U(null, ""),
-            number: U(null, 0),
-            pull_request: U(null, O("PayloadPullRequest")),
-            forkee: U(null, O("Forkee")),
             ref: U(null, ""),
             ref_type: U(null, ""),
             pusher_type: U(null, ""),
+            action: U(null, ""),
+            number: U(null, 0),
+            pull_request: U(null, O("PayloadPullRequest")),
             push_id: U(null, 0),
             size: U(null, 0),
             distinct_size: U(null, 0),
@@ -573,9 +479,9 @@ export module Convert {
             before: U(null, ""),
             commits: U(null, A(O("Commit"))),
             issue: U(null, O("Issue")),
+            comment: U(null, O("Comment")),
             master_branch: U(null, ""),
             description: U(null, ""),
-            comment: U(null, O("Comment")),
         },
         "Comment": {
             url: "",
@@ -587,23 +493,10 @@ export module Convert {
             updated_at: "",
             author_association: "",
             body: "",
-            pull_request_review_id: U(null, 0),
-            diff_hunk: U(null, ""),
-            path: U(null, ""),
             position: U(null, 0),
-            original_position: U(null, 0),
+            line: U(null, 0),
+            path: U(null, ""),
             commit_id: U(null, ""),
-            original_commit_id: U(null, ""),
-            pull_request_url: U(null, ""),
-            _links: U(null, O("CommentLinks")),
-        },
-        "CommentLinks": {
-            self: O("HTML"),
-            html: O("HTML"),
-            pull_request: O("HTML"),
-        },
-        "HTML": {
-            href: "",
         },
         "User": {
             login: "",
@@ -621,7 +514,7 @@ export module Convert {
             repos_url: "",
             events_url: "",
             received_events_url: "",
-            type: E("UserType"),
+            type: E("Type"),
             site_admin: false,
         },
         "Commit": {
@@ -635,7 +528,103 @@ export module Convert {
             email: "",
             name: "",
         },
-        "Forkee": {
+        "Issue": {
+            url: "",
+            repository_url: "",
+            labels_url: "",
+            comments_url: "",
+            events_url: "",
+            html_url: "",
+            id: 0,
+            number: 0,
+            title: "",
+            user: O("User"),
+            labels: A(undefined),
+            state: "",
+            locked: false,
+            assignee: null,
+            assignees: A(undefined),
+            milestone: null,
+            comments: 0,
+            created_at: "",
+            updated_at: "",
+            closed_at: null,
+            author_association: "",
+            body: "",
+            pull_request: U(null, O("IssuePullRequest")),
+        },
+        "IssuePullRequest": {
+            url: "",
+            html_url: "",
+            diff_url: "",
+            patch_url: "",
+        },
+        "PayloadPullRequest": {
+            url: "",
+            id: 0,
+            html_url: "",
+            diff_url: "",
+            patch_url: "",
+            issue_url: "",
+            number: 0,
+            state: "",
+            locked: false,
+            title: "",
+            user: O("User"),
+            body: "",
+            created_at: "",
+            updated_at: "",
+            closed_at: null,
+            merged_at: null,
+            merge_commit_sha: null,
+            assignee: null,
+            assignees: A(undefined),
+            requested_reviewers: A(undefined),
+            requested_teams: A(undefined),
+            milestone: null,
+            commits_url: "",
+            review_comments_url: "",
+            review_comment_url: "",
+            comments_url: "",
+            statuses_url: "",
+            head: O("Base"),
+            base: O("Base"),
+            _links: O("Links"),
+            author_association: "",
+            merged: false,
+            mergeable: null,
+            rebaseable: null,
+            mergeable_state: "",
+            merged_by: null,
+            comments: 0,
+            review_comments: 0,
+            maintainer_can_modify: false,
+            commits: 0,
+            additions: 0,
+            deletions: 0,
+            changed_files: 0,
+        },
+        "Links": {
+            self: O("Comments"),
+            html: O("Comments"),
+            issue: O("Comments"),
+            comments: O("Comments"),
+            review_comments: O("Comments"),
+            review_comment: O("Comments"),
+            commits: O("Comments"),
+            statuses: O("Comments"),
+        },
+        "Comments": {
+            href: "",
+        },
+        "Base": {
+            label: "",
+            ref: "",
+            sha: "",
+            user: O("User"),
+            repo: O("BaseRepo"),
+        },
+        "BaseRepo": {
             id: 0,
             name: "",
             full_name: "",
@@ -688,7 +677,7 @@ export module Convert {
             ssh_url: "",
             clone_url: "",
             svn_url: "",
-            homepage: U(E("Homepage"), null),
+            homepage: null,
             size: 0,
             stargazers_count: 0,
             watchers_count: 0,
@@ -702,137 +691,13 @@ export module Convert {
             mirror_url: null,
             archived: false,
             open_issues_count: 0,
-            license: U(O("License"), null),
+            license: null,
             forks: 0,
             open_issues: 0,
             watchers: 0,
-            default_branch: E("DefaultBranch"),
-            public: U(null, false),
+            default_branch: "",
         },
-        "License": {
-            key: "",
-            name: "",
-            spdx_id: "",
-            url: "",
-        },
-        "Issue": {
-            url: "",
-            repository_url: "",
-            labels_url: "",
-            comments_url: "",
-            events_url: "",
-            html_url: "",
-            id: 0,
-            number: 0,
-            title: "",
-            user: O("User"),
-            labels: A(O("Label")),
-            state: "",
-            locked: false,
-            assignee: null,
-            assignees: A(undefined),
-            milestone: U(O("Milestone"), null),
-            comments: 0,
-            created_at: "",
-            updated_at: "",
-            closed_at: U(null, ""),
-            author_association: "",
-            body: "",
-            pull_request: U(null, O("IssuePullRequest")),
-        },
-        "Label": {
-            id: 0,
-            url: "",
-            name: "",
-            color: "",
-            default: false,
-        },
-        "Milestone": {
-            url: "",
-            html_url: "",
-            labels_url: "",
-            id: 0,
-            number: 0,
-            title: "",
-            description: null,
-            creator: O("User"),
-            open_issues: 0,
-            closed_issues: 0,
-            state: "",
-            created_at: "",
-            updated_at: "",
-            due_on: null,
-            closed_at: null,
-        },
-        "IssuePullRequest": {
-            url: "",
-            html_url: "",
-            diff_url: "",
-            patch_url: "",
-        },
-        "PayloadPullRequest": {
-            url: "",
-            id: 0,
-            html_url: "",
-            diff_url: "",
-            patch_url: "",
-            issue_url: "",
-            number: 0,
-            state: "",
-            locked: false,
-            title: "",
-            user: O("User"),
-            body: "",
-            created_at: "",
-            updated_at: "",
-            closed_at: U(null, ""),
-            merged_at: null,
-            merge_commit_sha: U(null, ""),
-            assignee: null,
-            assignees: A(undefined),
-            requested_reviewers: A(undefined),
-            requested_teams: A(undefined),
-            milestone: null,
-            commits_url: "",
-            review_comments_url: "",
-            review_comment_url: "",
-            comments_url: "",
-            statuses_url: "",
-            head: O("Base"),
-            base: O("Base"),
-            _links: O("PullRequestLinks"),
-            author_association: "",
-            merged: U(null, false),
-            mergeable: U(false, null),
-            rebaseable: U(false, null),
-            mergeable_state: U(null, ""),
-            merged_by: null,
-            comments: U(null, 0),
-            review_comments: U(null, 0),
-            maintainer_can_modify: U(null, false),
-            commits: U(null, 0),
-            additions: U(null, 0),
-            deletions: U(null, 0),
-            changed_files: U(null, 0),
-        },
-        "PullRequestLinks": {
-            self: O("HTML"),
-            html: O("HTML"),
-            issue: O("HTML"),
-            comments: O("HTML"),
-            review_comments: O("HTML"),
-            review_comment: O("HTML"),
-            commits: O("HTML"),
-            statuses: O("HTML"),
-        },
-        "Base": {
-            label: "",
-            ref: "",
-            sha: "",
-            user: O("User"),
-            repo: O("Forkee"),
-        },
-        "Repo": {
+        "EventRepo": {
             id: 0,
             name: "",
             url: "",
@@ -853,12 +718,12 @@ export module Convert {
             comments: 0,
             user: null,
             comments_url: "",
-            truncated: false,
             owner: U(null, O("User")),
+            truncated: false,
         },
         "File": {
             filename: "",
-            type: E("FileType"),
+            type: "",
             language: U(null, ""),
             raw_url: "",
             size: 0,
@@ -874,23 +739,8 @@ export module Convert {
         "GravatarID": [
             GravatarID.Empty,
         ],
-        "UserType": [
-            UserType.Organization,
-            UserType.User,
-        ],
-        "DefaultBranch": [
-            DefaultBranch.Master,
-        ],
-        "Homepage": [
-            Homepage.Empty,
-            Homepage.HTTPSValloricGithubIoYcmd,
-        ],
-        "FileType": [
-            FileType.ApplicationJSON,
-            FileType.ApplicationJavascript,
-            FileType.TextCSS,
-            FileType.TextHTML,
-            FileType.TextPlain,
+        "Type": [
+            Type.User,
         ],
     };
 }

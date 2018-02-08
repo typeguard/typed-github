@@ -80,7 +80,7 @@
             ],
             "title": "actor"
         },
-        "Repo": {
+        "EventRepo": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -157,8 +157,7 @@
                 "type": {
                     "type": "string",
                     "enum": [
-                        "User",
-                        "Organization"
+                        "User"
                     ],
                     "title": "type"
                 },
@@ -187,32 +186,7 @@
             ],
             "title": "user"
         },
-        "License": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "spdx_id": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "key",
-                "name",
-                "spdx_id",
-                "url"
-            ],
-            "title": "license"
-        },
-        "Forkee": {
+        "BaseRepo": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -384,20 +358,7 @@
                     "type": "string"
                 },
                 "homepage": {
-                    "oneOf": [
-                        {
-                            "type": "string",
-                            "enum": [
-                                "",
-                                "https://valloric.github.io/ycmd/"
-                            ],
-                            "title": "homepage"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "homepage"
+                    "type": "null"
                 },
                 "size": {
                     "type": "integer"
@@ -447,15 +408,7 @@
                     "type": "integer"
                 },
                 "license": {
-                    "oneOf": [
-                        {
-                            "$ref": "#/definitions/License"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "license"
+                    "type": "null"
                 },
                 "forks": {
                     "type": "integer"
@@ -467,14 +420,7 @@
                     "type": "integer"
                 },
                 "default_branch": {
-                    "type": "string",
-                    "enum": [
-                        "master"
-                    ],
-                    "title": "default_branch"
-                },
-                "public": {
-                    "type": "boolean"
+                    "type": "string"
                 }
             },
             "required": [
@@ -550,7 +496,7 @@
                 "watchers",
                 "watchers_count"
             ],
-            "title": "forkee"
+            "title": "repo"
         },
         "Base": {
             "type": "object",
@@ -569,7 +515,7 @@
                     "$ref": "#/definitions/User"
                 },
                 "repo": {
-                    "$ref": "#/definitions/Forkee"
+                    "$ref": "#/definitions/BaseRepo"
                 }
             },
             "required": [
@@ -581,7 +527,7 @@
             ],
             "title": "base"
         },
-        "HTML": {
+        "Comments": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -592,35 +538,35 @@
             "required": [
                 "href"
             ],
-            "title": "html"
+            "title": "comments"
         },
-        "PullRequestLinks": {
+        "Links": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
                 "self": {
-                    "$ref": "#/definitions/HTML"
+                    "$ref": "#/definitions/Comments"
                 },
                 "html": {
-                    "$ref": "#/definitions/HTML"
+                    "$ref": "#/definitions/Comments"
                 },
                 "issue": {
-                    "$ref": "#/definitions/HTML"
+                    "$ref": "#/definitions/Comments"
                 },
                 "comments": {
-                    "$ref": "#/definitions/HTML"
+                    "$ref": "#/definitions/Comments"
                 },
                 "review_comments": {
-                    "$ref": "#/definitions/HTML"
+                    "$ref": "#/definitions/Comments"
                 },
                 "review_comment": {
-                    "$ref": "#/definitions/HTML"
+                    "$ref": "#/definitions/Comments"
                 },
                 "commits": {
-                    "$ref": "#/definitions/HTML"
+                    "$ref": "#/definitions/Comments"
                 },
                 "statuses": {
-                    "$ref": "#/definitions/HTML"
+                    "$ref": "#/definitions/Comments"
                 }
             },
             "required": [
@@ -684,30 +630,13 @@
                     "format": "date-time"
                 },
                 "closed_at": {
-                    "oneOf": [
-                        {
-                            "type": "string",
-                            "format": "date-time"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "closed_at"
+                    "type": "null"
                 },
                 "merged_at": {
                     "type": "null"
                 },
                 "merge_commit_sha": {
-                    "oneOf": [
-                        {
-                            "type": "null"
-                        },
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "title": "description"
+                    "type": "null"
                 },
                 "assignee": {
                     "type": "null"
@@ -749,7 +678,7 @@
                     "$ref": "#/definitions/Base"
                 },
                 "_links": {
-                    "$ref": "#/definitions/PullRequestLinks"
+                    "$ref": "#/definitions/Links"
                 },
                 "author_association": {
                     "type": "string"
@@ -758,26 +687,10 @@
                     "type": "boolean"
                 },
                 "mergeable": {
-                    "oneOf": [
-                        {
-                            "type": "boolean"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "eable"
+                    "type": "null"
                 },
                 "rebaseable": {
-                    "oneOf": [
-                        {
-                            "type": "boolean"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "eable"
+                    "type": "null"
                 },
                 "mergeable_state": {
                     "type": "string"
@@ -809,29 +722,41 @@
             },
             "required": [
                 "_links",
+                "additions",
                 "assignee",
                 "assignees",
                 "author_association",
                 "base",
                 "body",
+                "changed_files",
                 "closed_at",
+                "comments",
                 "comments_url",
+                "commits",
                 "commits_url",
                 "created_at",
+                "deletions",
                 "diff_url",
                 "head",
                 "html_url",
                 "id",
                 "issue_url",
                 "locked",
+                "maintainer_can_modify",
                 "merge_commit_sha",
+                "mergeable",
+                "mergeable_state",
+                "merged",
                 "merged_at",
+                "merged_by",
                 "milestone",
                 "number",
                 "patch_url",
+                "rebaseable",
                 "requested_reviewers",
                 "requested_teams",
                 "review_comment_url",
+                "review_comments",
                 "review_comments_url",
                 "state",
                 "statuses_url",
@@ -887,106 +812,6 @@
                 "url"
             ],
             "title": "commit"
-        },
-        "Label": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "color": {
-                    "type": "string"
-                },
-                "default": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "color",
-                "default",
-                "id",
-                "name",
-                "url"
-            ],
-            "title": "label"
-        },
-        "Milestone": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "url": {
-                    "type": "string"
-                },
-                "html_url": {
-                    "type": "string"
-                },
-                "labels_url": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "number": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "null"
-                },
-                "creator": {
-                    "$ref": "#/definitions/User"
-                },
-                "open_issues": {
-                    "type": "integer"
-                },
-                "closed_issues": {
-                    "type": "integer"
-                },
-                "state": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "due_on": {
-                    "type": "null"
-                },
-                "closed_at": {
-                    "type": "null"
-                }
-            },
-            "required": [
-                "closed_at",
-                "closed_issues",
-                "created_at",
-                "creator",
-                "description",
-                "due_on",
-                "html_url",
-                "id",
-                "labels_url",
-                "number",
-                "open_issues",
-                "state",
-                "title",
-                "updated_at",
-                "url"
-            ],
-            "title": "milestone"
         },
         "IssuePullRequest": {
             "type": "object",
@@ -1049,9 +874,7 @@
                 },
                 "labels": {
                     "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Label"
-                    }
+                    "items": {}
                 },
                 "state": {
                     "type": "string"
@@ -1067,15 +890,7 @@
                     "items": {}
                 },
                 "milestone": {
-                    "oneOf": [
-                        {
-                            "$ref": "#/definitions/Milestone"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "milestone"
+                    "type": "null"
                 },
                 "comments": {
                     "type": "integer"
@@ -1089,16 +904,7 @@
                     "format": "date-time"
                 },
                 "closed_at": {
-                    "oneOf": [
-                        {
-                            "type": "string",
-                            "format": "date-time"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "closed_at"
+                    "type": "null"
                 },
                 "author_association": {
                     "type": "string"
@@ -1136,27 +942,6 @@
             ],
             "title": "issue"
         },
-        "CommentLinks": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "self": {
-                    "$ref": "#/definitions/HTML"
-                },
-                "html": {
-                    "$ref": "#/definitions/HTML"
-                },
-                "pull_request": {
-                    "$ref": "#/definitions/HTML"
-                }
-            },
-            "required": [
-                "html",
-                "pull_request",
-                "self"
-            ],
-            "title": "_links"
-        },
         "Comment": {
             "type": "object",
             "additionalProperties": false,
@@ -1190,32 +975,17 @@
                 "body": {
                     "type": "string"
                 },
-                "pull_request_review_id": {
+                "position": {
                     "type": "integer"
                 },
-                "diff_hunk": {
-                    "type": "string"
+                "line": {
+                    "type": "integer"
                 },
                 "path": {
                     "type": "string"
                 },
-                "position": {
-                    "type": "integer"
-                },
-                "original_position": {
-                    "type": "integer"
-                },
                 "commit_id": {
                     "type": "string"
-                },
-                "original_commit_id": {
-                    "type": "string"
-                },
-                "pull_request_url": {
-                    "type": "string"
-                },
-                "_links": {
-                    "$ref": "#/definitions/CommentLinks"
                 }
             },
             "required": [
@@ -1234,18 +1004,6 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "integer"
-                },
-                "pull_request": {
-                    "$ref": "#/definitions/PayloadPullRequest"
-                },
-                "forkee": {
-                    "$ref": "#/definitions/Forkee"
-                },
                 "ref": {
                     "oneOf": [
                         {
@@ -1262,6 +1020,15 @@
                 },
                 "pusher_type": {
                     "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "pull_request": {
+                    "$ref": "#/definitions/PayloadPullRequest"
                 },
                 "push_id": {
                     "type": "integer"
@@ -1287,6 +1054,9 @@
                 "issue": {
                     "$ref": "#/definitions/Issue"
                 },
+                "comment": {
+                    "$ref": "#/definitions/Comment"
+                },
                 "master_branch": {
                     "type": "string"
                 },
@@ -1300,9 +1070,6 @@
                         }
                     ],
                     "title": "description"
-                },
-                "comment": {
-                    "$ref": "#/definitions/Comment"
                 }
             },
             "required": [],
@@ -1322,7 +1089,7 @@
                     "$ref": "#/definitions/Actor"
                 },
                 "repo": {
-                    "$ref": "#/definitions/Repo"
+                    "$ref": "#/definitions/EventRepo"
                 },
                 "payload": {
                     "$ref": "#/definitions/Payload"
@@ -1357,15 +1124,7 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string",
-                    "enum": [
-                        "text/plain",
-                        "text/css",
-                        "application/json",
-                        "application/javascript",
-                        "text/html"
-                    ],
-                    "title": "type"
+                    "type": "string"
                 },
                 "language": {
                     "oneOf": [
@@ -1456,11 +1215,11 @@
                 "comments_url": {
                     "type": "string"
                 },
-                "truncated": {
-                    "type": "boolean"
-                },
                 "owner": {
                     "$ref": "#/definitions/User"
+                },
+                "truncated": {
+                    "type": "boolean"
                 }
             },
             "required": [

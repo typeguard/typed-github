@@ -16,7 +16,7 @@ typealias Gists = [Gist]
 struct Event: Codable {
     let id, type: String
     let actor: Actor
-    let repo: Repo
+    let repo: EventRepo
     let payload: Payload
     let purplePublic: Bool
     let createdAt: String
@@ -51,32 +51,30 @@ enum GravatarID: String, Codable {
 }
 
 struct Payload: Codable {
-    let action: String?
+    let ref: String?
+    let refType, pusherType, action: String?
     let number: Int?
     let pullRequest: PayloadPullRequest?
-    let forkee: Forkee?
-    let ref: String?
-    let refType, pusherType: String?
     let pushID, size, distinctSize: Int?
     let head, before: String?
     let commits: [Commit]?
     let issue: Issue?
+    let comment: Comment?
     let masterBranch: String?
     let description: String?
-    let comment: Comment?
 
     enum CodingKeys: String, CodingKey {
-        case action, number
-        case pullRequest = "pull_request"
-        case forkee, ref
+        case ref
         case refType = "ref_type"
         case pusherType = "pusher_type"
+        case action, number
+        case pullRequest = "pull_request"
         case pushID = "push_id"
         case size
         case distinctSize = "distinct_size"
-        case head, before, commits, issue
+        case head, before, commits, issue, comment
         case masterBranch = "master_branch"
-        case description, comment
+        case description
     }
 }
 
@@ -86,11 +84,8 @@ struct Comment: Codable {
     let id: Int
     let user: User
     let createdAt, updatedAt, authorAssociation, body: String
-    let pullRequestReviewID: Int?
-    let diffHunk, path: String?
-    let position, originalPosition: Int?
-    let commitID, originalCommitID, pullRequestURL: String?
-    let links: CommentLinks?
+    let position, line: Int?
+    let path, commitID: String?
 
     enum CodingKeys: String, CodingKey {
         case url
@@ -100,30 +95,9 @@ struct Comment: Codable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case authorAssociation = "author_association"
-        case body
-        case pullRequestReviewID = "pull_request_review_id"
-        case diffHunk = "diff_hunk"
-        case path, position
-        case originalPosition = "original_position"
+        case body, position, line, path
         case commitID = "commit_id"
-        case originalCommitID = "original_commit_id"
-        case pullRequestURL = "pull_request_url"
-        case links = "_links"
     }
-}
-
-struct CommentLinks: Codable {
-    let purpleSelf, html, pullRequest: HTML
-
-    enum CodingKeys: String, CodingKey {
-        case purpleSelf = "self"
-        case html
-        case pullRequest = "pull_request"
-    }
-}
-
-struct HTML: Codable {
-    let href: String
 }
 
 struct User: Codable {
@@ -134,7 +108,7 @@ struct User: Codable {
     let url, htmlURL, followersURL, followingURL: String
     let gistsURL, starredURL, subscriptionsURL, organizationsURL: String
     let reposURL, eventsURL, receivedEventsURL: String
-    let type: UserType
+    let type: PurpleType
     let siteAdmin: Bool
 
     enum CodingKeys: String, CodingKey {
@@ -157,8 +131,7 @@ struct User: Codable {
     }
 }
 
-enum UserType: String, Codable {
-    case organization = "Organization"
+enum PurpleType: String, Codable {
     case user = "User"
 }
 
@@ -174,7 +147,120 @@ struct Author: Codable {
     let email, name: String
 }
 
-struct Forkee: Codable {
+struct Issue: Codable {
+    let url, repositoryURL, labelsURL, commentsURL: String
+    let eventsURL, htmlURL: String
+    let id, number: Int
+    let title: String
+    let user: User
+    let labels: [JSONAny]
+    let state: String
+    let locked: Bool
+    let assignee: JSONNull?
+    let assignees: [JSONAny]
+    let milestone: JSONNull?
+    let comments: Int
+    let createdAt, updatedAt: String
+    let closedAt: JSONNull?
+    let authorAssociation, body: String
+    let pullRequest: IssuePullRequest?
+
+    enum CodingKeys: String, CodingKey {
+        case url
+        case repositoryURL = "repository_url"
+        case labelsURL = "labels_url"
+        case commentsURL = "comments_url"
+        case eventsURL = "events_url"
+        case htmlURL = "html_url"
+        case id, number, title, user, labels, state, locked, assignee, assignees, milestone, comments
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case closedAt = "closed_at"
+        case authorAssociation = "author_association"
+        case body
+        case pullRequest = "pull_request"
+    }
+}
+
+struct IssuePullRequest: Codable {
+    let url, htmlURL, diffURL, patchURL: String
+
+    enum CodingKeys: String, CodingKey {
+        case url
+        case htmlURL = "html_url"
+        case diffURL = "diff_url"
+        case patchURL = "patch_url"
+    }
+}
+
+struct PayloadPullRequest: Codable {
+    let url: String
+    let id: Int
+    let htmlURL, diffURL, patchURL, issueURL: String
+    let number: Int
+    let state: String
+    let locked: Bool
+    let title: String
+    let user: User
+    let body, createdAt, updatedAt: String
+    let closedAt, mergedAt, mergeCommitSHA, assignee: JSONNull?
+    let assignees, requestedReviewers, requestedTeams: [JSONAny]
+    let milestone: JSONNull?
+    let commitsURL, reviewCommentsURL, reviewCommentURL, commentsURL: String
+    let statusesURL: String
+    let head, base: Base
+    let links: Links
+    let authorAssociation: String
+    let merged: Bool
+    let mergeable, rebaseable: JSONNull?
+    let mergeableState: String
+    let mergedBy: JSONNull?
+    let comments, reviewComments: Int
+    let maintainerCanModify: Bool
+    let commits, additions, deletions, changedFiles: Int
+
+    enum CodingKeys: String, CodingKey {
+        case url, id
+        case htmlURL = "html_url"
+        case diffURL = "diff_url"
+        case patchURL = "patch_url"
+        case issueURL = "issue_url"
+        case number, state, locked, title, user, body
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case closedAt = "closed_at"
+        case mergedAt = "merged_at"
+        case mergeCommitSHA = "merge_commit_sha"
+        case assignee, assignees
+        case requestedReviewers = "requested_reviewers"
+        case requestedTeams = "requested_teams"
+        case milestone
+        case commitsURL = "commits_url"
+        case reviewCommentsURL = "review_comments_url"
+        case reviewCommentURL = "review_comment_url"
+        case commentsURL = "comments_url"
+        case statusesURL = "statuses_url"
+        case head, base
+        case links = "_links"
+        case authorAssociation = "author_association"
+        case merged, mergeable, rebaseable
+        case mergeableState = "mergeable_state"
+        case mergedBy = "merged_by"
+        case comments
+        case reviewComments = "review_comments"
+        case maintainerCanModify = "maintainer_can_modify"
+        case commits, additions, deletions
+        case changedFiles = "changed_files"
+    }
+}
+
+struct Base: Codable {
+    let label, ref, sha: String
+    let user: User
+    let repo: BaseRepo
+}
+
+struct BaseRepo: Codable {
     let id: Int
     let name, fullName: String
     let owner: User
@@ -193,7 +279,7 @@ struct Forkee: Codable {
     let milestonesURL, notificationsURL, labelsURL, releasesURL: String
     let deploymentsURL, createdAt, updatedAt, pushedAt: String
     let gitURL, sshURL, cloneURL, svnURL: String
-    let homepage: Homepage?
+    let homepage: JSONNull?
     let size, stargazersCount, watchersCount: Int
     let language: String?
     let hasIssues, hasProjects, hasDownloads, hasWiki: Bool
@@ -202,10 +288,9 @@ struct Forkee: Codable {
     let mirrorURL: JSONNull?
     let archived: Bool
     let openIssuesCount: Int
-    let license: License?
+    let license: JSONNull?
     let forks, openIssues, watchers: Int
-    let defaultBranch: DefaultBranch
-    let purplePublic: Bool?
+    let defaultBranch: String
 
     enum CodingKeys: String, CodingKey {
         case id, name
@@ -274,184 +359,12 @@ struct Forkee: Codable {
         case openIssues = "open_issues"
         case watchers
         case defaultBranch = "default_branch"
-        case purplePublic = "public"
     }
 }
 
-enum DefaultBranch: String, Codable {
-    case master = "master"
-}
-
-enum Homepage: String, Codable {
-    case empty = ""
-    case httpsValloricGithubIoYcmd = "https://valloric.github.io/ycmd/"
-}
-
-struct License: Codable {
-    let key, name, spdxID, url: String
-
-    enum CodingKeys: String, CodingKey {
-        case key, name
-        case spdxID = "spdx_id"
-        case url
-    }
-}
-
-struct Issue: Codable {
-    let url, repositoryURL, labelsURL, commentsURL: String
-    let eventsURL, htmlURL: String
-    let id, number: Int
-    let title: String
-    let user: User
-    let labels: [Label]
-    let state: String
-    let locked: Bool
-    let assignee: JSONNull?
-    let assignees: [JSONAny]
-    let milestone: Milestone?
-    let comments: Int
-    let createdAt, updatedAt: String
-    let closedAt: String?
-    let authorAssociation, body: String
-    let pullRequest: IssuePullRequest?
-
-    enum CodingKeys: String, CodingKey {
-        case url
-        case repositoryURL = "repository_url"
-        case labelsURL = "labels_url"
-        case commentsURL = "comments_url"
-        case eventsURL = "events_url"
-        case htmlURL = "html_url"
-        case id, number, title, user, labels, state, locked, assignee, assignees, milestone, comments
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case closedAt = "closed_at"
-        case authorAssociation = "author_association"
-        case body
-        case pullRequest = "pull_request"
-    }
-}
-
-struct Label: Codable {
-    let id: Int
-    let url, name, color: String
-    let purpleDefault: Bool
-
-    enum CodingKeys: String, CodingKey {
-        case id, url, name, color
-        case purpleDefault = "default"
-    }
-}
-
-struct Milestone: Codable {
-    let url, htmlURL, labelsURL: String
-    let id, number: Int
-    let title: String
-    let description: JSONNull?
-    let creator: User
-    let openIssues, closedIssues: Int
-    let state, createdAt, updatedAt: String
-    let dueOn, closedAt: JSONNull?
-
-    enum CodingKeys: String, CodingKey {
-        case url
-        case htmlURL = "html_url"
-        case labelsURL = "labels_url"
-        case id, number, title, description, creator
-        case openIssues = "open_issues"
-        case closedIssues = "closed_issues"
-        case state
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case dueOn = "due_on"
-        case closedAt = "closed_at"
-    }
-}
-
-struct IssuePullRequest: Codable {
-    let url, htmlURL, diffURL, patchURL: String
-
-    enum CodingKeys: String, CodingKey {
-        case url
-        case htmlURL = "html_url"
-        case diffURL = "diff_url"
-        case patchURL = "patch_url"
-    }
-}
-
-struct PayloadPullRequest: Codable {
-    let url: String
-    let id: Int
-    let htmlURL, diffURL, patchURL, issueURL: String
-    let number: Int
-    let state: String
-    let locked: Bool
-    let title: String
-    let user: User
-    let body, createdAt, updatedAt: String
-    let closedAt: String?
-    let mergedAt: JSONNull?
-    let mergeCommitSHA: String?
-    let assignee: JSONNull?
-    let assignees, requestedReviewers, requestedTeams: [JSONAny]
-    let milestone: JSONNull?
-    let commitsURL, reviewCommentsURL, reviewCommentURL, commentsURL: String
-    let statusesURL: String
-    let head, base: Base
-    let links: PullRequestLinks
-    let authorAssociation: String
-    let merged: Bool?
-    let mergeable, rebaseable: Bool?
-    let mergeableState: String?
-    let mergedBy: JSONNull?
-    let comments, reviewComments: Int?
-    let maintainerCanModify: Bool?
-    let commits, additions, deletions, changedFiles: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case url, id
-        case htmlURL = "html_url"
-        case diffURL = "diff_url"
-        case patchURL = "patch_url"
-        case issueURL = "issue_url"
-        case number, state, locked, title, user, body
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case closedAt = "closed_at"
-        case mergedAt = "merged_at"
-        case mergeCommitSHA = "merge_commit_sha"
-        case assignee, assignees
-        case requestedReviewers = "requested_reviewers"
-        case requestedTeams = "requested_teams"
-        case milestone
-        case commitsURL = "commits_url"
-        case reviewCommentsURL = "review_comments_url"
-        case reviewCommentURL = "review_comment_url"
-        case commentsURL = "comments_url"
-        case statusesURL = "statuses_url"
-        case head, base
-        case links = "_links"
-        case authorAssociation = "author_association"
-        case merged, mergeable, rebaseable
-        case mergeableState = "mergeable_state"
-        case mergedBy = "merged_by"
-        case comments
-        case reviewComments = "review_comments"
-        case maintainerCanModify = "maintainer_can_modify"
-        case commits, additions, deletions
-        case changedFiles = "changed_files"
-    }
-}
-
-struct Base: Codable {
-    let label, ref, sha: String
-    let user: User
-    let repo: Forkee
-}
-
-struct PullRequestLinks: Codable {
-    let purpleSelf, html, issue, comments: HTML
-    let reviewComments, reviewComment, commits, statuses: HTML
+struct Links: Codable {
+    let purpleSelf, html, issue, comments: Comments
+    let reviewComments, reviewComment, commits, statuses: Comments
 
     enum CodingKeys: String, CodingKey {
         case purpleSelf = "self"
@@ -462,7 +375,11 @@ struct PullRequestLinks: Codable {
     }
 }
 
-struct Repo: Codable {
+struct Comments: Codable {
+    let href: String
+}
+
+struct EventRepo: Codable {
     let id: Int
     let name, url: String
 }
@@ -477,8 +394,8 @@ struct Gist: Codable {
     let comments: Int
     let user: JSONNull?
     let commentsURL: String
-    let truncated: Bool
     let owner: User?
+    let truncated: Bool
 
     enum CodingKeys: String, CodingKey {
         case url
@@ -494,13 +411,12 @@ struct Gist: Codable {
         case updatedAt = "updated_at"
         case description, comments, user
         case commentsURL = "comments_url"
-        case truncated, owner
+        case owner, truncated
     }
 }
 
 struct File: Codable {
-    let filename: String
-    let type: FileType
+    let filename, type: String
     let language: String?
     let rawURL: String
     let size: Int
@@ -510,54 +426,6 @@ struct File: Codable {
         case rawURL = "raw_url"
         case size
     }
-}
-
-enum FileType: String, Codable {
-    case applicationJSON = "application/json"
-    case applicationJavascript = "application/javascript"
-    case textCSS = "text/css"
-    case textHTML = "text/html"
-    case textPlain = "text/plain"
-}
-
-struct User: Codable {
-    let login: String
-    let id: Int
-    let avatarURL: String
-    let gravatarID: GravatarID
-    let url, htmlURL, followersURL, followingURL: String
-    let gistsURL, starredURL, subscriptionsURL, organizationsURL: String
-    let reposURL, eventsURL, receivedEventsURL: String
-    let type: UserType
-    let siteAdmin: Bool
-
-    enum CodingKeys: String, CodingKey {
-        case login, id
-        case avatarURL = "avatar_url"
-        case gravatarID = "gravatar_id"
-        case url
-        case htmlURL = "html_url"
-        case followersURL = "followers_url"
-        case followingURL = "following_url"
-        case gistsURL = "gists_url"
-        case starredURL = "starred_url"
-        case subscriptionsURL = "subscriptions_url"
-        case organizationsURL = "organizations_url"
-        case reposURL = "repos_url"
-        case eventsURL = "events_url"
-        case receivedEventsURL = "received_events_url"
-        case type
-        case siteAdmin = "site_admin"
-    }
-}
-
-enum GravatarID: String, Codable {
-    case empty = ""
-}
-
-enum UserType: String, Codable {
-    case organization = "Organization"
-    case user = "User"
 }
 
 struct Meta: Codable {
@@ -674,56 +542,6 @@ extension Comment {
     }
 }
 
-extension CommentLinks {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(CommentLinks.self, from: data)
-    }
-
-    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else { return nil }
-        try self.init(data: data)
-    }
-
-    init?(fromURL url: String) throws {
-        guard let url = URL(string: url) else { return nil }
-        let data = try Data(contentsOf: url)
-        try self.init(data: data)
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString() throws -> String? {
-        return String(data: try self.jsonData(), encoding: .utf8)
-    }
-}
-
-extension HTML {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(HTML.self, from: data)
-    }
-
-    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else { return nil }
-        try self.init(data: data)
-    }
-
-    init?(fromURL url: String) throws {
-        guard let url = URL(string: url) else { return nil }
-        let data = try Data(contentsOf: url)
-        try self.init(data: data)
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString() throws -> String? {
-        return String(data: try self.jsonData(), encoding: .utf8)
-    }
-}
-
 extension User {
     init(data: Data) throws {
         self = try JSONDecoder().decode(User.self, from: data)
@@ -799,109 +617,9 @@ extension Author {
     }
 }
 
-extension Forkee {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(Forkee.self, from: data)
-    }
-
-    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else { return nil }
-        try self.init(data: data)
-    }
-
-    init?(fromURL url: String) throws {
-        guard let url = URL(string: url) else { return nil }
-        let data = try Data(contentsOf: url)
-        try self.init(data: data)
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString() throws -> String? {
-        return String(data: try self.jsonData(), encoding: .utf8)
-    }
-}
-
-extension License {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(License.self, from: data)
-    }
-
-    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else { return nil }
-        try self.init(data: data)
-    }
-
-    init?(fromURL url: String) throws {
-        guard let url = URL(string: url) else { return nil }
-        let data = try Data(contentsOf: url)
-        try self.init(data: data)
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString() throws -> String? {
-        return String(data: try self.jsonData(), encoding: .utf8)
-    }
-}
-
 extension Issue {
     init(data: Data) throws {
         self = try JSONDecoder().decode(Issue.self, from: data)
-    }
-
-    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else { return nil }
-        try self.init(data: data)
-    }
-
-    init?(fromURL url: String) throws {
-        guard let url = URL(string: url) else { return nil }
-        let data = try Data(contentsOf: url)
-        try self.init(data: data)
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString() throws -> String? {
-        return String(data: try self.jsonData(), encoding: .utf8)
-    }
-}
-
-extension Label {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(Label.self, from: data)
-    }
-
-    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else { return nil }
-        try self.init(data: data)
-    }
-
-    init?(fromURL url: String) throws {
-        guard let url = URL(string: url) else { return nil }
-        let data = try Data(contentsOf: url)
-        try self.init(data: data)
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString() throws -> String? {
-        return String(data: try self.jsonData(), encoding: .utf8)
-    }
-}
-
-extension Milestone {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(Milestone.self, from: data)
     }
 
     init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
@@ -999,9 +717,9 @@ extension Base {
     }
 }
 
-extension PullRequestLinks {
+extension BaseRepo {
     init(data: Data) throws {
-        self = try JSONDecoder().decode(PullRequestLinks.self, from: data)
+        self = try JSONDecoder().decode(BaseRepo.self, from: data)
     }
 
     init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
@@ -1024,9 +742,59 @@ extension PullRequestLinks {
     }
 }
 
-extension Repo {
+extension Links {
     init(data: Data) throws {
-        self = try JSONDecoder().decode(Repo.self, from: data)
+        self = try JSONDecoder().decode(Links.self, from: data)
+    }
+
+    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else { return nil }
+        try self.init(data: data)
+    }
+
+    init?(fromURL url: String) throws {
+        guard let url = URL(string: url) else { return nil }
+        let data = try Data(contentsOf: url)
+        try self.init(data: data)
+    }
+
+    func jsonData() throws -> Data {
+        return try JSONEncoder().encode(self)
+    }
+
+    func jsonString() throws -> String? {
+        return String(data: try self.jsonData(), encoding: .utf8)
+    }
+}
+
+extension Comments {
+    init(data: Data) throws {
+        self = try JSONDecoder().decode(Comments.self, from: data)
+    }
+
+    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else { return nil }
+        try self.init(data: data)
+    }
+
+    init?(fromURL url: String) throws {
+        guard let url = URL(string: url) else { return nil }
+        let data = try Data(contentsOf: url)
+        try self.init(data: data)
+    }
+
+    func jsonData() throws -> Data {
+        return try JSONEncoder().encode(self)
+    }
+
+    func jsonString() throws -> String? {
+        return String(data: try self.jsonData(), encoding: .utf8)
+    }
+}
+
+extension EventRepo {
+    init(data: Data) throws {
+        self = try JSONDecoder().decode(EventRepo.self, from: data)
     }
 
     init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
@@ -1077,31 +845,6 @@ extension Gist {
 extension File {
     init(data: Data) throws {
         self = try JSONDecoder().decode(File.self, from: data)
-    }
-
-    init?(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else { return nil }
-        try self.init(data: data)
-    }
-
-    init?(fromURL url: String) throws {
-        guard let url = URL(string: url) else { return nil }
-        let data = try Data(contentsOf: url)
-        try self.init(data: data)
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString() throws -> String? {
-        return String(data: try self.jsonData(), encoding: .utf8)
-    }
-}
-
-extension User {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(User.self, from: data)
     }
 
     init?(_ json: String, using encoding: String.Encoding = .utf8) throws {

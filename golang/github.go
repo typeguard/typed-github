@@ -39,7 +39,7 @@ func (r *Emojis) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 
-type Events []EventElement
+type Events []Event
 
 func UnmarshalEvents(data []byte) (Events, error) {
 	var r Events
@@ -51,7 +51,7 @@ func (r *Events) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 
-type Gists []GistElement
+type Gists []Gist
 
 func UnmarshalGists(data []byte) (Gists, error) {
 	var r Gists
@@ -1618,7 +1618,7 @@ type Emojis struct {
 	Zzz                              string `json:"zzz"`                                 
 }
 
-type EventElement struct {
+type Event struct {
 	ID        string  `json:"id"`        
 	Type      string  `json:"type"`      
 	Actor     Actor   `json:"actor"`     
@@ -1648,16 +1648,14 @@ type Payload struct {
 	Commits      []Commit     `json:"commits"`      
 	Forkee       *Forkee      `json:"forkee"`       
 	Action       *string      `json:"action"`       
-	Issue        *Issue       `json:"issue"`        
-	Comment      *Comment     `json:"comment"`      
+	Number       *int64       `json:"number"`       
+	PullRequest  *PullRequest `json:"pull_request"` 
 	RefType      *string      `json:"ref_type"`     
 	MasterBranch *string      `json:"master_branch"`
 	Description  *string      `json:"description"`  
 	PusherType   *string      `json:"pusher_type"`  
-	Release      *Release     `json:"release"`      
-	Number       *int64       `json:"number"`       
-	PullRequest  *PullRequest `json:"pull_request"` 
-	Pages        []Page       `json:"pages"`        
+	Issue        *Issue       `json:"issue"`        
+	Comment      *Comment     `json:"comment"`      
 }
 
 type Comment struct {
@@ -1772,7 +1770,7 @@ type Forkee struct {
 	MirrorURL        interface{} `json:"mirror_url"`       
 	Archived         bool        `json:"archived"`         
 	OpenIssuesCount  int64       `json:"open_issues_count"`
-	License          *License    `json:"license"`          
+	License          interface{} `json:"license"`          
 	Forks            int64       `json:"forks"`            
 	OpenIssues       int64       `json:"open_issues"`      
 	Watchers         int64       `json:"watchers"`         
@@ -1780,36 +1778,29 @@ type Forkee struct {
 	Public           *bool       `json:"public"`           
 }
 
-type License struct {
-	Key    string      `json:"key"`    
-	Name   string      `json:"name"`   
-	SpdxID interface{} `json:"spdx_id"`
-	URL    interface{} `json:"url"`    
-}
-
 type Issue struct {
-	URL               string     `json:"url"`               
-	RepositoryURL     string     `json:"repository_url"`    
-	LabelsURL         string     `json:"labels_url"`        
-	CommentsURL       string     `json:"comments_url"`      
-	EventsURL         string     `json:"events_url"`        
-	HTMLURL           string     `json:"html_url"`          
-	ID                int64      `json:"id"`                
-	Number            int64      `json:"number"`            
-	Title             string     `json:"title"`             
-	User              User       `json:"user"`              
-	Labels            []Label    `json:"labels"`            
-	State             string     `json:"state"`             
-	Locked            bool       `json:"locked"`            
-	Assignee          *User      `json:"assignee"`          
-	Assignees         []User     `json:"assignees"`         
-	Milestone         *Milestone `json:"milestone"`         
-	Comments          int64      `json:"comments"`          
-	CreatedAt         string     `json:"created_at"`        
-	UpdatedAt         string     `json:"updated_at"`        
-	ClosedAt          *string    `json:"closed_at"`         
-	AuthorAssociation string     `json:"author_association"`
-	Body              string     `json:"body"`              
+	URL               string      `json:"url"`               
+	RepositoryURL     string      `json:"repository_url"`    
+	LabelsURL         string      `json:"labels_url"`        
+	CommentsURL       string      `json:"comments_url"`      
+	EventsURL         string      `json:"events_url"`        
+	HTMLURL           string      `json:"html_url"`          
+	ID                int64       `json:"id"`                
+	Number            int64       `json:"number"`            
+	Title             string      `json:"title"`             
+	User              User        `json:"user"`              
+	Labels            []Label     `json:"labels"`            
+	State             string      `json:"state"`             
+	Locked            bool        `json:"locked"`            
+	Assignee          *User       `json:"assignee"`          
+	Assignees         []User      `json:"assignees"`         
+	Milestone         interface{} `json:"milestone"`         
+	Comments          int64       `json:"comments"`          
+	CreatedAt         string      `json:"created_at"`        
+	UpdatedAt         string      `json:"updated_at"`        
+	ClosedAt          interface{} `json:"closed_at"`         
+	AuthorAssociation string      `json:"author_association"`
+	Body              string      `json:"body"`              
 }
 
 type Label struct {
@@ -1818,33 +1809,6 @@ type Label struct {
 	Name    string `json:"name"`   
 	Color   string `json:"color"`  
 	Default bool   `json:"default"`
-}
-
-type Milestone struct {
-	URL          string      `json:"url"`          
-	HTMLURL      string      `json:"html_url"`     
-	LabelsURL    string      `json:"labels_url"`   
-	ID           int64       `json:"id"`           
-	Number       int64       `json:"number"`       
-	Title        string      `json:"title"`        
-	Description  string      `json:"description"`  
-	Creator      User        `json:"creator"`      
-	OpenIssues   int64       `json:"open_issues"`  
-	ClosedIssues int64       `json:"closed_issues"`
-	State        string      `json:"state"`        
-	CreatedAt    string      `json:"created_at"`   
-	UpdatedAt    string      `json:"updated_at"`   
-	DueOn        string      `json:"due_on"`       
-	ClosedAt     interface{} `json:"closed_at"`    
-}
-
-type Page struct {
-	PageName string      `json:"page_name"`
-	Title    string      `json:"title"`    
-	Summary  interface{} `json:"summary"`  
-	Action   string      `json:"action"`   
-	SHA      string      `json:"sha"`      
-	HTMLURL  string      `json:"html_url"` 
 }
 
 type PullRequest struct {
@@ -1862,9 +1826,9 @@ type PullRequest struct {
 	Body                string        `json:"body"`                 
 	CreatedAt           string        `json:"created_at"`           
 	UpdatedAt           string        `json:"updated_at"`           
-	ClosedAt            string        `json:"closed_at"`            
-	MergedAt            string        `json:"merged_at"`            
-	MergeCommitSHA      string        `json:"merge_commit_sha"`     
+	ClosedAt            interface{}   `json:"closed_at"`            
+	MergedAt            interface{}   `json:"merged_at"`            
+	MergeCommitSHA      interface{}   `json:"merge_commit_sha"`     
 	Assignee            interface{}   `json:"assignee"`             
 	Assignees           []interface{} `json:"assignees"`            
 	RequestedReviewers  []interface{} `json:"requested_reviewers"`  
@@ -1884,7 +1848,7 @@ type PullRequest struct {
 	Mergeable           interface{}   `json:"mergeable"`            
 	Rebaseable          interface{}   `json:"rebaseable"`           
 	MergeableState      string        `json:"mergeable_state"`      
-	MergedBy            User          `json:"merged_by"`            
+	MergedBy            interface{}   `json:"merged_by"`            
 	Comments            int64         `json:"comments"`             
 	ReviewComments      int64         `json:"review_comments"`      
 	MaintainerCanModify bool          `json:"maintainer_can_modify"`
@@ -1917,33 +1881,13 @@ type Comments struct {
 	Href string `json:"href"`
 }
 
-type Release struct {
-	URL             string        `json:"url"`             
-	AssetsURL       string        `json:"assets_url"`      
-	UploadURL       string        `json:"upload_url"`      
-	HTMLURL         string        `json:"html_url"`        
-	ID              int64         `json:"id"`              
-	TagName         string        `json:"tag_name"`        
-	TargetCommitish string        `json:"target_commitish"`
-	Name            string        `json:"name"`            
-	Draft           bool          `json:"draft"`           
-	Author          User          `json:"author"`          
-	Prerelease      bool          `json:"prerelease"`      
-	CreatedAt       string        `json:"created_at"`      
-	PublishedAt     string        `json:"published_at"`    
-	Assets          []interface{} `json:"assets"`          
-	TarballURL      string        `json:"tarball_url"`     
-	ZipballURL      string        `json:"zipball_url"`     
-	Body            string        `json:"body"`            
-}
-
 type Repo struct {
 	ID   int64  `json:"id"`  
 	Name string `json:"name"`
 	URL  string `json:"url"` 
 }
 
-type GistElement struct {
+type Gist struct {
 	URL         string          `json:"url"`         
 	ForksURL    string          `json:"forks_url"`   
 	CommitsURL  string          `json:"commits_url"` 
@@ -1959,16 +1903,16 @@ type GistElement struct {
 	Comments    int64           `json:"comments"`    
 	User        interface{}     `json:"user"`        
 	CommentsURL string          `json:"comments_url"`
-	Owner       *User           `json:"owner"`       
 	Truncated   bool            `json:"truncated"`   
+	Owner       *User           `json:"owner"`       
 }
 
 type File struct {
-	Filename string    `json:"filename"`
-	Type     FileType  `json:"type"`    
-	Language *Language `json:"language"`
-	RawURL   string    `json:"raw_url"` 
-	Size     int64     `json:"size"`    
+	Filename string   `json:"filename"`
+	Type     FileType `json:"type"`    
+	Language *string  `json:"language"`
+	RawURL   string   `json:"raw_url"` 
+	Size     int64    `json:"size"`    
 }
 
 type Meta struct {
@@ -1991,18 +1935,11 @@ const (
 	TypeUser UserType = "User"
 )
 
-type Language string
-const (
-	Apex Language = "Apex"
-	CSS Language = "CSS"
-	JavaScript Language = "JavaScript"
-	Markdown Language = "Markdown"
-	Text Language = "Text"
-)
-
 type FileType string
 const (
 	ApplicationJavascript FileType = "application/javascript"
+	ApplicationXPython FileType = "application/x-python"
 	TextCSS FileType = "text/css"
+	TextHTML FileType = "text/html"
 	TextPlain FileType = "text/plain"
 )

@@ -8,8 +8,8 @@
 
 import Foundation
 
-typealias Events = [EventElement]
-typealias Gists = [GistElement]
+typealias Events = [Event]
+typealias Gists = [Gist]
 
 struct APIData: Codable {
     let currentUserURL, currentUserAuthorizationsHTMLURL, authorizationsURL, codeSearchURL: String
@@ -1406,18 +1406,18 @@ struct Emojis: Codable {
     }
 }
 
-struct EventElement: Codable {
+struct Event: Codable {
     let id, type: String
     let actor: Actor
     let repo: Repo
     let payload: Payload
-    let eventsPublic: Bool
+    let eventPublic: Bool
     let createdAt: String
     let org: Actor?
 
     enum CodingKeys: String, CodingKey {
         case id, type, actor, repo, payload
-        case eventsPublic = "public"
+        case eventPublic = "public"
         case createdAt = "created_at"
         case org
     }
@@ -1449,28 +1449,25 @@ struct Payload: Codable {
     let commits: [Commit]?
     let forkee: Forkee?
     let action: String?
-    let issue: Issue?
-    let comment: Comment?
+    let number: Int?
+    let pullRequest: PullRequest?
     let refType, masterBranch: String?
     let description: String?
     let pusherType: String?
-    let release: Release?
-    let number: Int?
-    let pullRequest: PullRequest?
-    let pages: [Page]?
+    let issue: Issue?
+    let comment: Comment?
 
     enum CodingKeys: String, CodingKey {
         case pushID = "push_id"
         case size
         case distinctSize = "distinct_size"
-        case ref, head, before, commits, forkee, action, issue, comment
+        case ref, head, before, commits, forkee, action, number
+        case pullRequest = "pull_request"
         case refType = "ref_type"
         case masterBranch = "master_branch"
         case description
         case pusherType = "pusher_type"
-        case release, number
-        case pullRequest = "pull_request"
-        case pages
+        case issue, comment
     }
 }
 
@@ -1568,7 +1565,7 @@ struct Forkee: Codable {
     let mirrorURL: JSONNull?
     let archived: Bool
     let openIssuesCount: Int
-    let license: License?
+    let license: JSONNull?
     let forks, openIssues, watchers: Int
     let defaultBranch: String
     let forkeePublic: Bool?
@@ -1644,17 +1641,6 @@ struct Forkee: Codable {
     }
 }
 
-struct License: Codable {
-    let key, name: String
-    let spdxID, url: JSONNull?
-
-    enum CodingKeys: String, CodingKey {
-        case key, name
-        case spdxID = "spdx_id"
-        case url
-    }
-}
-
 struct Issue: Codable {
     let url, repositoryURL, labelsURL, commentsURL: String
     let eventsURL, htmlURL: String
@@ -1666,10 +1652,10 @@ struct Issue: Codable {
     let locked: Bool
     let assignee: User?
     let assignees: [User]
-    let milestone: Milestone?
+    let milestone: JSONNull?
     let comments: Int
     let createdAt, updatedAt: String
-    let closedAt: String?
+    let closedAt: JSONNull?
     let authorAssociation, body: String
 
     enum CodingKeys: String, CodingKey {
@@ -1699,42 +1685,6 @@ struct Label: Codable {
     }
 }
 
-struct Milestone: Codable {
-    let url, htmlURL, labelsURL: String
-    let id, number: Int
-    let title, description: String
-    let creator: User
-    let openIssues, closedIssues: Int
-    let state, createdAt, updatedAt, dueOn: String
-    let closedAt: JSONNull?
-
-    enum CodingKeys: String, CodingKey {
-        case url
-        case htmlURL = "html_url"
-        case labelsURL = "labels_url"
-        case id, number, title, description, creator
-        case openIssues = "open_issues"
-        case closedIssues = "closed_issues"
-        case state
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case dueOn = "due_on"
-        case closedAt = "closed_at"
-    }
-}
-
-struct Page: Codable {
-    let pageName, title: String
-    let summary: JSONNull?
-    let action, sha, htmlURL: String
-
-    enum CodingKeys: String, CodingKey {
-        case pageName = "page_name"
-        case title, summary, action, sha
-        case htmlURL = "html_url"
-    }
-}
-
 struct PullRequest: Codable {
     let url: String
     let id: Int
@@ -1744,9 +1694,8 @@ struct PullRequest: Codable {
     let locked: Bool
     let title: String
     let user: User
-    let body, createdAt, updatedAt, closedAt: String
-    let mergedAt, mergeCommitSHA: String
-    let assignee: JSONNull?
+    let body, createdAt, updatedAt: String
+    let closedAt, mergedAt, mergeCommitSHA, assignee: JSONNull?
     let assignees, requestedReviewers, requestedTeams, labels: [JSONAny]
     let milestone: JSONNull?
     let commitsURL, reviewCommentsURL, reviewCommentURL, commentsURL: String
@@ -1757,7 +1706,7 @@ struct PullRequest: Codable {
     let merged: Bool
     let mergeable, rebaseable: JSONNull?
     let mergeableState: String
-    let mergedBy: User
+    let mergedBy: JSONNull?
     let comments, reviewComments: Int
     let maintainerCanModify: Bool
     let commits, additions, deletions, changedFiles: Int
@@ -1820,52 +1769,23 @@ struct Comments: Codable {
     let href: String
 }
 
-struct Release: Codable {
-    let url, assetsURL, uploadURL, htmlURL: String
-    let id: Int
-    let tagName, targetCommitish, name: String
-    let draft: Bool
-    let author: User
-    let prerelease: Bool
-    let createdAt, publishedAt: String
-    let assets: [JSONAny]
-    let tarballURL, zipballURL, body: String
-
-    enum CodingKeys: String, CodingKey {
-        case url
-        case assetsURL = "assets_url"
-        case uploadURL = "upload_url"
-        case htmlURL = "html_url"
-        case id
-        case tagName = "tag_name"
-        case targetCommitish = "target_commitish"
-        case name, draft, author, prerelease
-        case createdAt = "created_at"
-        case publishedAt = "published_at"
-        case assets
-        case tarballURL = "tarball_url"
-        case zipballURL = "zipball_url"
-        case body
-    }
-}
-
 struct Repo: Codable {
     let id: Int
     let name, url: String
 }
 
-struct GistElement: Codable {
+struct Gist: Codable {
     let url, forksURL, commitsURL, id: String
     let gitPullURL, gitPushURL, htmlURL: String
     let files: [String: File]
-    let gistsPublic: Bool
+    let gistPublic: Bool
     let createdAt, updatedAt: String
     let description: String?
     let comments: Int
     let user: JSONNull?
     let commentsURL: String
-    let owner: User?
     let truncated: Bool
+    let owner: User?
 
     enum CodingKeys: String, CodingKey {
         case url
@@ -1876,19 +1796,19 @@ struct GistElement: Codable {
         case gitPushURL = "git_push_url"
         case htmlURL = "html_url"
         case files
-        case gistsPublic = "public"
+        case gistPublic = "public"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case description, comments, user
         case commentsURL = "comments_url"
-        case owner, truncated
+        case truncated, owner
     }
 }
 
 struct File: Codable {
     let filename: String
     let type: FileType
-    let language: Language?
+    let language: String?
     let rawURL: String
     let size: Int
 
@@ -1899,17 +1819,11 @@ struct File: Codable {
     }
 }
 
-enum Language: String, Codable {
-    case apex = "Apex"
-    case css = "CSS"
-    case javaScript = "JavaScript"
-    case markdown = "Markdown"
-    case text = "Text"
-}
-
 enum FileType: String, Codable {
     case applicationJavascript = "application/javascript"
+    case applicationXPython = "application/x-python"
     case textCSS = "text/css"
+    case textHTML = "text/html"
     case textPlain = "text/plain"
 }
 
@@ -1977,9 +1891,9 @@ extension Emojis {
     }
 }
 
-extension EventElement {
+extension Event {
     init(data: Data) throws {
-        self = try JSONDecoder().decode(EventElement.self, from: data)
+        self = try JSONDecoder().decode(Event.self, from: data)
     }
 
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
@@ -2177,31 +2091,6 @@ extension Forkee {
     }
 }
 
-extension License {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(License.self, from: data)
-    }
-
-    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else {
-            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
-        }
-        try self.init(data: data)
-    }
-
-    init(fromURL url: URL) throws {
-        try self.init(data: try Data(contentsOf: url))
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
-        return String(data: try self.jsonData(), encoding: encoding)
-    }
-}
-
 extension Issue {
     init(data: Data) throws {
         self = try JSONDecoder().decode(Issue.self, from: data)
@@ -2230,56 +2119,6 @@ extension Issue {
 extension Label {
     init(data: Data) throws {
         self = try JSONDecoder().decode(Label.self, from: data)
-    }
-
-    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else {
-            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
-        }
-        try self.init(data: data)
-    }
-
-    init(fromURL url: URL) throws {
-        try self.init(data: try Data(contentsOf: url))
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
-        return String(data: try self.jsonData(), encoding: encoding)
-    }
-}
-
-extension Milestone {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(Milestone.self, from: data)
-    }
-
-    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else {
-            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
-        }
-        try self.init(data: data)
-    }
-
-    init(fromURL url: URL) throws {
-        try self.init(data: try Data(contentsOf: url))
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
-        return String(data: try self.jsonData(), encoding: encoding)
-    }
-}
-
-extension Page {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(Page.self, from: data)
     }
 
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
@@ -2402,31 +2241,6 @@ extension Comments {
     }
 }
 
-extension Release {
-    init(data: Data) throws {
-        self = try JSONDecoder().decode(Release.self, from: data)
-    }
-
-    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else {
-            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
-        }
-        try self.init(data: data)
-    }
-
-    init(fromURL url: URL) throws {
-        try self.init(data: try Data(contentsOf: url))
-    }
-
-    func jsonData() throws -> Data {
-        return try JSONEncoder().encode(self)
-    }
-
-    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
-        return String(data: try self.jsonData(), encoding: encoding)
-    }
-}
-
 extension Repo {
     init(data: Data) throws {
         self = try JSONDecoder().decode(Repo.self, from: data)
@@ -2452,9 +2266,9 @@ extension Repo {
     }
 }
 
-extension GistElement {
+extension Gist {
     init(data: Data) throws {
-        self = try JSONDecoder().decode(GistElement.self, from: data)
+        self = try JSONDecoder().decode(Gist.self, from: data)
     }
 
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {

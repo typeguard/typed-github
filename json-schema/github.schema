@@ -17,7 +17,7 @@
             {
                 "type": "array",
                 "items": {
-                    "$ref": "#/definitions/EventElement"
+                    "$ref": "#/definitions/Event"
                 }
             }
         ],
@@ -26,7 +26,7 @@
             {
                 "type": "array",
                 "items": {
-                    "$ref": "#/definitions/GistElement"
+                    "$ref": "#/definitions/Gist"
                 }
             }
         ],
@@ -6315,31 +6315,6 @@
             ],
             "title": "commit"
         },
-        "License": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "spdx_id": {
-                    "type": "null"
-                },
-                "url": {
-                    "type": "null"
-                }
-            },
-            "required": [
-                "key",
-                "name",
-                "spdx_id",
-                "url"
-            ],
-            "title": "license"
-        },
         "Forkee": {
             "type": "object",
             "additionalProperties": false,
@@ -6570,15 +6545,7 @@
                     "type": "integer"
                 },
                 "license": {
-                    "oneOf": [
-                        {
-                            "$ref": "#/definitions/License"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "license"
+                    "type": "null"
                 },
                 "forks": {
                     "type": "integer"
@@ -6670,450 +6637,6 @@
                 "watchers_count"
             ],
             "title": "forkee"
-        },
-        "Label": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "color": {
-                    "type": "string"
-                },
-                "default": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "color",
-                "default",
-                "id",
-                "name",
-                "url"
-            ],
-            "title": "label"
-        },
-        "User": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "login": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "avatar_url": {
-                    "type": "string"
-                },
-                "gravatar_id": {
-                    "type": "string",
-                    "enum": [
-                        ""
-                    ],
-                    "title": "gravatar_id"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "html_url": {
-                    "type": "string"
-                },
-                "followers_url": {
-                    "type": "string"
-                },
-                "following_url": {
-                    "type": "string"
-                },
-                "gists_url": {
-                    "type": "string"
-                },
-                "starred_url": {
-                    "type": "string"
-                },
-                "subscriptions_url": {
-                    "type": "string"
-                },
-                "organizations_url": {
-                    "type": "string"
-                },
-                "repos_url": {
-                    "type": "string"
-                },
-                "events_url": {
-                    "type": "string"
-                },
-                "received_events_url": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "Organization",
-                        "User"
-                    ],
-                    "title": "type"
-                },
-                "site_admin": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "avatar_url",
-                "events_url",
-                "followers_url",
-                "following_url",
-                "gists_url",
-                "gravatar_id",
-                "html_url",
-                "id",
-                "login",
-                "organizations_url",
-                "received_events_url",
-                "repos_url",
-                "site_admin",
-                "starred_url",
-                "subscriptions_url",
-                "type",
-                "url"
-            ],
-            "title": "user"
-        },
-        "Milestone": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "url": {
-                    "type": "string"
-                },
-                "html_url": {
-                    "type": "string"
-                },
-                "labels_url": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "number": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "creator": {
-                    "$ref": "#/definitions/User"
-                },
-                "open_issues": {
-                    "type": "integer"
-                },
-                "closed_issues": {
-                    "type": "integer"
-                },
-                "state": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "due_on": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "closed_at": {
-                    "type": "null"
-                }
-            },
-            "required": [
-                "closed_at",
-                "closed_issues",
-                "created_at",
-                "creator",
-                "description",
-                "due_on",
-                "html_url",
-                "id",
-                "labels_url",
-                "number",
-                "open_issues",
-                "state",
-                "title",
-                "updated_at",
-                "url"
-            ],
-            "title": "milestone"
-        },
-        "Issue": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "url": {
-                    "type": "string"
-                },
-                "repository_url": {
-                    "type": "string"
-                },
-                "labels_url": {
-                    "type": "string"
-                },
-                "comments_url": {
-                    "type": "string"
-                },
-                "events_url": {
-                    "type": "string"
-                },
-                "html_url": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "number": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/User"
-                },
-                "labels": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Label"
-                    }
-                },
-                "state": {
-                    "type": "string"
-                },
-                "locked": {
-                    "type": "boolean"
-                },
-                "assignee": {
-                    "oneOf": [
-                        {
-                            "$ref": "#/definitions/User"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "assignee"
-                },
-                "assignees": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/User"
-                    }
-                },
-                "milestone": {
-                    "oneOf": [
-                        {
-                            "$ref": "#/definitions/Milestone"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "milestone"
-                },
-                "comments": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "closed_at": {
-                    "oneOf": [
-                        {
-                            "type": "string",
-                            "format": "date-time"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "title": "closed_at"
-                },
-                "author_association": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "assignee",
-                "assignees",
-                "author_association",
-                "body",
-                "closed_at",
-                "comments",
-                "comments_url",
-                "created_at",
-                "events_url",
-                "html_url",
-                "id",
-                "labels",
-                "labels_url",
-                "locked",
-                "milestone",
-                "number",
-                "repository_url",
-                "state",
-                "title",
-                "updated_at",
-                "url",
-                "user"
-            ],
-            "title": "issue"
-        },
-        "Comment": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "url": {
-                    "type": "string"
-                },
-                "html_url": {
-                    "type": "string"
-                },
-                "issue_url": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/User"
-                },
-                "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "author_association": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "author_association",
-                "body",
-                "created_at",
-                "html_url",
-                "id",
-                "issue_url",
-                "updated_at",
-                "url",
-                "user"
-            ],
-            "title": "comment"
-        },
-        "Release": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "url": {
-                    "type": "string"
-                },
-                "assets_url": {
-                    "type": "string"
-                },
-                "upload_url": {
-                    "type": "string"
-                },
-                "html_url": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "tag_name": {
-                    "type": "string"
-                },
-                "target_commitish": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "draft": {
-                    "type": "boolean"
-                },
-                "author": {
-                    "$ref": "#/definitions/User"
-                },
-                "prerelease": {
-                    "type": "boolean"
-                },
-                "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "published_at": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "assets": {
-                    "type": "array",
-                    "items": {}
-                },
-                "tarball_url": {
-                    "type": "string"
-                },
-                "zipball_url": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "assets",
-                "assets_url",
-                "author",
-                "body",
-                "created_at",
-                "draft",
-                "html_url",
-                "id",
-                "name",
-                "prerelease",
-                "published_at",
-                "tag_name",
-                "tarball_url",
-                "target_commitish",
-                "upload_url",
-                "url",
-                "zipball_url"
-            ],
-            "title": "release"
         },
         "Base": {
             "type": "object",
@@ -7247,15 +6770,13 @@
                     "format": "date-time"
                 },
                 "closed_at": {
-                    "type": "string",
-                    "format": "date-time"
+                    "type": "null"
                 },
                 "merged_at": {
-                    "type": "string",
-                    "format": "date-time"
+                    "type": "null"
                 },
                 "merge_commit_sha": {
-                    "type": "string"
+                    "type": "null"
                 },
                 "assignee": {
                     "type": "null"
@@ -7319,7 +6840,7 @@
                     "type": "string"
                 },
                 "merged_by": {
-                    "$ref": "#/definitions/User"
+                    "type": "null"
                 },
                 "comments": {
                     "type": "integer"
@@ -7391,38 +6912,280 @@
             ],
             "title": "pull_request"
         },
-        "Page": {
+        "Label": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "page_name": {
+                "id": {
+                    "type": "integer"
+                },
+                "url": {
                     "type": "string"
                 },
-                "title": {
+                "name": {
                     "type": "string"
                 },
-                "summary": {
-                    "type": "null"
-                },
-                "action": {
+                "color": {
                     "type": "string"
                 },
-                "sha": {
+                "default": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "color",
+                "default",
+                "id",
+                "name",
+                "url"
+            ],
+            "title": "label"
+        },
+        "User": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "avatar_url": {
+                    "type": "string"
+                },
+                "gravatar_id": {
+                    "type": "string",
+                    "enum": [
+                        ""
+                    ],
+                    "title": "gravatar_id"
+                },
+                "url": {
                     "type": "string"
                 },
                 "html_url": {
                     "type": "string"
+                },
+                "followers_url": {
+                    "type": "string"
+                },
+                "following_url": {
+                    "type": "string"
+                },
+                "gists_url": {
+                    "type": "string"
+                },
+                "starred_url": {
+                    "type": "string"
+                },
+                "subscriptions_url": {
+                    "type": "string"
+                },
+                "organizations_url": {
+                    "type": "string"
+                },
+                "repos_url": {
+                    "type": "string"
+                },
+                "events_url": {
+                    "type": "string"
+                },
+                "received_events_url": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "Organization",
+                        "User"
+                    ],
+                    "title": "type"
+                },
+                "site_admin": {
+                    "type": "boolean"
                 }
             },
             "required": [
-                "action",
+                "avatar_url",
+                "events_url",
+                "followers_url",
+                "following_url",
+                "gists_url",
+                "gravatar_id",
                 "html_url",
-                "page_name",
-                "sha",
-                "summary",
-                "title"
+                "id",
+                "login",
+                "organizations_url",
+                "received_events_url",
+                "repos_url",
+                "site_admin",
+                "starred_url",
+                "subscriptions_url",
+                "type",
+                "url"
             ],
-            "title": "page"
+            "title": "user"
+        },
+        "Issue": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "repository_url": {
+                    "type": "string"
+                },
+                "labels_url": {
+                    "type": "string"
+                },
+                "comments_url": {
+                    "type": "string"
+                },
+                "events_url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Label"
+                    }
+                },
+                "state": {
+                    "type": "string"
+                },
+                "locked": {
+                    "type": "boolean"
+                },
+                "assignee": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/User"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "assignee"
+                },
+                "assignees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/User"
+                    }
+                },
+                "milestone": {
+                    "type": "null"
+                },
+                "comments": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "closed_at": {
+                    "type": "null"
+                },
+                "author_association": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assignee",
+                "assignees",
+                "author_association",
+                "body",
+                "closed_at",
+                "comments",
+                "comments_url",
+                "created_at",
+                "events_url",
+                "html_url",
+                "id",
+                "labels",
+                "labels_url",
+                "locked",
+                "milestone",
+                "number",
+                "repository_url",
+                "state",
+                "title",
+                "updated_at",
+                "url",
+                "user"
+            ],
+            "title": "issue"
+        },
+        "Comment": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "html_url": {
+                    "type": "string"
+                },
+                "issue_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "author_association": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "author_association",
+                "body",
+                "created_at",
+                "html_url",
+                "id",
+                "issue_url",
+                "updated_at",
+                "url",
+                "user"
+            ],
+            "title": "comment"
         },
         "Payload": {
             "type": "object",
@@ -7458,11 +7221,11 @@
                 "action": {
                     "type": "string"
                 },
-                "issue": {
-                    "$ref": "#/definitions/Issue"
+                "number": {
+                    "type": "integer"
                 },
-                "comment": {
-                    "$ref": "#/definitions/Comment"
+                "pull_request": {
+                    "$ref": "#/definitions/PullRequest"
                 },
                 "ref_type": {
                     "type": "string"
@@ -7484,26 +7247,17 @@
                 "pusher_type": {
                     "type": "string"
                 },
-                "release": {
-                    "$ref": "#/definitions/Release"
+                "issue": {
+                    "$ref": "#/definitions/Issue"
                 },
-                "number": {
-                    "type": "integer"
-                },
-                "pull_request": {
-                    "$ref": "#/definitions/PullRequest"
-                },
-                "pages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Page"
-                    }
+                "comment": {
+                    "$ref": "#/definitions/Comment"
                 }
             },
             "required": [],
             "title": "payload"
         },
-        "EventElement": {
+        "Event": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -7542,7 +7296,7 @@
                 "repo",
                 "type"
             ],
-            "title": "Events"
+            "title": "Event"
         },
         "File": {
             "type": "object",
@@ -7554,30 +7308,24 @@
                 "type": {
                     "type": "string",
                     "enum": [
-                        "application/javascript",
+                        "text/plain",
+                        "application/x-python",
                         "text/css",
-                        "text/plain"
+                        "text/html",
+                        "application/javascript"
                     ],
                     "title": "type"
                 },
                 "language": {
                     "oneOf": [
                         {
-                            "type": "string",
-                            "enum": [
-                                "JavaScript",
-                                "CSS",
-                                "Apex",
-                                "Markdown",
-                                "Text"
-                            ],
-                            "title": "language"
+                            "type": "null"
                         },
                         {
-                            "type": "null"
+                            "type": "string"
                         }
                     ],
-                    "title": "language"
+                    "title": "description"
                 },
                 "raw_url": {
                     "type": "string"
@@ -7595,7 +7343,7 @@
             ],
             "title": "file"
         },
-        "GistElement": {
+        "Gist": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -7657,11 +7405,11 @@
                 "comments_url": {
                     "type": "string"
                 },
-                "owner": {
-                    "$ref": "#/definitions/User"
-                },
                 "truncated": {
                     "type": "boolean"
+                },
+                "owner": {
+                    "$ref": "#/definitions/User"
                 }
             },
             "required": [
@@ -7682,7 +7430,7 @@
                 "url",
                 "user"
             ],
-            "title": "Gists"
+            "title": "Gist"
         },
         "Meta": {
             "type": "object",

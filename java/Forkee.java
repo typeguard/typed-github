@@ -70,7 +70,7 @@ public class Forkee {
     private Object mirrorURL;
     private boolean archived;
     private long openIssuesCount;
-    private License license;
+    private Object license;
     private long forks;
     private long openIssues;
     private long watchers;
@@ -408,9 +408,9 @@ public class Forkee {
     public void setOpenIssuesCount(long value) { this.openIssuesCount = value; }
 
     @JsonProperty("license")
-    public License getLicense() { return license; }
+    public Object getLicense() { return license; }
     @JsonProperty("license")
-    public void setLicense(License value) { this.license = value; }
+    public void setLicense(Object value) { this.license = value; }
 
     @JsonProperty("forks")
     public long getForks() { return forks; }

@@ -1619,13 +1619,6 @@ namespace quicktype {
         std::string url;
     };
 
-    struct License {
-        std::string key;
-        std::string name;
-        nlohmann::json spdx_id;
-        nlohmann::json url;
-    };
-
     struct Forkee {
         int64_t id;
         std::string name;
@@ -1693,7 +1686,7 @@ namespace quicktype {
         nlohmann::json mirror_url;
         bool archived;
         int64_t open_issues_count;
-        std::unique_ptr<struct License> license;
+        nlohmann::json license;
         int64_t forks;
         int64_t open_issues;
         int64_t watchers;
@@ -1707,24 +1700,6 @@ namespace quicktype {
         std::string name;
         std::string color;
         bool label_default;
-    };
-
-    struct Milestone {
-        std::string url;
-        std::string html_url;
-        std::string labels_url;
-        int64_t id;
-        int64_t number;
-        std::string title;
-        std::string description;
-        struct User creator;
-        int64_t open_issues;
-        int64_t closed_issues;
-        std::string state;
-        std::string created_at;
-        std::string updated_at;
-        std::string due_on;
-        nlohmann::json closed_at;
     };
 
     struct Issue {
@@ -1743,22 +1718,13 @@ namespace quicktype {
         bool locked;
         std::unique_ptr<struct User> assignee;
         std::vector<struct User> assignees;
-        std::unique_ptr<struct Milestone> milestone;
+        nlohmann::json milestone;
         int64_t comments;
         std::string created_at;
         std::string updated_at;
-        std::unique_ptr<std::string> closed_at;
+        nlohmann::json closed_at;
         std::string author_association;
         std::string body;
-    };
-
-    struct Page {
-        std::string page_name;
-        std::string title;
-        nlohmann::json summary;
-        std::string action;
-        std::string sha;
-        std::string html_url;
     };
 
     struct Base {
@@ -1799,9 +1765,9 @@ namespace quicktype {
         std::string body;
         std::string created_at;
         std::string updated_at;
-        std::string closed_at;
-        std::string merged_at;
-        std::string merge_commit_sha;
+        nlohmann::json closed_at;
+        nlohmann::json merged_at;
+        nlohmann::json merge_commit_sha;
         nlohmann::json assignee;
         std::vector<nlohmann::json> assignees;
         std::vector<nlohmann::json> requested_reviewers;
@@ -1821,7 +1787,7 @@ namespace quicktype {
         nlohmann::json mergeable;
         nlohmann::json rebaseable;
         std::string mergeable_state;
-        struct User merged_by;
+        nlohmann::json merged_by;
         int64_t comments;
         int64_t review_comments;
         bool maintainer_can_modify;
@@ -1829,26 +1795,6 @@ namespace quicktype {
         int64_t additions;
         int64_t deletions;
         int64_t changed_files;
-    };
-
-    struct Release {
-        std::string url;
-        std::string assets_url;
-        std::string upload_url;
-        std::string html_url;
-        int64_t id;
-        std::string tag_name;
-        std::string target_commitish;
-        std::string name;
-        bool draft;
-        struct User author;
-        bool prerelease;
-        std::string created_at;
-        std::string published_at;
-        std::vector<nlohmann::json> assets;
-        std::string tarball_url;
-        std::string zipball_url;
-        std::string body;
     };
 
     struct Payload {
@@ -1861,16 +1807,14 @@ namespace quicktype {
         std::unique_ptr<std::vector<struct Commit>> commits;
         std::unique_ptr<struct Forkee> forkee;
         std::unique_ptr<std::string> action;
-        std::unique_ptr<struct Issue> issue;
-        std::unique_ptr<struct Comment> comment;
+        std::unique_ptr<int64_t> number;
+        std::unique_ptr<struct PullRequest> pull_request;
         std::unique_ptr<std::string> ref_type;
         std::unique_ptr<std::string> master_branch;
         std::unique_ptr<std::string> description;
         std::unique_ptr<std::string> pusher_type;
-        std::unique_ptr<struct Release> release;
-        std::unique_ptr<int64_t> number;
-        std::unique_ptr<struct PullRequest> pull_request;
-        std::unique_ptr<std::vector<struct Page>> pages;
+        std::unique_ptr<struct Issue> issue;
+        std::unique_ptr<struct Comment> comment;
     };
 
     struct Repo {
@@ -1879,30 +1823,28 @@ namespace quicktype {
         std::string url;
     };
 
-    struct EventElement {
+    struct Event {
         std::string id;
         std::string type;
         struct Actor actor;
         struct Repo repo;
         struct Payload payload;
-        bool events_public;
+        bool event_public;
         std::string created_at;
         std::unique_ptr<struct Actor> org;
     };
 
-    enum class Language { APEX, CSS, JAVA_SCRIPT, MARKDOWN, TEXT };
-
-    enum class FileType { APPLICATION_JAVASCRIPT, TEXT_CSS, TEXT_PLAIN };
+    enum class FileType { APPLICATION_JAVASCRIPT, APPLICATION_X_PYTHON, TEXT_CSS, TEXT_HTML, TEXT_PLAIN };
 
     struct File {
         std::string filename;
         FileType type;
-        std::unique_ptr<Language> language;
+        std::unique_ptr<std::string> language;
         std::string raw_url;
         int64_t size;
     };
 
-    struct GistElement {
+    struct Gist {
         std::string url;
         std::string forks_url;
         std::string commits_url;
@@ -1911,15 +1853,15 @@ namespace quicktype {
         std::string git_push_url;
         std::string html_url;
         std::map<std::string, struct File> files;
-        bool gists_public;
+        bool gist_public;
         std::string created_at;
         std::string updated_at;
         std::unique_ptr<std::string> description;
         int64_t comments;
         nlohmann::json user;
         std::string comments_url;
-        std::unique_ptr<struct User> owner;
         bool truncated;
+        std::unique_ptr<struct User> owner;
     };
 
     struct Meta {
@@ -1931,8 +1873,8 @@ namespace quicktype {
         std::vector<std::string> importer;
     };
 
-    typedef std::vector<struct EventElement> Events;
-    typedef std::vector<struct GistElement> Gists;
+    typedef std::vector<struct Event> Events;
+    typedef std::vector<struct Gist> Gists;
     
     inline json get_untyped(const json &j, const char *property) {
         if (j.find(property) != j.end()) {
@@ -5172,21 +5114,6 @@ namespace nlohmann {
         _j["url"] = _x.url;
     }
 
-    inline void from_json(const json& _j, struct quicktype::License& _x) {
-        _x.key = _j.at("key").get<std::string>();
-        _x.name = _j.at("name").get<std::string>();
-        _x.spdx_id = quicktype::get_untyped(_j, "spdx_id");
-        _x.url = quicktype::get_untyped(_j, "url");
-    }
-
-    inline void to_json(json& _j, const struct quicktype::License& _x) {
-        _j = json::object();
-        _j["key"] = _x.key;
-        _j["name"] = _x.name;
-        _j["spdx_id"] = _x.spdx_id;
-        _j["url"] = _x.url;
-    }
-
     inline void from_json(const json& _j, struct quicktype::Forkee& _x) {
         _x.id = _j.at("id").get<int64_t>();
         _x.name = _j.at("name").get<std::string>();
@@ -5254,7 +5181,7 @@ namespace nlohmann {
         _x.mirror_url = quicktype::get_untyped(_j, "mirror_url");
         _x.archived = _j.at("archived").get<bool>();
         _x.open_issues_count = _j.at("open_issues_count").get<int64_t>();
-        _x.license = quicktype::get_optional<struct quicktype::License>(_j, "license");
+        _x.license = quicktype::get_untyped(_j, "license");
         _x.forks = _j.at("forks").get<int64_t>();
         _x.open_issues = _j.at("open_issues").get<int64_t>();
         _x.watchers = _j.at("watchers").get<int64_t>();
@@ -5355,43 +5282,6 @@ namespace nlohmann {
         _j["default"] = _x.label_default;
     }
 
-    inline void from_json(const json& _j, struct quicktype::Milestone& _x) {
-        _x.url = _j.at("url").get<std::string>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-        _x.labels_url = _j.at("labels_url").get<std::string>();
-        _x.id = _j.at("id").get<int64_t>();
-        _x.number = _j.at("number").get<int64_t>();
-        _x.title = _j.at("title").get<std::string>();
-        _x.description = _j.at("description").get<std::string>();
-        _x.creator = _j.at("creator").get<struct quicktype::User>();
-        _x.open_issues = _j.at("open_issues").get<int64_t>();
-        _x.closed_issues = _j.at("closed_issues").get<int64_t>();
-        _x.state = _j.at("state").get<std::string>();
-        _x.created_at = _j.at("created_at").get<std::string>();
-        _x.updated_at = _j.at("updated_at").get<std::string>();
-        _x.due_on = _j.at("due_on").get<std::string>();
-        _x.closed_at = quicktype::get_untyped(_j, "closed_at");
-    }
-
-    inline void to_json(json& _j, const struct quicktype::Milestone& _x) {
-        _j = json::object();
-        _j["url"] = _x.url;
-        _j["html_url"] = _x.html_url;
-        _j["labels_url"] = _x.labels_url;
-        _j["id"] = _x.id;
-        _j["number"] = _x.number;
-        _j["title"] = _x.title;
-        _j["description"] = _x.description;
-        _j["creator"] = _x.creator;
-        _j["open_issues"] = _x.open_issues;
-        _j["closed_issues"] = _x.closed_issues;
-        _j["state"] = _x.state;
-        _j["created_at"] = _x.created_at;
-        _j["updated_at"] = _x.updated_at;
-        _j["due_on"] = _x.due_on;
-        _j["closed_at"] = _x.closed_at;
-    }
-
     inline void from_json(const json& _j, struct quicktype::Issue& _x) {
         _x.url = _j.at("url").get<std::string>();
         _x.repository_url = _j.at("repository_url").get<std::string>();
@@ -5408,11 +5298,11 @@ namespace nlohmann {
         _x.locked = _j.at("locked").get<bool>();
         _x.assignee = quicktype::get_optional<struct quicktype::User>(_j, "assignee");
         _x.assignees = _j.at("assignees").get<std::vector<struct quicktype::User>>();
-        _x.milestone = quicktype::get_optional<struct quicktype::Milestone>(_j, "milestone");
+        _x.milestone = quicktype::get_untyped(_j, "milestone");
         _x.comments = _j.at("comments").get<int64_t>();
         _x.created_at = _j.at("created_at").get<std::string>();
         _x.updated_at = _j.at("updated_at").get<std::string>();
-        _x.closed_at = quicktype::get_optional<std::string>(_j, "closed_at");
+        _x.closed_at = quicktype::get_untyped(_j, "closed_at");
         _x.author_association = _j.at("author_association").get<std::string>();
         _x.body = _j.at("body").get<std::string>();
     }
@@ -5441,25 +5331,6 @@ namespace nlohmann {
         _j["closed_at"] = _x.closed_at;
         _j["author_association"] = _x.author_association;
         _j["body"] = _x.body;
-    }
-
-    inline void from_json(const json& _j, struct quicktype::Page& _x) {
-        _x.page_name = _j.at("page_name").get<std::string>();
-        _x.title = _j.at("title").get<std::string>();
-        _x.summary = quicktype::get_untyped(_j, "summary");
-        _x.action = _j.at("action").get<std::string>();
-        _x.sha = _j.at("sha").get<std::string>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-    }
-
-    inline void to_json(json& _j, const struct quicktype::Page& _x) {
-        _j = json::object();
-        _j["page_name"] = _x.page_name;
-        _j["title"] = _x.title;
-        _j["summary"] = _x.summary;
-        _j["action"] = _x.action;
-        _j["sha"] = _x.sha;
-        _j["html_url"] = _x.html_url;
     }
 
     inline void from_json(const json& _j, struct quicktype::Base& _x) {
@@ -5526,9 +5397,9 @@ namespace nlohmann {
         _x.body = _j.at("body").get<std::string>();
         _x.created_at = _j.at("created_at").get<std::string>();
         _x.updated_at = _j.at("updated_at").get<std::string>();
-        _x.closed_at = _j.at("closed_at").get<std::string>();
-        _x.merged_at = _j.at("merged_at").get<std::string>();
-        _x.merge_commit_sha = _j.at("merge_commit_sha").get<std::string>();
+        _x.closed_at = quicktype::get_untyped(_j, "closed_at");
+        _x.merged_at = quicktype::get_untyped(_j, "merged_at");
+        _x.merge_commit_sha = quicktype::get_untyped(_j, "merge_commit_sha");
         _x.assignee = quicktype::get_untyped(_j, "assignee");
         _x.assignees = _j.at("assignees").get<std::vector<json>>();
         _x.requested_reviewers = _j.at("requested_reviewers").get<std::vector<json>>();
@@ -5548,7 +5419,7 @@ namespace nlohmann {
         _x.mergeable = quicktype::get_untyped(_j, "mergeable");
         _x.rebaseable = quicktype::get_untyped(_j, "rebaseable");
         _x.mergeable_state = _j.at("mergeable_state").get<std::string>();
-        _x.merged_by = _j.at("merged_by").get<struct quicktype::User>();
+        _x.merged_by = quicktype::get_untyped(_j, "merged_by");
         _x.comments = _j.at("comments").get<int64_t>();
         _x.review_comments = _j.at("review_comments").get<int64_t>();
         _x.maintainer_can_modify = _j.at("maintainer_can_modify").get<bool>();
@@ -5606,47 +5477,6 @@ namespace nlohmann {
         _j["changed_files"] = _x.changed_files;
     }
 
-    inline void from_json(const json& _j, struct quicktype::Release& _x) {
-        _x.url = _j.at("url").get<std::string>();
-        _x.assets_url = _j.at("assets_url").get<std::string>();
-        _x.upload_url = _j.at("upload_url").get<std::string>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-        _x.id = _j.at("id").get<int64_t>();
-        _x.tag_name = _j.at("tag_name").get<std::string>();
-        _x.target_commitish = _j.at("target_commitish").get<std::string>();
-        _x.name = _j.at("name").get<std::string>();
-        _x.draft = _j.at("draft").get<bool>();
-        _x.author = _j.at("author").get<struct quicktype::User>();
-        _x.prerelease = _j.at("prerelease").get<bool>();
-        _x.created_at = _j.at("created_at").get<std::string>();
-        _x.published_at = _j.at("published_at").get<std::string>();
-        _x.assets = _j.at("assets").get<std::vector<json>>();
-        _x.tarball_url = _j.at("tarball_url").get<std::string>();
-        _x.zipball_url = _j.at("zipball_url").get<std::string>();
-        _x.body = _j.at("body").get<std::string>();
-    }
-
-    inline void to_json(json& _j, const struct quicktype::Release& _x) {
-        _j = json::object();
-        _j["url"] = _x.url;
-        _j["assets_url"] = _x.assets_url;
-        _j["upload_url"] = _x.upload_url;
-        _j["html_url"] = _x.html_url;
-        _j["id"] = _x.id;
-        _j["tag_name"] = _x.tag_name;
-        _j["target_commitish"] = _x.target_commitish;
-        _j["name"] = _x.name;
-        _j["draft"] = _x.draft;
-        _j["author"] = _x.author;
-        _j["prerelease"] = _x.prerelease;
-        _j["created_at"] = _x.created_at;
-        _j["published_at"] = _x.published_at;
-        _j["assets"] = _x.assets;
-        _j["tarball_url"] = _x.tarball_url;
-        _j["zipball_url"] = _x.zipball_url;
-        _j["body"] = _x.body;
-    }
-
     inline void from_json(const json& _j, struct quicktype::Payload& _x) {
         _x.push_id = quicktype::get_optional<int64_t>(_j, "push_id");
         _x.size = quicktype::get_optional<int64_t>(_j, "size");
@@ -5657,16 +5487,14 @@ namespace nlohmann {
         _x.commits = quicktype::get_optional<std::vector<struct quicktype::Commit>>(_j, "commits");
         _x.forkee = quicktype::get_optional<struct quicktype::Forkee>(_j, "forkee");
         _x.action = quicktype::get_optional<std::string>(_j, "action");
-        _x.issue = quicktype::get_optional<struct quicktype::Issue>(_j, "issue");
-        _x.comment = quicktype::get_optional<struct quicktype::Comment>(_j, "comment");
+        _x.number = quicktype::get_optional<int64_t>(_j, "number");
+        _x.pull_request = quicktype::get_optional<struct quicktype::PullRequest>(_j, "pull_request");
         _x.ref_type = quicktype::get_optional<std::string>(_j, "ref_type");
         _x.master_branch = quicktype::get_optional<std::string>(_j, "master_branch");
         _x.description = quicktype::get_optional<std::string>(_j, "description");
         _x.pusher_type = quicktype::get_optional<std::string>(_j, "pusher_type");
-        _x.release = quicktype::get_optional<struct quicktype::Release>(_j, "release");
-        _x.number = quicktype::get_optional<int64_t>(_j, "number");
-        _x.pull_request = quicktype::get_optional<struct quicktype::PullRequest>(_j, "pull_request");
-        _x.pages = quicktype::get_optional<std::vector<struct quicktype::Page>>(_j, "pages");
+        _x.issue = quicktype::get_optional<struct quicktype::Issue>(_j, "issue");
+        _x.comment = quicktype::get_optional<struct quicktype::Comment>(_j, "comment");
     }
 
     inline void to_json(json& _j, const struct quicktype::Payload& _x) {
@@ -5680,16 +5508,14 @@ namespace nlohmann {
         _j["commits"] = _x.commits;
         _j["forkee"] = _x.forkee;
         _j["action"] = _x.action;
-        _j["issue"] = _x.issue;
-        _j["comment"] = _x.comment;
+        _j["number"] = _x.number;
+        _j["pull_request"] = _x.pull_request;
         _j["ref_type"] = _x.ref_type;
         _j["master_branch"] = _x.master_branch;
         _j["description"] = _x.description;
         _j["pusher_type"] = _x.pusher_type;
-        _j["release"] = _x.release;
-        _j["number"] = _x.number;
-        _j["pull_request"] = _x.pull_request;
-        _j["pages"] = _x.pages;
+        _j["issue"] = _x.issue;
+        _j["comment"] = _x.comment;
     }
 
     inline void from_json(const json& _j, struct quicktype::Repo& _x) {
@@ -5705,25 +5531,25 @@ namespace nlohmann {
         _j["url"] = _x.url;
     }
 
-    inline void from_json(const json& _j, struct quicktype::EventElement& _x) {
+    inline void from_json(const json& _j, struct quicktype::Event& _x) {
         _x.id = _j.at("id").get<std::string>();
         _x.type = _j.at("type").get<std::string>();
         _x.actor = _j.at("actor").get<struct quicktype::Actor>();
         _x.repo = _j.at("repo").get<struct quicktype::Repo>();
         _x.payload = _j.at("payload").get<struct quicktype::Payload>();
-        _x.events_public = _j.at("public").get<bool>();
+        _x.event_public = _j.at("public").get<bool>();
         _x.created_at = _j.at("created_at").get<std::string>();
         _x.org = quicktype::get_optional<struct quicktype::Actor>(_j, "org");
     }
 
-    inline void to_json(json& _j, const struct quicktype::EventElement& _x) {
+    inline void to_json(json& _j, const struct quicktype::Event& _x) {
         _j = json::object();
         _j["id"] = _x.id;
         _j["type"] = _x.type;
         _j["actor"] = _x.actor;
         _j["repo"] = _x.repo;
         _j["payload"] = _x.payload;
-        _j["public"] = _x.events_public;
+        _j["public"] = _x.event_public;
         _j["created_at"] = _x.created_at;
         _j["org"] = _x.org;
     }
@@ -5731,7 +5557,7 @@ namespace nlohmann {
     inline void from_json(const json& _j, struct quicktype::File& _x) {
         _x.filename = _j.at("filename").get<std::string>();
         _x.type = _j.at("type").get<quicktype::FileType>();
-        _x.language = quicktype::get_optional<quicktype::Language>(_j, "language");
+        _x.language = quicktype::get_optional<std::string>(_j, "language");
         _x.raw_url = _j.at("raw_url").get<std::string>();
         _x.size = _j.at("size").get<int64_t>();
     }
@@ -5745,7 +5571,7 @@ namespace nlohmann {
         _j["size"] = _x.size;
     }
 
-    inline void from_json(const json& _j, struct quicktype::GistElement& _x) {
+    inline void from_json(const json& _j, struct quicktype::Gist& _x) {
         _x.url = _j.at("url").get<std::string>();
         _x.forks_url = _j.at("forks_url").get<std::string>();
         _x.commits_url = _j.at("commits_url").get<std::string>();
@@ -5754,18 +5580,18 @@ namespace nlohmann {
         _x.git_push_url = _j.at("git_push_url").get<std::string>();
         _x.html_url = _j.at("html_url").get<std::string>();
         _x.files = _j.at("files").get<std::map<std::string, struct quicktype::File>>();
-        _x.gists_public = _j.at("public").get<bool>();
+        _x.gist_public = _j.at("public").get<bool>();
         _x.created_at = _j.at("created_at").get<std::string>();
         _x.updated_at = _j.at("updated_at").get<std::string>();
         _x.description = quicktype::get_optional<std::string>(_j, "description");
         _x.comments = _j.at("comments").get<int64_t>();
         _x.user = quicktype::get_untyped(_j, "user");
         _x.comments_url = _j.at("comments_url").get<std::string>();
-        _x.owner = quicktype::get_optional<struct quicktype::User>(_j, "owner");
         _x.truncated = _j.at("truncated").get<bool>();
+        _x.owner = quicktype::get_optional<struct quicktype::User>(_j, "owner");
     }
 
-    inline void to_json(json& _j, const struct quicktype::GistElement& _x) {
+    inline void to_json(json& _j, const struct quicktype::Gist& _x) {
         _j = json::object();
         _j["url"] = _x.url;
         _j["forks_url"] = _x.forks_url;
@@ -5775,15 +5601,15 @@ namespace nlohmann {
         _j["git_push_url"] = _x.git_push_url;
         _j["html_url"] = _x.html_url;
         _j["files"] = _x.files;
-        _j["public"] = _x.gists_public;
+        _j["public"] = _x.gist_public;
         _j["created_at"] = _x.created_at;
         _j["updated_at"] = _x.updated_at;
         _j["description"] = _x.description;
         _j["comments"] = _x.comments;
         _j["user"] = _x.user;
         _j["comments_url"] = _x.comments_url;
-        _j["owner"] = _x.owner;
         _j["truncated"] = _x.truncated;
+        _j["owner"] = _x.owner;
     }
 
     inline void from_json(const json& _j, struct quicktype::Meta& _x) {
@@ -5831,29 +5657,11 @@ namespace nlohmann {
         }
     }
 
-    inline void from_json(const json& _j, quicktype::Language& _x) {
-        if (_j == "Apex") _x = quicktype::Language::APEX;
-        else if (_j == "CSS") _x = quicktype::Language::CSS;
-        else if (_j == "JavaScript") _x = quicktype::Language::JAVA_SCRIPT;
-        else if (_j == "Markdown") _x = quicktype::Language::MARKDOWN;
-        else if (_j == "Text") _x = quicktype::Language::TEXT;
-        else throw "Input JSON does not conform to schema";
-    }
-
-    inline void to_json(json& _j, const quicktype::Language& _x) {
-        switch (_x) {
-            case quicktype::Language::APEX: _j = "Apex"; break;
-            case quicktype::Language::CSS: _j = "CSS"; break;
-            case quicktype::Language::JAVA_SCRIPT: _j = "JavaScript"; break;
-            case quicktype::Language::MARKDOWN: _j = "Markdown"; break;
-            case quicktype::Language::TEXT: _j = "Text"; break;
-            default: throw "This should not happen";
-        }
-    }
-
     inline void from_json(const json& _j, quicktype::FileType& _x) {
         if (_j == "application/javascript") _x = quicktype::FileType::APPLICATION_JAVASCRIPT;
+        else if (_j == "application/x-python") _x = quicktype::FileType::APPLICATION_X_PYTHON;
         else if (_j == "text/css") _x = quicktype::FileType::TEXT_CSS;
+        else if (_j == "text/html") _x = quicktype::FileType::TEXT_HTML;
         else if (_j == "text/plain") _x = quicktype::FileType::TEXT_PLAIN;
         else throw "Input JSON does not conform to schema";
     }
@@ -5861,7 +5669,9 @@ namespace nlohmann {
     inline void to_json(json& _j, const quicktype::FileType& _x) {
         switch (_x) {
             case quicktype::FileType::APPLICATION_JAVASCRIPT: _j = "application/javascript"; break;
+            case quicktype::FileType::APPLICATION_X_PYTHON: _j = "application/x-python"; break;
             case quicktype::FileType::TEXT_CSS: _j = "text/css"; break;
+            case quicktype::FileType::TEXT_HTML: _j = "text/html"; break;
             case quicktype::FileType::TEXT_PLAIN: _j = "text/plain"; break;
             default: throw "This should not happen";
         }

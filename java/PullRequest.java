@@ -18,9 +18,9 @@ public class PullRequest {
     private String body;
     private String createdAt;
     private String updatedAt;
-    private String closedAt;
-    private String mergedAt;
-    private String mergeCommitSHA;
+    private Object closedAt;
+    private Object mergedAt;
+    private Object mergeCommitSHA;
     private Object assignee;
     private Object[] assignees;
     private Object[] requestedReviewers;
@@ -40,7 +40,7 @@ public class PullRequest {
     private Object mergeable;
     private Object rebaseable;
     private String mergeableState;
-    private User mergedBy;
+    private Object mergedBy;
     private long comments;
     private long reviewComments;
     private boolean maintainerCanModify;
@@ -120,19 +120,19 @@ public class PullRequest {
     public void setUpdatedAt(String value) { this.updatedAt = value; }
 
     @JsonProperty("closed_at")
-    public String getClosedAt() { return closedAt; }
+    public Object getClosedAt() { return closedAt; }
     @JsonProperty("closed_at")
-    public void setClosedAt(String value) { this.closedAt = value; }
+    public void setClosedAt(Object value) { this.closedAt = value; }
 
     @JsonProperty("merged_at")
-    public String getMergedAt() { return mergedAt; }
+    public Object getMergedAt() { return mergedAt; }
     @JsonProperty("merged_at")
-    public void setMergedAt(String value) { this.mergedAt = value; }
+    public void setMergedAt(Object value) { this.mergedAt = value; }
 
     @JsonProperty("merge_commit_sha")
-    public String getMergeCommitSHA() { return mergeCommitSHA; }
+    public Object getMergeCommitSHA() { return mergeCommitSHA; }
     @JsonProperty("merge_commit_sha")
-    public void setMergeCommitSHA(String value) { this.mergeCommitSHA = value; }
+    public void setMergeCommitSHA(Object value) { this.mergeCommitSHA = value; }
 
     @JsonProperty("assignee")
     public Object getAssignee() { return assignee; }
@@ -230,9 +230,9 @@ public class PullRequest {
     public void setMergeableState(String value) { this.mergeableState = value; }
 
     @JsonProperty("merged_by")
-    public User getMergedBy() { return mergedBy; }
+    public Object getMergedBy() { return mergedBy; }
     @JsonProperty("merged_by")
-    public void setMergedBy(User value) { this.mergedBy = value; }
+    public void setMergedBy(Object value) { this.mergedBy = value; }
 
     @JsonProperty("comments")
     public long getComments() { return comments; }

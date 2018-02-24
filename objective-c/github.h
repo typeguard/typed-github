@@ -11,7 +11,7 @@
 
 @class APIData;
 @class APIEmojis;
-@class APIEventElement;
+@class APIEvent;
 @class APIActor;
 @class APIGravatarID;
 @class APIPayload;
@@ -21,20 +21,15 @@
 @class APICommit;
 @class APIAuthor;
 @class APIForkee;
-@class APILicense;
 @class APIIssue;
 @class APILabel;
-@class APIMilestone;
-@class APIPage;
 @class APIPullRequest;
 @class APIBase;
 @class APILinks;
 @class APIComments;
-@class APIRelease;
 @class APIRepo;
-@class APIGistElement;
+@class APIGist;
 @class APIFile;
-@class APILanguage;
 @class APIFileType;
 @class APIMeta;
 
@@ -55,27 +50,19 @@ NS_ASSUME_NONNULL_BEGIN
 + (APIUserType *)user;
 @end
 
-@interface APILanguage : NSObject
-@property (nonatomic, readonly, copy) NSString *value;
-+ (instancetype _Nullable)withValue:(NSString *)value;
-+ (APILanguage *)apex;
-+ (APILanguage *)css;
-+ (APILanguage *)javaScript;
-+ (APILanguage *)markdown;
-+ (APILanguage *)text;
-@end
-
 @interface APIFileType : NSObject
 @property (nonatomic, readonly, copy) NSString *value;
 + (instancetype _Nullable)withValue:(NSString *)value;
 + (APIFileType *)applicationJavascript;
++ (APIFileType *)applicationXPython;
 + (APIFileType *)textCSS;
++ (APIFileType *)textHTML;
 + (APIFileType *)textPlain;
 @end
 
-typedef NSArray<APIEventElement *> APIEvents;
+typedef NSArray<APIEvent *> APIEvents;
 
-typedef NSArray<APIGistElement *> APIGists;
+typedef NSArray<APIGist *> APIGists;
 
 #pragma mark - Top-level marshaling functions
 
@@ -1646,7 +1633,7 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 - (NSData *_Nullable)toData:(NSError *_Nullable *)error;
 @end
 
-@interface APIEventElement : NSObject
+@interface APIEvent : NSObject
 @property (nonatomic, copy)             NSString *identifier;
 @property (nonatomic, copy)             NSString *type;
 @property (nonatomic, strong)           APIActor *actor;
@@ -1676,16 +1663,14 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 @property (nonatomic, nullable, copy)   NSArray<APICommit *> *commits;
 @property (nonatomic, nullable, strong) APIForkee *forkee;
 @property (nonatomic, nullable, copy)   NSString *action;
-@property (nonatomic, nullable, strong) APIIssue *issue;
-@property (nonatomic, nullable, strong) APIComment *comment;
+@property (nonatomic, nullable, strong) NSNumber *number;
+@property (nonatomic, nullable, strong) APIPullRequest *pullRequest;
 @property (nonatomic, nullable, copy)   NSString *refType;
 @property (nonatomic, nullable, copy)   NSString *masterBranch;
 @property (nonatomic, nullable, copy)   NSString *theDescription;
 @property (nonatomic, nullable, copy)   NSString *pusherType;
-@property (nonatomic, nullable, strong) APIRelease *release;
-@property (nonatomic, nullable, strong) NSNumber *number;
-@property (nonatomic, nullable, strong) APIPullRequest *pullRequest;
-@property (nonatomic, nullable, copy)   NSArray<APIPage *> *pages;
+@property (nonatomic, nullable, strong) APIIssue *issue;
+@property (nonatomic, nullable, strong) APIComment *comment;
 @end
 
 @interface APIComment : NSObject
@@ -1800,19 +1785,12 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 @property (nonatomic, nullable, copy)   id mirrorURL;
 @property (nonatomic, assign)           BOOL isArchived;
 @property (nonatomic, assign)           NSInteger openIssuesCount;
-@property (nonatomic, nullable, strong) APILicense *license;
+@property (nonatomic, nullable, copy)   id license;
 @property (nonatomic, assign)           NSInteger forks;
 @property (nonatomic, assign)           NSInteger openIssues;
 @property (nonatomic, assign)           NSInteger watchers;
 @property (nonatomic, copy)             NSString *defaultBranch;
 @property (nonatomic, nullable, strong) NSNumber *public;
-@end
-
-@interface APILicense : NSObject
-@property (nonatomic, copy)           NSString *key;
-@property (nonatomic, copy)           NSString *name;
-@property (nonatomic, nullable, copy) id spdxID;
-@property (nonatomic, nullable, copy) id url;
 @end
 
 @interface APIIssue : NSObject
@@ -1831,11 +1809,11 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 @property (nonatomic, assign)           BOOL isLocked;
 @property (nonatomic, nullable, strong) APIUser *assignee;
 @property (nonatomic, copy)             NSArray<APIUser *> *assignees;
-@property (nonatomic, nullable, strong) APIMilestone *milestone;
+@property (nonatomic, nullable, copy)   id milestone;
 @property (nonatomic, assign)           NSInteger comments;
 @property (nonatomic, copy)             NSString *createdAt;
 @property (nonatomic, copy)             NSString *updatedAt;
-@property (nonatomic, nullable, copy)   NSString *closedAt;
+@property (nonatomic, nullable, copy)   id closedAt;
 @property (nonatomic, copy)             NSString *authorAssociation;
 @property (nonatomic, copy)             NSString *body;
 @end
@@ -1846,33 +1824,6 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 @property (nonatomic, copy)   NSString *name;
 @property (nonatomic, copy)   NSString *color;
 @property (nonatomic, assign) BOOL isDefault;
-@end
-
-@interface APIMilestone : NSObject
-@property (nonatomic, copy)           NSString *url;
-@property (nonatomic, copy)           NSString *htmlURL;
-@property (nonatomic, copy)           NSString *labelsURL;
-@property (nonatomic, assign)         NSInteger identifier;
-@property (nonatomic, assign)         NSInteger number;
-@property (nonatomic, copy)           NSString *title;
-@property (nonatomic, copy)           NSString *theDescription;
-@property (nonatomic, strong)         APIUser *creator;
-@property (nonatomic, assign)         NSInteger openIssues;
-@property (nonatomic, assign)         NSInteger closedIssues;
-@property (nonatomic, copy)           NSString *state;
-@property (nonatomic, copy)           NSString *createdAt;
-@property (nonatomic, copy)           NSString *updatedAt;
-@property (nonatomic, copy)           NSString *dueOn;
-@property (nonatomic, nullable, copy) id closedAt;
-@end
-
-@interface APIPage : NSObject
-@property (nonatomic, copy)           NSString *pageName;
-@property (nonatomic, copy)           NSString *title;
-@property (nonatomic, nullable, copy) id summary;
-@property (nonatomic, copy)           NSString *action;
-@property (nonatomic, copy)           NSString *sha;
-@property (nonatomic, copy)           NSString *htmlURL;
 @end
 
 @interface APIPullRequest : NSObject
@@ -1890,9 +1841,9 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 @property (nonatomic, copy)           NSString *body;
 @property (nonatomic, copy)           NSString *createdAt;
 @property (nonatomic, copy)           NSString *updatedAt;
-@property (nonatomic, copy)           NSString *closedAt;
-@property (nonatomic, copy)           NSString *mergedAt;
-@property (nonatomic, copy)           NSString *mergeCommitSHA;
+@property (nonatomic, nullable, copy) id closedAt;
+@property (nonatomic, nullable, copy) id mergedAt;
+@property (nonatomic, nullable, copy) id mergeCommitSHA;
 @property (nonatomic, nullable, copy) id assignee;
 @property (nonatomic, copy)           NSArray *assignees;
 @property (nonatomic, copy)           NSArray *requestedReviewers;
@@ -1912,7 +1863,7 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 @property (nonatomic, nullable, copy) id mergeable;
 @property (nonatomic, nullable, copy) id rebaseable;
 @property (nonatomic, copy)           NSString *mergeableState;
-@property (nonatomic, strong)         APIUser *mergedBy;
+@property (nonatomic, nullable, copy) id mergedBy;
 @property (nonatomic, assign)         NSInteger comments;
 @property (nonatomic, assign)         NSInteger reviewComments;
 @property (nonatomic, assign)         BOOL isMaintainerCanModify;
@@ -1945,33 +1896,13 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 @property (nonatomic, copy) NSString *href;
 @end
 
-@interface APIRelease : NSObject
-@property (nonatomic, copy)   NSString *url;
-@property (nonatomic, copy)   NSString *assetsURL;
-@property (nonatomic, copy)   NSString *uploadURL;
-@property (nonatomic, copy)   NSString *htmlURL;
-@property (nonatomic, assign) NSInteger identifier;
-@property (nonatomic, copy)   NSString *tagName;
-@property (nonatomic, copy)   NSString *targetCommitish;
-@property (nonatomic, copy)   NSString *name;
-@property (nonatomic, assign) BOOL isDraft;
-@property (nonatomic, strong) APIUser *author;
-@property (nonatomic, assign) BOOL isPrerelease;
-@property (nonatomic, copy)   NSString *createdAt;
-@property (nonatomic, copy)   NSString *publishedAt;
-@property (nonatomic, copy)   NSArray *assets;
-@property (nonatomic, copy)   NSString *tarballURL;
-@property (nonatomic, copy)   NSString *zipballURL;
-@property (nonatomic, copy)   NSString *body;
-@end
-
 @interface APIRepo : NSObject
 @property (nonatomic, assign) NSInteger identifier;
 @property (nonatomic, copy)   NSString *name;
 @property (nonatomic, copy)   NSString *url;
 @end
 
-@interface APIGistElement : NSObject
+@interface APIGist : NSObject
 @property (nonatomic, copy)             NSString *url;
 @property (nonatomic, copy)             NSString *forksURL;
 @property (nonatomic, copy)             NSString *commitsURL;
@@ -1987,16 +1918,16 @@ NSString *_Nullable APIGistsToJSON(APIGists *gists, NSStringEncoding encoding, N
 @property (nonatomic, assign)           NSInteger comments;
 @property (nonatomic, nullable, copy)   id user;
 @property (nonatomic, copy)             NSString *commentsURL;
-@property (nonatomic, nullable, strong) APIUser *owner;
 @property (nonatomic, assign)           BOOL isTruncated;
+@property (nonatomic, nullable, strong) APIUser *owner;
 @end
 
 @interface APIFile : NSObject
-@property (nonatomic, copy)             NSString *filename;
-@property (nonatomic, assign)           APIFileType *type;
-@property (nonatomic, nullable, assign) APILanguage *language;
-@property (nonatomic, copy)             NSString *rawURL;
-@property (nonatomic, assign)           NSInteger size;
+@property (nonatomic, copy)           NSString *filename;
+@property (nonatomic, assign)         APIFileType *type;
+@property (nonatomic, nullable, copy) NSString *language;
+@property (nonatomic, copy)           NSString *rawURL;
+@property (nonatomic, assign)         NSInteger size;
 @end
 
 @interface APIMeta : NSObject

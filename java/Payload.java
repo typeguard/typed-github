@@ -13,16 +13,14 @@ public class Payload {
     private Commit[] commits;
     private Forkee forkee;
     private String action;
-    private Issue issue;
-    private Comment comment;
+    private Long number;
+    private PullRequest pullRequest;
     private String refType;
     private String masterBranch;
     private String description;
     private String pusherType;
-    private Release release;
-    private Long number;
-    private PullRequest pullRequest;
-    private Page[] pages;
+    private Issue issue;
+    private Comment comment;
 
     @JsonProperty("push_id")
     public Long getPushID() { return pushID; }
@@ -69,15 +67,15 @@ public class Payload {
     @JsonProperty("action")
     public void setAction(String value) { this.action = value; }
 
-    @JsonProperty("issue")
-    public Issue getIssue() { return issue; }
-    @JsonProperty("issue")
-    public void setIssue(Issue value) { this.issue = value; }
+    @JsonProperty("number")
+    public Long getNumber() { return number; }
+    @JsonProperty("number")
+    public void setNumber(Long value) { this.number = value; }
 
-    @JsonProperty("comment")
-    public Comment getComment() { return comment; }
-    @JsonProperty("comment")
-    public void setComment(Comment value) { this.comment = value; }
+    @JsonProperty("pull_request")
+    public PullRequest getPullRequest() { return pullRequest; }
+    @JsonProperty("pull_request")
+    public void setPullRequest(PullRequest value) { this.pullRequest = value; }
 
     @JsonProperty("ref_type")
     public String getRefType() { return refType; }
@@ -99,23 +97,13 @@ public class Payload {
     @JsonProperty("pusher_type")
     public void setPusherType(String value) { this.pusherType = value; }
 
-    @JsonProperty("release")
-    public Release getRelease() { return release; }
-    @JsonProperty("release")
-    public void setRelease(Release value) { this.release = value; }
+    @JsonProperty("issue")
+    public Issue getIssue() { return issue; }
+    @JsonProperty("issue")
+    public void setIssue(Issue value) { this.issue = value; }
 
-    @JsonProperty("number")
-    public Long getNumber() { return number; }
-    @JsonProperty("number")
-    public void setNumber(Long value) { this.number = value; }
-
-    @JsonProperty("pull_request")
-    public PullRequest getPullRequest() { return pullRequest; }
-    @JsonProperty("pull_request")
-    public void setPullRequest(PullRequest value) { this.pullRequest = value; }
-
-    @JsonProperty("pages")
-    public Page[] getPages() { return pages; }
-    @JsonProperty("pages")
-    public void setPages(Page[] value) { this.pages = value; }
+    @JsonProperty("comment")
+    public Comment getComment() { return comment; }
+    @JsonProperty("comment")
+    public void setComment(Comment value) { this.comment = value; }
 }

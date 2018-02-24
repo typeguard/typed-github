@@ -4718,11 +4718,11 @@ namespace QuickType
         [JsonProperty("action")]
         public string Action { get; set; }
 
-        [JsonProperty("issue")]
-        public Issue Issue { get; set; }
+        [JsonProperty("number")]
+        public long? Number { get; set; }
 
-        [JsonProperty("comment")]
-        public Comment Comment { get; set; }
+        [JsonProperty("pull_request")]
+        public PullRequest PullRequest { get; set; }
 
         [JsonProperty("ref_type")]
         public string RefType { get; set; }
@@ -4736,17 +4736,11 @@ namespace QuickType
         [JsonProperty("pusher_type")]
         public string PusherType { get; set; }
 
-        [JsonProperty("release")]
-        public Release Release { get; set; }
+        [JsonProperty("issue")]
+        public Issue Issue { get; set; }
 
-        [JsonProperty("number")]
-        public long? Number { get; set; }
-
-        [JsonProperty("pull_request")]
-        public PullRequest PullRequest { get; set; }
-
-        [JsonProperty("pages")]
-        public Page[] Pages { get; set; }
+        [JsonProperty("comment")]
+        public Comment Comment { get; set; }
     }
 
     public partial class Comment
@@ -5061,7 +5055,7 @@ namespace QuickType
         public long OpenIssuesCount { get; set; }
 
         [JsonProperty("license")]
-        public License License { get; set; }
+        public object License { get; set; }
 
         [JsonProperty("forks")]
         public long Forks { get; set; }
@@ -5077,21 +5071,6 @@ namespace QuickType
 
         [JsonProperty("public")]
         public bool? Public { get; set; }
-    }
-
-    public partial class License
-    {
-        [JsonProperty("key")]
-        public string Key { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("spdx_id")]
-        public object SpdxId { get; set; }
-
-        [JsonProperty("url")]
-        public object Url { get; set; }
     }
 
     public partial class Issue
@@ -5142,7 +5121,7 @@ namespace QuickType
         public User[] Assignees { get; set; }
 
         [JsonProperty("milestone")]
-        public Milestone Milestone { get; set; }
+        public object Milestone { get; set; }
 
         [JsonProperty("comments")]
         public long Comments { get; set; }
@@ -5154,7 +5133,7 @@ namespace QuickType
         public System.DateTimeOffset UpdatedAt { get; set; }
 
         [JsonProperty("closed_at")]
-        public System.DateTimeOffset? ClosedAt { get; set; }
+        public object ClosedAt { get; set; }
 
         [JsonProperty("author_association")]
         public string AuthorAssociation { get; set; }
@@ -5179,75 +5158,6 @@ namespace QuickType
 
         [JsonProperty("default")]
         public bool Default { get; set; }
-    }
-
-    public partial class Milestone
-    {
-        [JsonProperty("url")]
-        public string Url { get; set; }
-
-        [JsonProperty("html_url")]
-        public string HtmlUrl { get; set; }
-
-        [JsonProperty("labels_url")]
-        public string LabelsUrl { get; set; }
-
-        [JsonProperty("id")]
-        public long Id { get; set; }
-
-        [JsonProperty("number")]
-        public long Number { get; set; }
-
-        [JsonProperty("title")]
-        public string Title { get; set; }
-
-        [JsonProperty("description")]
-        public string Description { get; set; }
-
-        [JsonProperty("creator")]
-        public User Creator { get; set; }
-
-        [JsonProperty("open_issues")]
-        public long OpenIssues { get; set; }
-
-        [JsonProperty("closed_issues")]
-        public long ClosedIssues { get; set; }
-
-        [JsonProperty("state")]
-        public string State { get; set; }
-
-        [JsonProperty("created_at")]
-        public System.DateTimeOffset CreatedAt { get; set; }
-
-        [JsonProperty("updated_at")]
-        public System.DateTimeOffset UpdatedAt { get; set; }
-
-        [JsonProperty("due_on")]
-        public System.DateTimeOffset DueOn { get; set; }
-
-        [JsonProperty("closed_at")]
-        public object ClosedAt { get; set; }
-    }
-
-    public partial class Page
-    {
-        [JsonProperty("page_name")]
-        public string PageName { get; set; }
-
-        [JsonProperty("title")]
-        public string Title { get; set; }
-
-        [JsonProperty("summary")]
-        public object Summary { get; set; }
-
-        [JsonProperty("action")]
-        public string Action { get; set; }
-
-        [JsonProperty("sha")]
-        public string Sha { get; set; }
-
-        [JsonProperty("html_url")]
-        public string HtmlUrl { get; set; }
     }
 
     public partial class PullRequest
@@ -5295,13 +5205,13 @@ namespace QuickType
         public System.DateTimeOffset UpdatedAt { get; set; }
 
         [JsonProperty("closed_at")]
-        public System.DateTimeOffset ClosedAt { get; set; }
+        public object ClosedAt { get; set; }
 
         [JsonProperty("merged_at")]
-        public System.DateTimeOffset MergedAt { get; set; }
+        public object MergedAt { get; set; }
 
         [JsonProperty("merge_commit_sha")]
-        public string MergeCommitSha { get; set; }
+        public object MergeCommitSha { get; set; }
 
         [JsonProperty("assignee")]
         public object Assignee { get; set; }
@@ -5361,7 +5271,7 @@ namespace QuickType
         public string MergeableState { get; set; }
 
         [JsonProperty("merged_by")]
-        public User MergedBy { get; set; }
+        public object MergedBy { get; set; }
 
         [JsonProperty("comments")]
         public long Comments { get; set; }
@@ -5436,60 +5346,6 @@ namespace QuickType
         public string Href { get; set; }
     }
 
-    public partial class Release
-    {
-        [JsonProperty("url")]
-        public string Url { get; set; }
-
-        [JsonProperty("assets_url")]
-        public string AssetsUrl { get; set; }
-
-        [JsonProperty("upload_url")]
-        public string UploadUrl { get; set; }
-
-        [JsonProperty("html_url")]
-        public string HtmlUrl { get; set; }
-
-        [JsonProperty("id")]
-        public long Id { get; set; }
-
-        [JsonProperty("tag_name")]
-        public string TagName { get; set; }
-
-        [JsonProperty("target_commitish")]
-        public string TargetCommitish { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("draft")]
-        public bool Draft { get; set; }
-
-        [JsonProperty("author")]
-        public User Author { get; set; }
-
-        [JsonProperty("prerelease")]
-        public bool Prerelease { get; set; }
-
-        [JsonProperty("created_at")]
-        public System.DateTimeOffset CreatedAt { get; set; }
-
-        [JsonProperty("published_at")]
-        public System.DateTimeOffset PublishedAt { get; set; }
-
-        [JsonProperty("assets")]
-        public object[] Assets { get; set; }
-
-        [JsonProperty("tarball_url")]
-        public string TarballUrl { get; set; }
-
-        [JsonProperty("zipball_url")]
-        public string ZipballUrl { get; set; }
-
-        [JsonProperty("body")]
-        public string Body { get; set; }
-    }
-
     public partial class Repo
     {
         [JsonProperty("id")]
@@ -5549,11 +5405,11 @@ namespace QuickType
         [JsonProperty("comments_url")]
         public string CommentsUrl { get; set; }
 
-        [JsonProperty("owner")]
-        public User Owner { get; set; }
-
         [JsonProperty("truncated")]
         public bool Truncated { get; set; }
+
+        [JsonProperty("owner")]
+        public User Owner { get; set; }
     }
 
     public partial class File
@@ -5565,7 +5421,7 @@ namespace QuickType
         public FileType Type { get; set; }
 
         [JsonProperty("language")]
-        public Language? Language { get; set; }
+        public string Language { get; set; }
 
         [JsonProperty("raw_url")]
         public string RawUrl { get; set; }
@@ -5599,9 +5455,7 @@ namespace QuickType
 
     public enum UserType { Organization, User };
 
-    public enum Language { Apex, Css, JavaScript, Markdown, Text };
-
-    public enum FileType { ApplicationJavascript, TextCss, TextPlain };
+    public enum FileType { ApplicationJavascript, ApplicationXPython, TextCss, TextHtml, TextPlain };
 
     public partial class ApiData
     {
@@ -5686,42 +5540,6 @@ namespace QuickType
         }
     }
 
-    static class LanguageExtensions
-    {
-        public static Language? ValueForString(string str)
-        {
-            switch (str)
-            {
-                case "Apex": return Language.Apex;
-                case "CSS": return Language.Css;
-                case "JavaScript": return Language.JavaScript;
-                case "Markdown": return Language.Markdown;
-                case "Text": return Language.Text;
-                default: return null;
-            }
-        }
-
-        public static Language ReadJson(JsonReader reader, JsonSerializer serializer)
-        {
-            var str = serializer.Deserialize<string>(reader);
-            var maybeValue = ValueForString(str);
-            if (maybeValue.HasValue) return maybeValue.Value;
-            throw new Exception("Unknown enum case " + str);
-        }
-
-        public static void WriteJson(this Language value, JsonWriter writer, JsonSerializer serializer)
-        {
-            switch (value)
-            {
-                case Language.Apex: serializer.Serialize(writer, "Apex"); break;
-                case Language.Css: serializer.Serialize(writer, "CSS"); break;
-                case Language.JavaScript: serializer.Serialize(writer, "JavaScript"); break;
-                case Language.Markdown: serializer.Serialize(writer, "Markdown"); break;
-                case Language.Text: serializer.Serialize(writer, "Text"); break;
-            }
-        }
-    }
-
     static class FileTypeExtensions
     {
         public static FileType? ValueForString(string str)
@@ -5729,7 +5547,9 @@ namespace QuickType
             switch (str)
             {
                 case "application/javascript": return FileType.ApplicationJavascript;
+                case "application/x-python": return FileType.ApplicationXPython;
                 case "text/css": return FileType.TextCss;
+                case "text/html": return FileType.TextHtml;
                 case "text/plain": return FileType.TextPlain;
                 default: return null;
             }
@@ -5748,7 +5568,9 @@ namespace QuickType
             switch (value)
             {
                 case FileType.ApplicationJavascript: serializer.Serialize(writer, "application/javascript"); break;
+                case FileType.ApplicationXPython: serializer.Serialize(writer, "application/x-python"); break;
                 case FileType.TextCss: serializer.Serialize(writer, "text/css"); break;
+                case FileType.TextHtml: serializer.Serialize(writer, "text/html"); break;
                 case FileType.TextPlain: serializer.Serialize(writer, "text/plain"); break;
             }
         }
@@ -5765,7 +5587,7 @@ namespace QuickType
 
     internal class Converter: JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(GravatarId) || t == typeof(UserType) || t == typeof(Language) || t == typeof(FileType) || t == typeof(GravatarId?) || t == typeof(UserType?) || t == typeof(Language?) || t == typeof(FileType?);
+        public override bool CanConvert(Type t) => t == typeof(GravatarId) || t == typeof(UserType) || t == typeof(FileType) || t == typeof(GravatarId?) || t == typeof(UserType?) || t == typeof(FileType?);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
@@ -5773,8 +5595,6 @@ namespace QuickType
                 return GravatarIdExtensions.ReadJson(reader, serializer);
             if (t == typeof(UserType))
                 return UserTypeExtensions.ReadJson(reader, serializer);
-            if (t == typeof(Language))
-                return LanguageExtensions.ReadJson(reader, serializer);
             if (t == typeof(FileType))
                 return FileTypeExtensions.ReadJson(reader, serializer);
             if (t == typeof(GravatarId?))
@@ -5786,11 +5606,6 @@ namespace QuickType
             {
                 if (reader.TokenType == JsonToken.Null) return null;
                 return UserTypeExtensions.ReadJson(reader, serializer);
-            }
-            if (t == typeof(Language?))
-            {
-                if (reader.TokenType == JsonToken.Null) return null;
-                return LanguageExtensions.ReadJson(reader, serializer);
             }
             if (t == typeof(FileType?))
             {
@@ -5811,11 +5626,6 @@ namespace QuickType
             if (t == typeof(UserType))
             {
                 ((UserType)value).WriteJson(writer, serializer);
-                return;
-            }
-            if (t == typeof(Language))
-            {
-                ((Language)value).WriteJson(writer, serializer);
                 return;
             }
             if (t == typeof(FileType))

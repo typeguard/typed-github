@@ -1591,16 +1591,14 @@ export type Payload = {
     commits?:       Commit[];
     forkee?:        Forkee;
     action?:        string;
-    issue?:         Issue;
-    comment?:       Comment;
+    number?:        number;
+    pull_request?:  PullRequest;
     ref_type?:      string;
     master_branch?: string;
     description?:   string;
     pusher_type?:   string;
-    release?:       Release;
-    number?:        number;
-    pull_request?:  PullRequest;
-    pages?:         Page[];
+    issue?:         Issue;
+    comment?:       Comment;
 };
 
 export type Comment = {
@@ -1719,19 +1717,12 @@ export type Forkee = {
     mirror_url:        null;
     archived:          boolean;
     open_issues_count: number;
-    license?:          License;
+    license:           null;
     forks:             number;
     open_issues:       number;
     watchers:          number;
     default_branch:    string;
     public?:           boolean;
-};
-
-export type License = {
-    key:     string;
-    name:    string;
-    spdx_id: null;
-    url:     null;
 };
 
 export type Issue = {
@@ -1750,11 +1741,11 @@ export type Issue = {
     locked:             boolean;
     assignee?:          User;
     assignees:          User[];
-    milestone?:         Milestone;
+    milestone:          null;
     comments:           number;
     created_at:         string;
     updated_at:         string;
-    closed_at?:         string;
+    closed_at:          null;
     author_association: string;
     body:               string;
 };
@@ -1765,33 +1756,6 @@ export type Label = {
     name:    string;
     color:   string;
     default: boolean;
-};
-
-export type Milestone = {
-    url:           string;
-    html_url:      string;
-    labels_url:    string;
-    id:            number;
-    number:        number;
-    title:         string;
-    description:   string;
-    creator:       User;
-    open_issues:   number;
-    closed_issues: number;
-    state:         string;
-    created_at:    string;
-    updated_at:    string;
-    due_on:        string;
-    closed_at:     null;
-};
-
-export type Page = {
-    page_name: string;
-    title:     string;
-    summary:   null;
-    action:    string;
-    sha:       string;
-    html_url:  string;
 };
 
 export type PullRequest = {
@@ -1809,9 +1773,9 @@ export type PullRequest = {
     body:                  string;
     created_at:            string;
     updated_at:            string;
-    closed_at:             string;
-    merged_at:             string;
-    merge_commit_sha:      string;
+    closed_at:             null;
+    merged_at:             null;
+    merge_commit_sha:      null;
     assignee:              null;
     assignees:             any[];
     requested_reviewers:   any[];
@@ -1831,7 +1795,7 @@ export type PullRequest = {
     mergeable:             null;
     rebaseable:            null;
     mergeable_state:       string;
-    merged_by:             User;
+    merged_by:             null;
     comments:              number;
     review_comments:       number;
     maintainer_can_modify: boolean;
@@ -1864,26 +1828,6 @@ export type Base = {
     repo:  Forkee;
 };
 
-export type Release = {
-    url:              string;
-    assets_url:       string;
-    upload_url:       string;
-    html_url:         string;
-    id:               number;
-    tag_name:         string;
-    target_commitish: string;
-    name:             string;
-    draft:            boolean;
-    author:           User;
-    prerelease:       boolean;
-    created_at:       string;
-    published_at:     string;
-    assets:           any[];
-    tarball_url:      string;
-    zipball_url:      string;
-    body:             string;
-};
-
 export type Repo = {
     id:   number;
     name: string;
@@ -1906,28 +1850,23 @@ export type Gists = {
     comments:     number;
     user:         null;
     comments_url: string;
-    owner?:       User;
     truncated:    boolean;
+    owner?:       User;
 };
 
 export type File = {
     filename:  string;
     type:      FileType;
-    language?: Language;
+    language?: string;
     raw_url:   string;
     size:      number;
 };
 
-export type Language =
-      "Apex"
-    | "CSS"
-    | "JavaScript"
-    | "Markdown"
-    | "Text";
-
 export type FileType =
       "application/javascript"
+    | "application/x-python"
     | "text/css"
+    | "text/html"
     | "text/plain";
 
 export type Meta = {
@@ -3630,16 +3569,14 @@ const typeMap: any = {
         commits: u(null, a(o("Commit"))),
         forkee: u(null, o("Forkee")),
         action: u(null, ""),
-        issue: u(null, o("Issue")),
-        comment: u(null, o("Comment")),
+        number: u(null, 0),
+        pull_request: u(null, o("PullRequest")),
         ref_type: u(null, ""),
         master_branch: u(null, ""),
         description: u(null, ""),
         pusher_type: u(null, ""),
-        release: u(null, o("Release")),
-        number: u(null, 0),
-        pull_request: u(null, o("PullRequest")),
-        pages: u(null, a(o("Page"))),
+        issue: u(null, o("Issue")),
+        comment: u(null, o("Comment")),
     },
     "Comment": {
         url: "",
@@ -3749,18 +3686,12 @@ const typeMap: any = {
         mirror_url: null,
         archived: false,
         open_issues_count: 0,
-        license: u(o("License"), null),
+        license: null,
         forks: 0,
         open_issues: 0,
         watchers: 0,
         default_branch: "",
         public: u(null, false),
-    },
-    "License": {
-        key: "",
-        name: "",
-        spdx_id: null,
-        url: null,
     },
     "Issue": {
         url: "",
@@ -3778,11 +3709,11 @@ const typeMap: any = {
         locked: false,
         assignee: u(o("User"), null),
         assignees: a(o("User")),
-        milestone: u(o("Milestone"), null),
+        milestone: null,
         comments: 0,
         created_at: "",
         updated_at: "",
-        closed_at: u(null, ""),
+        closed_at: null,
         author_association: "",
         body: "",
     },
@@ -3792,31 +3723,6 @@ const typeMap: any = {
         name: "",
         color: "",
         default: false,
-    },
-    "Milestone": {
-        url: "",
-        html_url: "",
-        labels_url: "",
-        id: 0,
-        number: 0,
-        title: "",
-        description: "",
-        creator: o("User"),
-        open_issues: 0,
-        closed_issues: 0,
-        state: "",
-        created_at: "",
-        updated_at: "",
-        due_on: "",
-        closed_at: null,
-    },
-    "Page": {
-        page_name: "",
-        title: "",
-        summary: null,
-        action: "",
-        sha: "",
-        html_url: "",
     },
     "PullRequest": {
         url: "",
@@ -3833,9 +3739,9 @@ const typeMap: any = {
         body: "",
         created_at: "",
         updated_at: "",
-        closed_at: "",
-        merged_at: "",
-        merge_commit_sha: "",
+        closed_at: null,
+        merged_at: null,
+        merge_commit_sha: null,
         assignee: null,
         assignees: a(undefined),
         requested_reviewers: a(undefined),
@@ -3855,7 +3761,7 @@ const typeMap: any = {
         mergeable: null,
         rebaseable: null,
         mergeable_state: "",
-        merged_by: o("User"),
+        merged_by: null,
         comments: 0,
         review_comments: 0,
         maintainer_can_modify: false,
@@ -3884,25 +3790,6 @@ const typeMap: any = {
         user: o("User"),
         repo: o("Forkee"),
     },
-    "Release": {
-        url: "",
-        assets_url: "",
-        upload_url: "",
-        html_url: "",
-        id: 0,
-        tag_name: "",
-        target_commitish: "",
-        name: "",
-        draft: false,
-        author: o("User"),
-        prerelease: false,
-        created_at: "",
-        published_at: "",
-        assets: a(undefined),
-        tarball_url: "",
-        zipball_url: "",
-        body: "",
-    },
     "Repo": {
         id: 0,
         name: "",
@@ -3924,13 +3811,13 @@ const typeMap: any = {
         comments: 0,
         user: null,
         comments_url: "",
-        owner: u(null, o("User")),
         truncated: false,
+        owner: u(null, o("User")),
     },
     "File": {
         filename: "",
         type: e("FileType"),
-        language: u(e("Language"), null),
+        language: u(null, ""),
         raw_url: "",
         size: 0,
     },
@@ -3949,16 +3836,11 @@ const typeMap: any = {
         "Organization",
         "User",
     ],
-    "Language": [
-        "Apex",
-        "CSS",
-        "JavaScript",
-        "Markdown",
-        "Text",
-    ],
     "FileType": [
         "application/javascript",
+        "application/x-python",
         "text/css",
+        "text/html",
         "text/plain",
     ],
 };

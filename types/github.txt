@@ -1573,16 +1573,14 @@ class Payload {
     commits?: List<Commit>
     forkee?: Forkee
     action?: String
-    issue?: Issue
-    comment?: Comment
+    number?: Int
+    pullRequest?: PullRequest
     refType?: String
     masterBranch?: String
     description?: Maybe<String>
     pusherType?: String
-    release?: Release
-    number?: Int
-    pullRequest?: PullRequest
-    pages?: List<Page>
+    issue?: Issue
+    comment?: Comment
 }
 
 class Comment {
@@ -1697,19 +1695,12 @@ class Forkee {
     mirrorURL: Null
     archived: Bool
     openIssuesCount: Int
-    license: Maybe<License>
+    license: Null
     forks: Int
     openIssues: Int
     watchers: Int
     defaultBranch: String
     public?: Bool
-}
-
-class License {
-    key: String
-    name: String
-    spdxID: Null
-    url: Null
 }
 
 class Issue {
@@ -1728,11 +1719,11 @@ class Issue {
     locked: Bool
     assignee: Maybe<User>
     assignees: List<User>
-    milestone: Maybe<Milestone>
+    milestone: Null
     comments: Int
     createdAt: DateTime
     updatedAt: DateTime
-    closedAt: Maybe<DateTime>
+    closedAt: Null
     authorAssociation: String
     body: String
 }
@@ -1743,33 +1734,6 @@ class Label {
     name: String
     color: String
     default: Bool
-}
-
-class Milestone {
-    url: String
-    htmlURL: String
-    labelsURL: String
-    id: Int
-    number: Int
-    title: String
-    description: String
-    creator: User
-    openIssues: Int
-    closedIssues: Int
-    state: String
-    createdAt: DateTime
-    updatedAt: DateTime
-    dueOn: DateTime
-    closedAt: Null
-}
-
-class Page {
-    pageName: String
-    title: String
-    summary: Null
-    action: String
-    sha: String
-    htmlURL: String
 }
 
 class PullRequest {
@@ -1787,9 +1751,9 @@ class PullRequest {
     body: String
     createdAt: DateTime
     updatedAt: DateTime
-    closedAt: DateTime
-    mergedAt: DateTime
-    mergeCommitSHA: String
+    closedAt: Null
+    mergedAt: Null
+    mergeCommitSHA: Null
     assignee: Null
     assignees: List<Any>
     requestedReviewers: List<Any>
@@ -1809,7 +1773,7 @@ class PullRequest {
     mergeable: Null
     rebaseable: Null
     mergeableState: String
-    mergedBy: User
+    mergedBy: Null
     comments: Int
     reviewComments: Int
     maintainerCanModify: Bool
@@ -1842,26 +1806,6 @@ class Comments {
     href: String
 }
 
-class Release {
-    url: String
-    assetsURL: String
-    uploadURL: String
-    htmlURL: String
-    id: Int
-    tagName: String
-    targetCommitish: String
-    name: String
-    draft: Bool
-    author: User
-    prerelease: Bool
-    createdAt: DateTime
-    publishedAt: DateTime
-    assets: List<Any>
-    tarballURL: String
-    zipballURL: String
-    body: String
-}
-
 class Repo {
     id: Int
     name: String
@@ -1884,14 +1828,14 @@ class Gists {
     comments: Int
     user: Null
     commentsURL: String
-    owner?: User
     truncated: Bool
+    owner?: User
 }
 
 class File {
     filename: String
     type: FileType
-    language: Maybe<Language>
+    language: Maybe<String>
     rawURL: String
     size: Int
 }
@@ -1909,6 +1853,4 @@ enum GravatarID = Empty
 
 enum UserType = Organization | User
 
-enum Language = Apex | CSS | JavaScript | Markdown | Text
-
-enum FileType = ApplicationJavascript | TextCSS | TextPlain
+enum FileType = ApplicationJavascript | ApplicationXPython | TextCSS | TextHTML | TextPlain

@@ -9,7 +9,7 @@ public class Events {
     private Actor actor;
     private Repo repo;
     private Payload payload;
-    private boolean eventsPublic;
+    private boolean eventPublic;
     private String createdAt;
     private Actor org;
 
@@ -39,9 +39,9 @@ public class Events {
     public void setPayload(Payload value) { this.payload = value; }
 
     @JsonProperty("public")
-    public boolean getEventsPublic() { return eventsPublic; }
+    public boolean getEventPublic() { return eventPublic; }
     @JsonProperty("public")
-    public void setEventsPublic(boolean value) { this.eventsPublic = value; }
+    public void setEventPublic(boolean value) { this.eventPublic = value; }
 
     @JsonProperty("created_at")
     public String getCreatedAt() { return createdAt; }

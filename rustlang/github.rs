@@ -14,8 +14,8 @@
 extern crate serde_json;
 use std::collections::HashMap;
 
-pub type Events = Vec<EventElement>;
-pub type Gists = Vec<GistElement>;
+pub type Events = Vec<Event>;
+pub type Gists = Vec<Gist>;
 
 #[derive(Serialize, Deserialize)]
 pub struct ApiData {
@@ -4641,12 +4641,12 @@ pub struct Emojis {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct EventElement {
+pub struct Event {
     #[serde(rename = "id")]
     id: String,
 
     #[serde(rename = "type")]
-    events_type: String,
+    event_type: String,
 
     #[serde(rename = "actor")]
     actor: Actor,
@@ -4717,11 +4717,11 @@ pub struct Payload {
     #[serde(rename = "action")]
     action: Option<String>,
 
-    #[serde(rename = "issue")]
-    issue: Option<Issue>,
+    #[serde(rename = "number")]
+    number: Option<i64>,
 
-    #[serde(rename = "comment")]
-    comment: Option<Comment>,
+    #[serde(rename = "pull_request")]
+    pull_request: Option<PullRequest>,
 
     #[serde(rename = "ref_type")]
     ref_type: Option<String>,
@@ -4735,17 +4735,11 @@ pub struct Payload {
     #[serde(rename = "pusher_type")]
     pusher_type: Option<String>,
 
-    #[serde(rename = "release")]
-    release: Option<Release>,
+    #[serde(rename = "issue")]
+    issue: Option<Issue>,
 
-    #[serde(rename = "number")]
-    number: Option<i64>,
-
-    #[serde(rename = "pull_request")]
-    pull_request: Option<PullRequest>,
-
-    #[serde(rename = "pages")]
-    pages: Option<Vec<Page>>,
+    #[serde(rename = "comment")]
+    comment: Option<Comment>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -5060,7 +5054,7 @@ pub struct Forkee {
     open_issues_count: i64,
 
     #[serde(rename = "license")]
-    license: Option<License>,
+    license: Option<serde_json::Value>,
 
     #[serde(rename = "forks")]
     forks: i64,
@@ -5076,21 +5070,6 @@ pub struct Forkee {
 
     #[serde(rename = "public")]
     public: Option<bool>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct License {
-    #[serde(rename = "key")]
-    key: String,
-
-    #[serde(rename = "name")]
-    name: String,
-
-    #[serde(rename = "spdx_id")]
-    spdx_id: Option<serde_json::Value>,
-
-    #[serde(rename = "url")]
-    url: Option<serde_json::Value>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -5141,7 +5120,7 @@ pub struct Issue {
     assignees: Vec<User>,
 
     #[serde(rename = "milestone")]
-    milestone: Option<Milestone>,
+    milestone: Option<serde_json::Value>,
 
     #[serde(rename = "comments")]
     comments: i64,
@@ -5153,7 +5132,7 @@ pub struct Issue {
     updated_at: String,
 
     #[serde(rename = "closed_at")]
-    closed_at: Option<String>,
+    closed_at: Option<serde_json::Value>,
 
     #[serde(rename = "author_association")]
     author_association: String,
@@ -5178,75 +5157,6 @@ pub struct Label {
 
     #[serde(rename = "default")]
     label_default: bool,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Milestone {
-    #[serde(rename = "url")]
-    url: String,
-
-    #[serde(rename = "html_url")]
-    html_url: String,
-
-    #[serde(rename = "labels_url")]
-    labels_url: String,
-
-    #[serde(rename = "id")]
-    id: i64,
-
-    #[serde(rename = "number")]
-    number: i64,
-
-    #[serde(rename = "title")]
-    title: String,
-
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "creator")]
-    creator: User,
-
-    #[serde(rename = "open_issues")]
-    open_issues: i64,
-
-    #[serde(rename = "closed_issues")]
-    closed_issues: i64,
-
-    #[serde(rename = "state")]
-    state: String,
-
-    #[serde(rename = "created_at")]
-    created_at: String,
-
-    #[serde(rename = "updated_at")]
-    updated_at: String,
-
-    #[serde(rename = "due_on")]
-    due_on: String,
-
-    #[serde(rename = "closed_at")]
-    closed_at: Option<serde_json::Value>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Page {
-    #[serde(rename = "page_name")]
-    page_name: String,
-
-    #[serde(rename = "title")]
-    title: String,
-
-    #[serde(rename = "summary")]
-    summary: Option<serde_json::Value>,
-
-    #[serde(rename = "action")]
-    action: String,
-
-    #[serde(rename = "sha")]
-    sha: String,
-
-    #[serde(rename = "html_url")]
-    html_url: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -5294,13 +5204,13 @@ pub struct PullRequest {
     updated_at: String,
 
     #[serde(rename = "closed_at")]
-    closed_at: String,
+    closed_at: Option<serde_json::Value>,
 
     #[serde(rename = "merged_at")]
-    merged_at: String,
+    merged_at: Option<serde_json::Value>,
 
     #[serde(rename = "merge_commit_sha")]
-    merge_commit_sha: String,
+    merge_commit_sha: Option<serde_json::Value>,
 
     #[serde(rename = "assignee")]
     assignee: Option<serde_json::Value>,
@@ -5360,7 +5270,7 @@ pub struct PullRequest {
     mergeable_state: String,
 
     #[serde(rename = "merged_by")]
-    merged_by: User,
+    merged_by: Option<serde_json::Value>,
 
     #[serde(rename = "comments")]
     comments: i64,
@@ -5436,60 +5346,6 @@ pub struct Comments {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Release {
-    #[serde(rename = "url")]
-    url: String,
-
-    #[serde(rename = "assets_url")]
-    assets_url: String,
-
-    #[serde(rename = "upload_url")]
-    upload_url: String,
-
-    #[serde(rename = "html_url")]
-    html_url: String,
-
-    #[serde(rename = "id")]
-    id: i64,
-
-    #[serde(rename = "tag_name")]
-    tag_name: String,
-
-    #[serde(rename = "target_commitish")]
-    target_commitish: String,
-
-    #[serde(rename = "name")]
-    name: String,
-
-    #[serde(rename = "draft")]
-    draft: bool,
-
-    #[serde(rename = "author")]
-    author: User,
-
-    #[serde(rename = "prerelease")]
-    prerelease: bool,
-
-    #[serde(rename = "created_at")]
-    created_at: String,
-
-    #[serde(rename = "published_at")]
-    published_at: String,
-
-    #[serde(rename = "assets")]
-    assets: Vec<serde_json::Value>,
-
-    #[serde(rename = "tarball_url")]
-    tarball_url: String,
-
-    #[serde(rename = "zipball_url")]
-    zipball_url: String,
-
-    #[serde(rename = "body")]
-    body: String,
-}
-
-#[derive(Serialize, Deserialize)]
 pub struct Repo {
     #[serde(rename = "id")]
     id: i64,
@@ -5502,7 +5358,7 @@ pub struct Repo {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct GistElement {
+pub struct Gist {
     #[serde(rename = "url")]
     url: String,
 
@@ -5548,11 +5404,11 @@ pub struct GistElement {
     #[serde(rename = "comments_url")]
     comments_url: String,
 
-    #[serde(rename = "owner")]
-    owner: Option<User>,
-
     #[serde(rename = "truncated")]
     truncated: bool,
+
+    #[serde(rename = "owner")]
+    owner: Option<User>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -5564,7 +5420,7 @@ pub struct File {
     file_type: FileType,
 
     #[serde(rename = "language")]
-    language: Option<Language>,
+    language: Option<String>,
 
     #[serde(rename = "raw_url")]
     raw_url: String,
@@ -5614,27 +5470,15 @@ pub enum FileType {
     #[serde(rename = "application/javascript")]
     ApplicationJavascript,
 
+    #[serde(rename = "application/x-python")]
+    ApplicationXPython,
+
     #[serde(rename = "text/css")]
     TextCss,
 
+    #[serde(rename = "text/html")]
+    TextHtml,
+
     #[serde(rename = "text/plain")]
     TextPlain,
-}
-
-#[derive(Serialize, Deserialize)]
-pub enum Language {
-    #[serde(rename = "Apex")]
-    Apex,
-
-    #[serde(rename = "CSS")]
-    Css,
-
-    #[serde(rename = "JavaScript")]
-    JavaScript,
-
-    #[serde(rename = "Markdown")]
-    Markdown,
-
-    #[serde(rename = "Text")]
-    Text,
 }

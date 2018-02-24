@@ -12,15 +12,15 @@ public class Gists {
     private String gitPushURL;
     private String htmlURL;
     private Map<String, File> files;
-    private boolean gistsPublic;
+    private boolean gistPublic;
     private String createdAt;
     private String updatedAt;
     private String description;
     private long comments;
     private Object user;
     private String commentsURL;
-    private User owner;
     private boolean truncated;
+    private User owner;
 
     @JsonProperty("url")
     public String getURL() { return url; }
@@ -63,9 +63,9 @@ public class Gists {
     public void setFiles(Map<String, File> value) { this.files = value; }
 
     @JsonProperty("public")
-    public boolean getGistsPublic() { return gistsPublic; }
+    public boolean getGistPublic() { return gistPublic; }
     @JsonProperty("public")
-    public void setGistsPublic(boolean value) { this.gistsPublic = value; }
+    public void setGistPublic(boolean value) { this.gistPublic = value; }
 
     @JsonProperty("created_at")
     public String getCreatedAt() { return createdAt; }
@@ -97,13 +97,13 @@ public class Gists {
     @JsonProperty("comments_url")
     public void setCommentsURL(String value) { this.commentsURL = value; }
 
-    @JsonProperty("owner")
-    public User getOwner() { return owner; }
-    @JsonProperty("owner")
-    public void setOwner(User value) { this.owner = value; }
-
     @JsonProperty("truncated")
     public boolean getTruncated() { return truncated; }
     @JsonProperty("truncated")
     public void setTruncated(boolean value) { this.truncated = value; }
+
+    @JsonProperty("owner")
+    public User getOwner() { return owner; }
+    @JsonProperty("owner")
+    public void setOwner(User value) { this.owner = value; }
 }

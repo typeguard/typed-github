@@ -19,11 +19,11 @@ public class Issue {
     private boolean locked;
     private User assignee;
     private User[] assignees;
-    private Milestone milestone;
+    private Object milestone;
     private long comments;
     private String createdAt;
     private String updatedAt;
-    private String closedAt;
+    private Object closedAt;
     private String authorAssociation;
     private String body;
 
@@ -103,9 +103,9 @@ public class Issue {
     public void setAssignees(User[] value) { this.assignees = value; }
 
     @JsonProperty("milestone")
-    public Milestone getMilestone() { return milestone; }
+    public Object getMilestone() { return milestone; }
     @JsonProperty("milestone")
-    public void setMilestone(Milestone value) { this.milestone = value; }
+    public void setMilestone(Object value) { this.milestone = value; }
 
     @JsonProperty("comments")
     public long getComments() { return comments; }
@@ -123,9 +123,9 @@ public class Issue {
     public void setUpdatedAt(String value) { this.updatedAt = value; }
 
     @JsonProperty("closed_at")
-    public String getClosedAt() { return closedAt; }
+    public Object getClosedAt() { return closedAt; }
     @JsonProperty("closed_at")
-    public void setClosedAt(String value) { this.closedAt = value; }
+    public void setClosedAt(Object value) { this.closedAt = value; }
 
     @JsonProperty("author_association")
     public String getAuthorAssociation() { return authorAssociation; }

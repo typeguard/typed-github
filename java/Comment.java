@@ -13,20 +13,16 @@ public class Comment {
     private String updatedAt;
     private String authorAssociation;
     private String body;
-    private Long position;
-    private Long line;
-    private String path;
-    private String commitID;
 
     @JsonProperty("url")
-    public String getUrl() { return url; }
+    public String getURL() { return url; }
     @JsonProperty("url")
-    public void setUrl(String value) { this.url = value; }
+    public void setURL(String value) { this.url = value; }
 
     @JsonProperty("html_url")
-    public String getHtmlURL() { return htmlURL; }
+    public String getHTMLURL() { return htmlURL; }
     @JsonProperty("html_url")
-    public void setHtmlURL(String value) { this.htmlURL = value; }
+    public void setHTMLURL(String value) { this.htmlURL = value; }
 
     @JsonProperty("issue_url")
     public String getIssueURL() { return issueURL; }
@@ -34,9 +30,9 @@ public class Comment {
     public void setIssueURL(String value) { this.issueURL = value; }
 
     @JsonProperty("id")
-    public long getId() { return id; }
+    public long getID() { return id; }
     @JsonProperty("id")
-    public void setId(long value) { this.id = value; }
+    public void setID(long value) { this.id = value; }
 
     @JsonProperty("user")
     public User getUser() { return user; }
@@ -62,24 +58,4 @@ public class Comment {
     public String getBody() { return body; }
     @JsonProperty("body")
     public void setBody(String value) { this.body = value; }
-
-    @JsonProperty("position")
-    public Long getPosition() { return position; }
-    @JsonProperty("position")
-    public void setPosition(Long value) { this.position = value; }
-
-    @JsonProperty("line")
-    public Long getLine() { return line; }
-    @JsonProperty("line")
-    public void setLine(Long value) { this.line = value; }
-
-    @JsonProperty("path")
-    public String getPath() { return path; }
-    @JsonProperty("path")
-    public void setPath(String value) { this.path = value; }
-
-    @JsonProperty("commit_id")
-    public String getCommitID() { return commitID; }
-    @JsonProperty("commit_id")
-    public void setCommitID(String value) { this.commitID = value; }
 }

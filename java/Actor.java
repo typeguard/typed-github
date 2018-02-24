@@ -12,9 +12,9 @@ public class Actor {
     private String avatarURL;
 
     @JsonProperty("id")
-    public long getId() { return id; }
+    public long getID() { return id; }
     @JsonProperty("id")
-    public void setId(long value) { this.id = value; }
+    public void setID(long value) { this.id = value; }
 
     @JsonProperty("login")
     public String getLogin() { return login; }
@@ -32,9 +32,9 @@ public class Actor {
     public void setGravatarID(GravatarID value) { this.gravatarID = value; }
 
     @JsonProperty("url")
-    public String getUrl() { return url; }
+    public String getURL() { return url; }
     @JsonProperty("url")
-    public void setUrl(String value) { this.url = value; }
+    public void setURL(String value) { this.url = value; }
 
     @JsonProperty("avatar_url")
     public String getAvatarURL() { return avatarURL; }

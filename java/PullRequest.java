@@ -3,7 +3,7 @@ package io.quicktype;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.*;
 
-public class PayloadPullRequest {
+public class PullRequest {
     private String url;
     private long id;
     private String htmlURL;
@@ -18,13 +18,14 @@ public class PayloadPullRequest {
     private String body;
     private String createdAt;
     private String updatedAt;
-    private Object closedAt;
-    private Object mergedAt;
-    private Object mergeCommitSHA;
+    private String closedAt;
+    private String mergedAt;
+    private String mergeCommitSHA;
     private Object assignee;
     private Object[] assignees;
     private Object[] requestedReviewers;
     private Object[] requestedTeams;
+    private Object[] labels;
     private Object milestone;
     private String commitsURL;
     private String reviewCommentsURL;
@@ -39,7 +40,7 @@ public class PayloadPullRequest {
     private Object mergeable;
     private Object rebaseable;
     private String mergeableState;
-    private Object mergedBy;
+    private User mergedBy;
     private long comments;
     private long reviewComments;
     private boolean maintainerCanModify;
@@ -49,19 +50,19 @@ public class PayloadPullRequest {
     private long changedFiles;
 
     @JsonProperty("url")
-    public String getUrl() { return url; }
+    public String getURL() { return url; }
     @JsonProperty("url")
-    public void setUrl(String value) { this.url = value; }
+    public void setURL(String value) { this.url = value; }
 
     @JsonProperty("id")
-    public long getId() { return id; }
+    public long getID() { return id; }
     @JsonProperty("id")
-    public void setId(long value) { this.id = value; }
+    public void setID(long value) { this.id = value; }
 
     @JsonProperty("html_url")
-    public String getHtmlURL() { return htmlURL; }
+    public String getHTMLURL() { return htmlURL; }
     @JsonProperty("html_url")
-    public void setHtmlURL(String value) { this.htmlURL = value; }
+    public void setHTMLURL(String value) { this.htmlURL = value; }
 
     @JsonProperty("diff_url")
     public String getDiffURL() { return diffURL; }
@@ -119,19 +120,19 @@ public class PayloadPullRequest {
     public void setUpdatedAt(String value) { this.updatedAt = value; }
 
     @JsonProperty("closed_at")
-    public Object getClosedAt() { return closedAt; }
+    public String getClosedAt() { return closedAt; }
     @JsonProperty("closed_at")
-    public void setClosedAt(Object value) { this.closedAt = value; }
+    public void setClosedAt(String value) { this.closedAt = value; }
 
     @JsonProperty("merged_at")
-    public Object getMergedAt() { return mergedAt; }
+    public String getMergedAt() { return mergedAt; }
     @JsonProperty("merged_at")
-    public void setMergedAt(Object value) { this.mergedAt = value; }
+    public void setMergedAt(String value) { this.mergedAt = value; }
 
     @JsonProperty("merge_commit_sha")
-    public Object getMergeCommitSHA() { return mergeCommitSHA; }
+    public String getMergeCommitSHA() { return mergeCommitSHA; }
     @JsonProperty("merge_commit_sha")
-    public void setMergeCommitSHA(Object value) { this.mergeCommitSHA = value; }
+    public void setMergeCommitSHA(String value) { this.mergeCommitSHA = value; }
 
     @JsonProperty("assignee")
     public Object getAssignee() { return assignee; }
@@ -152,6 +153,11 @@ public class PayloadPullRequest {
     public Object[] getRequestedTeams() { return requestedTeams; }
     @JsonProperty("requested_teams")
     public void setRequestedTeams(Object[] value) { this.requestedTeams = value; }
+
+    @JsonProperty("labels")
+    public Object[] getLabels() { return labels; }
+    @JsonProperty("labels")
+    public void setLabels(Object[] value) { this.labels = value; }
 
     @JsonProperty("milestone")
     public Object getMilestone() { return milestone; }
@@ -224,9 +230,9 @@ public class PayloadPullRequest {
     public void setMergeableState(String value) { this.mergeableState = value; }
 
     @JsonProperty("merged_by")
-    public Object getMergedBy() { return mergedBy; }
+    public User getMergedBy() { return mergedBy; }
     @JsonProperty("merged_by")
-    public void setMergedBy(Object value) { this.mergedBy = value; }
+    public void setMergedBy(User value) { this.mergedBy = value; }
 
     @JsonProperty("comments")
     public long getComments() { return comments; }

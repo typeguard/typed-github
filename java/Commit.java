@@ -11,9 +11,9 @@ public class Commit {
     private String url;
 
     @JsonProperty("sha")
-    public String getSha() { return sha; }
+    public String getSHA() { return sha; }
     @JsonProperty("sha")
-    public void setSha(String value) { this.sha = value; }
+    public void setSHA(String value) { this.sha = value; }
 
     @JsonProperty("author")
     public Author getAuthor() { return author; }
@@ -31,7 +31,7 @@ public class Commit {
     public void setDistinct(boolean value) { this.distinct = value; }
 
     @JsonProperty("url")
-    public String getUrl() { return url; }
+    public String getURL() { return url; }
     @JsonProperty("url")
-    public void setUrl(String value) { this.url = value; }
+    public void setURL(String value) { this.url = value; }
 }

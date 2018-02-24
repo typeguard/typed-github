@@ -14,24 +14,23 @@ public class Issue {
     private long number;
     private String title;
     private User user;
-    private Object[] labels;
+    private Label[] labels;
     private String state;
     private boolean locked;
-    private Object assignee;
-    private Object[] assignees;
-    private Object milestone;
+    private User assignee;
+    private User[] assignees;
+    private Milestone milestone;
     private long comments;
     private String createdAt;
     private String updatedAt;
-    private Object closedAt;
+    private String closedAt;
     private String authorAssociation;
     private String body;
-    private IssuePullRequest pullRequest;
 
     @JsonProperty("url")
-    public String getUrl() { return url; }
+    public String getURL() { return url; }
     @JsonProperty("url")
-    public void setUrl(String value) { this.url = value; }
+    public void setURL(String value) { this.url = value; }
 
     @JsonProperty("repository_url")
     public String getRepositoryURL() { return repositoryURL; }
@@ -54,14 +53,14 @@ public class Issue {
     public void setEventsURL(String value) { this.eventsURL = value; }
 
     @JsonProperty("html_url")
-    public String getHtmlURL() { return htmlURL; }
+    public String getHTMLURL() { return htmlURL; }
     @JsonProperty("html_url")
-    public void setHtmlURL(String value) { this.htmlURL = value; }
+    public void setHTMLURL(String value) { this.htmlURL = value; }
 
     @JsonProperty("id")
-    public long getId() { return id; }
+    public long getID() { return id; }
     @JsonProperty("id")
-    public void setId(long value) { this.id = value; }
+    public void setID(long value) { this.id = value; }
 
     @JsonProperty("number")
     public long getNumber() { return number; }
@@ -79,9 +78,9 @@ public class Issue {
     public void setUser(User value) { this.user = value; }
 
     @JsonProperty("labels")
-    public Object[] getLabels() { return labels; }
+    public Label[] getLabels() { return labels; }
     @JsonProperty("labels")
-    public void setLabels(Object[] value) { this.labels = value; }
+    public void setLabels(Label[] value) { this.labels = value; }
 
     @JsonProperty("state")
     public String getState() { return state; }
@@ -94,19 +93,19 @@ public class Issue {
     public void setLocked(boolean value) { this.locked = value; }
 
     @JsonProperty("assignee")
-    public Object getAssignee() { return assignee; }
+    public User getAssignee() { return assignee; }
     @JsonProperty("assignee")
-    public void setAssignee(Object value) { this.assignee = value; }
+    public void setAssignee(User value) { this.assignee = value; }
 
     @JsonProperty("assignees")
-    public Object[] getAssignees() { return assignees; }
+    public User[] getAssignees() { return assignees; }
     @JsonProperty("assignees")
-    public void setAssignees(Object[] value) { this.assignees = value; }
+    public void setAssignees(User[] value) { this.assignees = value; }
 
     @JsonProperty("milestone")
-    public Object getMilestone() { return milestone; }
+    public Milestone getMilestone() { return milestone; }
     @JsonProperty("milestone")
-    public void setMilestone(Object value) { this.milestone = value; }
+    public void setMilestone(Milestone value) { this.milestone = value; }
 
     @JsonProperty("comments")
     public long getComments() { return comments; }
@@ -124,9 +123,9 @@ public class Issue {
     public void setUpdatedAt(String value) { this.updatedAt = value; }
 
     @JsonProperty("closed_at")
-    public Object getClosedAt() { return closedAt; }
+    public String getClosedAt() { return closedAt; }
     @JsonProperty("closed_at")
-    public void setClosedAt(Object value) { this.closedAt = value; }
+    public void setClosedAt(String value) { this.closedAt = value; }
 
     @JsonProperty("author_association")
     public String getAuthorAssociation() { return authorAssociation; }
@@ -137,9 +136,4 @@ public class Issue {
     public String getBody() { return body; }
     @JsonProperty("body")
     public void setBody(String value) { this.body = value; }
-
-    @JsonProperty("pull_request")
-    public IssuePullRequest getPullRequest() { return pullRequest; }
-    @JsonProperty("pull_request")
-    public void setPullRequest(IssuePullRequest value) { this.pullRequest = value; }
 }

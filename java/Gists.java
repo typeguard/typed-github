@@ -12,7 +12,7 @@ public class Gists {
     private String gitPushURL;
     private String htmlURL;
     private Map<String, File> files;
-    private boolean purplePublic;
+    private boolean gistsPublic;
     private String createdAt;
     private String updatedAt;
     private String description;
@@ -23,9 +23,9 @@ public class Gists {
     private boolean truncated;
 
     @JsonProperty("url")
-    public String getUrl() { return url; }
+    public String getURL() { return url; }
     @JsonProperty("url")
-    public void setUrl(String value) { this.url = value; }
+    public void setURL(String value) { this.url = value; }
 
     @JsonProperty("forks_url")
     public String getForksURL() { return forksURL; }
@@ -38,9 +38,9 @@ public class Gists {
     public void setCommitsURL(String value) { this.commitsURL = value; }
 
     @JsonProperty("id")
-    public String getId() { return id; }
+    public String getID() { return id; }
     @JsonProperty("id")
-    public void setId(String value) { this.id = value; }
+    public void setID(String value) { this.id = value; }
 
     @JsonProperty("git_pull_url")
     public String getGitPullURL() { return gitPullURL; }
@@ -53,9 +53,9 @@ public class Gists {
     public void setGitPushURL(String value) { this.gitPushURL = value; }
 
     @JsonProperty("html_url")
-    public String getHtmlURL() { return htmlURL; }
+    public String getHTMLURL() { return htmlURL; }
     @JsonProperty("html_url")
-    public void setHtmlURL(String value) { this.htmlURL = value; }
+    public void setHTMLURL(String value) { this.htmlURL = value; }
 
     @JsonProperty("files")
     public Map<String, File> getFiles() { return files; }
@@ -63,9 +63,9 @@ public class Gists {
     public void setFiles(Map<String, File> value) { this.files = value; }
 
     @JsonProperty("public")
-    public boolean getPurplePublic() { return purplePublic; }
+    public boolean getGistsPublic() { return gistsPublic; }
     @JsonProperty("public")
-    public void setPurplePublic(boolean value) { this.purplePublic = value; }
+    public void setGistsPublic(boolean value) { this.gistsPublic = value; }
 
     @JsonProperty("created_at")
     public String getCreatedAt() { return createdAt; }

@@ -8,7 +8,7 @@ public class Base {
     private String ref;
     private String sha;
     private User user;
-    private BaseRepo repo;
+    private Forkee repo;
 
     @JsonProperty("label")
     public String getLabel() { return label; }
@@ -21,9 +21,9 @@ public class Base {
     public void setRef(String value) { this.ref = value; }
 
     @JsonProperty("sha")
-    public String getSha() { return sha; }
+    public String getSHA() { return sha; }
     @JsonProperty("sha")
-    public void setSha(String value) { this.sha = value; }
+    public void setSHA(String value) { this.sha = value; }
 
     @JsonProperty("user")
     public User getUser() { return user; }
@@ -31,7 +31,7 @@ public class Base {
     public void setUser(User value) { this.user = value; }
 
     @JsonProperty("repo")
-    public BaseRepo getRepo() { return repo; }
+    public Forkee getRepo() { return repo; }
     @JsonProperty("repo")
-    public void setRepo(BaseRepo value) { this.repo = value; }
+    public void setRepo(Forkee value) { this.repo = value; }
 }

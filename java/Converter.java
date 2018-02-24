@@ -1,15 +1,15 @@
 // To use this code, add the following Maven dependency to your project:
-//
+// 
 //     com.fasterxml.jackson.core : jackson-databind : 2.9.0
-//
+// 
 // Import this package:
-//
+// 
 //     import io.quicktype.Converter;
 //
 // Then you can deserialize a JSON string with
 //
-//     Map<String, String> data = Converter.APIDataFromJsonString(jsonString);
-//     Map<String, String> data = Converter.EmojisFromJsonString(jsonString);
+//     APIData data = Converter.APIDataFromJsonString(jsonString);
+//     Emojis data = Converter.EmojisFromJsonString(jsonString);
 //     Events[] data = Converter.EventsFromJsonString(jsonString);
 //     Gists[] data = Converter.GistsFromJsonString(jsonString);
 //     Meta data = Converter.MetaFromJsonString(jsonString);
@@ -24,19 +24,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class Converter {
     // Serialize/deserialize helpers
 
-    public static Map<String, String> APIDataFromJsonString(String json) throws IOException {
+    public static APIData APIDataFromJsonString(String json) throws IOException {
         return getAPIDataObjectReader().readValue(json);
     }
 
-    public static String APIDataToJsonString(Map<String, String> obj) throws JsonProcessingException {
+    public static String APIDataToJsonString(APIData obj) throws JsonProcessingException {
         return getAPIDataObjectWriter().writeValueAsString(obj);
     }
 
-    public static Map<String, String> EmojisFromJsonString(String json) throws IOException {
+    public static Emojis EmojisFromJsonString(String json) throws IOException {
         return getEmojisObjectReader().readValue(json);
     }
 
-    public static String EmojisToJsonString(Map<String, String> obj) throws JsonProcessingException {
+    public static String EmojisToJsonString(Emojis obj) throws JsonProcessingException {
         return getEmojisObjectWriter().writeValueAsString(obj);
     }
 
@@ -69,8 +69,8 @@ public class Converter {
 
     private static void instantiateAPIDataMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        APIDataReader = mapper.reader(Map.class);
-        APIDataWriter = mapper.writerFor(Map.class);
+        APIDataReader = mapper.reader(APIData.class);
+        APIDataWriter = mapper.writerFor(APIData.class);
     }
 
     private static ObjectReader getAPIDataObjectReader() {
@@ -88,8 +88,8 @@ public class Converter {
 
     private static void instantiateEmojisMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        EmojisReader = mapper.reader(Map.class);
-        EmojisWriter = mapper.writerFor(Map.class);
+        EmojisReader = mapper.reader(Emojis.class);
+        EmojisWriter = mapper.writerFor(Emojis.class);
     }
 
     private static ObjectReader getEmojisObjectReader() {

@@ -7,16 +7,16 @@ public class Events {
     private String id;
     private String type;
     private Actor actor;
-    private EventRepo repo;
+    private Repo repo;
     private Payload payload;
-    private boolean purplePublic;
+    private boolean eventsPublic;
     private String createdAt;
     private Actor org;
 
     @JsonProperty("id")
-    public String getId() { return id; }
+    public String getID() { return id; }
     @JsonProperty("id")
-    public void setId(String value) { this.id = value; }
+    public void setID(String value) { this.id = value; }
 
     @JsonProperty("type")
     public String getType() { return type; }
@@ -29,9 +29,9 @@ public class Events {
     public void setActor(Actor value) { this.actor = value; }
 
     @JsonProperty("repo")
-    public EventRepo getRepo() { return repo; }
+    public Repo getRepo() { return repo; }
     @JsonProperty("repo")
-    public void setRepo(EventRepo value) { this.repo = value; }
+    public void setRepo(Repo value) { this.repo = value; }
 
     @JsonProperty("payload")
     public Payload getPayload() { return payload; }
@@ -39,9 +39,9 @@ public class Events {
     public void setPayload(Payload value) { this.payload = value; }
 
     @JsonProperty("public")
-    public boolean getPurplePublic() { return purplePublic; }
+    public boolean getEventsPublic() { return eventsPublic; }
     @JsonProperty("public")
-    public void setPurplePublic(boolean value) { this.purplePublic = value; }
+    public void setEventsPublic(boolean value) { this.eventsPublic = value; }
 
     @JsonProperty("created_at")
     public String getCreatedAt() { return createdAt; }

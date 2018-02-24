@@ -3,12 +3,12 @@ package io.quicktype;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.*;
 
-public class BaseRepo {
+public class Forkee {
     private long id;
     private String name;
     private String fullName;
     private User owner;
-    private boolean purplePrivate;
+    private boolean forkeePrivate;
     private String htmlURL;
     private String description;
     private boolean fork;
@@ -56,7 +56,7 @@ public class BaseRepo {
     private String sshURL;
     private String cloneURL;
     private String svnURL;
-    private Object homepage;
+    private String homepage;
     private long size;
     private long stargazersCount;
     private long watchersCount;
@@ -70,16 +70,17 @@ public class BaseRepo {
     private Object mirrorURL;
     private boolean archived;
     private long openIssuesCount;
-    private Object license;
+    private License license;
     private long forks;
     private long openIssues;
     private long watchers;
     private String defaultBranch;
+    private Boolean forkeePublic;
 
     @JsonProperty("id")
-    public long getId() { return id; }
+    public long getID() { return id; }
     @JsonProperty("id")
-    public void setId(long value) { this.id = value; }
+    public void setID(long value) { this.id = value; }
 
     @JsonProperty("name")
     public String getName() { return name; }
@@ -97,14 +98,14 @@ public class BaseRepo {
     public void setOwner(User value) { this.owner = value; }
 
     @JsonProperty("private")
-    public boolean getPurplePrivate() { return purplePrivate; }
+    public boolean getForkeePrivate() { return forkeePrivate; }
     @JsonProperty("private")
-    public void setPurplePrivate(boolean value) { this.purplePrivate = value; }
+    public void setForkeePrivate(boolean value) { this.forkeePrivate = value; }
 
     @JsonProperty("html_url")
-    public String getHtmlURL() { return htmlURL; }
+    public String getHTMLURL() { return htmlURL; }
     @JsonProperty("html_url")
-    public void setHtmlURL(String value) { this.htmlURL = value; }
+    public void setHTMLURL(String value) { this.htmlURL = value; }
 
     @JsonProperty("description")
     public String getDescription() { return description; }
@@ -117,9 +118,9 @@ public class BaseRepo {
     public void setFork(boolean value) { this.fork = value; }
 
     @JsonProperty("url")
-    public String getUrl() { return url; }
+    public String getURL() { return url; }
     @JsonProperty("url")
-    public void setUrl(String value) { this.url = value; }
+    public void setURL(String value) { this.url = value; }
 
     @JsonProperty("forks_url")
     public String getForksURL() { return forksURL; }
@@ -322,9 +323,9 @@ public class BaseRepo {
     public void setGitURL(String value) { this.gitURL = value; }
 
     @JsonProperty("ssh_url")
-    public String getSshURL() { return sshURL; }
+    public String getSSHURL() { return sshURL; }
     @JsonProperty("ssh_url")
-    public void setSshURL(String value) { this.sshURL = value; }
+    public void setSSHURL(String value) { this.sshURL = value; }
 
     @JsonProperty("clone_url")
     public String getCloneURL() { return cloneURL; }
@@ -337,9 +338,9 @@ public class BaseRepo {
     public void setSvnURL(String value) { this.svnURL = value; }
 
     @JsonProperty("homepage")
-    public Object getHomepage() { return homepage; }
+    public String getHomepage() { return homepage; }
     @JsonProperty("homepage")
-    public void setHomepage(Object value) { this.homepage = value; }
+    public void setHomepage(String value) { this.homepage = value; }
 
     @JsonProperty("size")
     public long getSize() { return size; }
@@ -407,9 +408,9 @@ public class BaseRepo {
     public void setOpenIssuesCount(long value) { this.openIssuesCount = value; }
 
     @JsonProperty("license")
-    public Object getLicense() { return license; }
+    public License getLicense() { return license; }
     @JsonProperty("license")
-    public void setLicense(Object value) { this.license = value; }
+    public void setLicense(License value) { this.license = value; }
 
     @JsonProperty("forks")
     public long getForks() { return forks; }
@@ -430,4 +431,9 @@ public class BaseRepo {
     public String getDefaultBranch() { return defaultBranch; }
     @JsonProperty("default_branch")
     public void setDefaultBranch(String value) { this.defaultBranch = value; }
+
+    @JsonProperty("public")
+    public Boolean getForkeePublic() { return forkeePublic; }
+    @JsonProperty("public")
+    public void setForkeePublic(Boolean value) { this.forkeePublic = value; }
 }

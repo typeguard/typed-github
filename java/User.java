@@ -19,7 +19,7 @@ public class User {
     private String reposURL;
     private String eventsURL;
     private String receivedEventsURL;
-    private Type type;
+    private UserType type;
     private boolean siteAdmin;
 
     @JsonProperty("login")
@@ -28,9 +28,9 @@ public class User {
     public void setLogin(String value) { this.login = value; }
 
     @JsonProperty("id")
-    public long getId() { return id; }
+    public long getID() { return id; }
     @JsonProperty("id")
-    public void setId(long value) { this.id = value; }
+    public void setID(long value) { this.id = value; }
 
     @JsonProperty("avatar_url")
     public String getAvatarURL() { return avatarURL; }
@@ -43,14 +43,14 @@ public class User {
     public void setGravatarID(GravatarID value) { this.gravatarID = value; }
 
     @JsonProperty("url")
-    public String getUrl() { return url; }
+    public String getURL() { return url; }
     @JsonProperty("url")
-    public void setUrl(String value) { this.url = value; }
+    public void setURL(String value) { this.url = value; }
 
     @JsonProperty("html_url")
-    public String getHtmlURL() { return htmlURL; }
+    public String getHTMLURL() { return htmlURL; }
     @JsonProperty("html_url")
-    public void setHtmlURL(String value) { this.htmlURL = value; }
+    public void setHTMLURL(String value) { this.htmlURL = value; }
 
     @JsonProperty("followers_url")
     public String getFollowersURL() { return followersURL; }
@@ -98,9 +98,9 @@ public class User {
     public void setReceivedEventsURL(String value) { this.receivedEventsURL = value; }
 
     @JsonProperty("type")
-    public Type getType() { return type; }
+    public UserType getType() { return type; }
     @JsonProperty("type")
-    public void setType(Type value) { this.type = value; }
+    public void setType(UserType value) { this.type = value; }
 
     @JsonProperty("site_admin")
     public boolean getSiteAdmin() { return siteAdmin; }

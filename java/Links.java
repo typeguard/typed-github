@@ -19,9 +19,9 @@ public class Links {
     public void setSelf(Comments value) { this.self = value; }
 
     @JsonProperty("html")
-    public Comments getHtml() { return html; }
+    public Comments getHTML() { return html; }
     @JsonProperty("html")
-    public void setHtml(Comments value) { this.html = value; }
+    public void setHTML(Comments value) { this.html = value; }
 
     @JsonProperty("issue")
     public Comments getIssue() { return issue; }

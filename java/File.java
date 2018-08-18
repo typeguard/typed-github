@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.*;
 
 public class File {
     private String filename;
-    private FileType type;
+    private String type;
     private String language;
     private String rawURL;
     private long size;
@@ -16,9 +16,9 @@ public class File {
     public void setFilename(String value) { this.filename = value; }
 
     @JsonProperty("type")
-    public FileType getType() { return type; }
+    public String getType() { return type; }
     @JsonProperty("type")
-    public void setType(FileType value) { this.type = value; }
+    public void setType(String value) { this.type = value; }
 
     @JsonProperty("language")
     public String getLanguage() { return language; }

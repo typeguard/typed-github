@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.*;
 public class PullRequest {
     private String url;
     private long id;
+    private String nodeID;
     private String htmlURL;
     private String diffURL;
     private String patchURL;
@@ -14,13 +15,13 @@ public class PullRequest {
     private String state;
     private boolean locked;
     private String title;
-    private User user;
+    private Owner user;
     private String body;
     private String createdAt;
     private String updatedAt;
     private Object closedAt;
     private Object mergedAt;
-    private Object mergeCommitSHA;
+    private String mergeCommitSHA;
     private Object assignee;
     private Object[] assignees;
     private Object[] requestedReviewers;
@@ -34,20 +35,20 @@ public class PullRequest {
     private String statusesURL;
     private Base head;
     private Base base;
-    private Links links;
+    private PullRequestLinks links;
     private String authorAssociation;
-    private boolean merged;
+    private Boolean merged;
     private Object mergeable;
     private Object rebaseable;
     private String mergeableState;
     private Object mergedBy;
-    private long comments;
-    private long reviewComments;
-    private boolean maintainerCanModify;
-    private long commits;
-    private long additions;
-    private long deletions;
-    private long changedFiles;
+    private Long comments;
+    private Long reviewComments;
+    private Boolean maintainerCanModify;
+    private Long commits;
+    private Long additions;
+    private Long deletions;
+    private Long changedFiles;
 
     @JsonProperty("url")
     public String getURL() { return url; }
@@ -58,6 +59,11 @@ public class PullRequest {
     public long getID() { return id; }
     @JsonProperty("id")
     public void setID(long value) { this.id = value; }
+
+    @JsonProperty("node_id")
+    public String getNodeID() { return nodeID; }
+    @JsonProperty("node_id")
+    public void setNodeID(String value) { this.nodeID = value; }
 
     @JsonProperty("html_url")
     public String getHTMLURL() { return htmlURL; }
@@ -100,9 +106,9 @@ public class PullRequest {
     public void setTitle(String value) { this.title = value; }
 
     @JsonProperty("user")
-    public User getUser() { return user; }
+    public Owner getUser() { return user; }
     @JsonProperty("user")
-    public void setUser(User value) { this.user = value; }
+    public void setUser(Owner value) { this.user = value; }
 
     @JsonProperty("body")
     public String getBody() { return body; }
@@ -130,9 +136,9 @@ public class PullRequest {
     public void setMergedAt(Object value) { this.mergedAt = value; }
 
     @JsonProperty("merge_commit_sha")
-    public Object getMergeCommitSHA() { return mergeCommitSHA; }
+    public String getMergeCommitSHA() { return mergeCommitSHA; }
     @JsonProperty("merge_commit_sha")
-    public void setMergeCommitSHA(Object value) { this.mergeCommitSHA = value; }
+    public void setMergeCommitSHA(String value) { this.mergeCommitSHA = value; }
 
     @JsonProperty("assignee")
     public Object getAssignee() { return assignee; }
@@ -200,9 +206,9 @@ public class PullRequest {
     public void setBase(Base value) { this.base = value; }
 
     @JsonProperty("_links")
-    public Links getLinks() { return links; }
+    public PullRequestLinks getLinks() { return links; }
     @JsonProperty("_links")
-    public void setLinks(Links value) { this.links = value; }
+    public void setLinks(PullRequestLinks value) { this.links = value; }
 
     @JsonProperty("author_association")
     public String getAuthorAssociation() { return authorAssociation; }
@@ -210,9 +216,9 @@ public class PullRequest {
     public void setAuthorAssociation(String value) { this.authorAssociation = value; }
 
     @JsonProperty("merged")
-    public boolean getMerged() { return merged; }
+    public Boolean getMerged() { return merged; }
     @JsonProperty("merged")
-    public void setMerged(boolean value) { this.merged = value; }
+    public void setMerged(Boolean value) { this.merged = value; }
 
     @JsonProperty("mergeable")
     public Object getMergeable() { return mergeable; }
@@ -235,37 +241,37 @@ public class PullRequest {
     public void setMergedBy(Object value) { this.mergedBy = value; }
 
     @JsonProperty("comments")
-    public long getComments() { return comments; }
+    public Long getComments() { return comments; }
     @JsonProperty("comments")
-    public void setComments(long value) { this.comments = value; }
+    public void setComments(Long value) { this.comments = value; }
 
     @JsonProperty("review_comments")
-    public long getReviewComments() { return reviewComments; }
+    public Long getReviewComments() { return reviewComments; }
     @JsonProperty("review_comments")
-    public void setReviewComments(long value) { this.reviewComments = value; }
+    public void setReviewComments(Long value) { this.reviewComments = value; }
 
     @JsonProperty("maintainer_can_modify")
-    public boolean getMaintainerCanModify() { return maintainerCanModify; }
+    public Boolean getMaintainerCanModify() { return maintainerCanModify; }
     @JsonProperty("maintainer_can_modify")
-    public void setMaintainerCanModify(boolean value) { this.maintainerCanModify = value; }
+    public void setMaintainerCanModify(Boolean value) { this.maintainerCanModify = value; }
 
     @JsonProperty("commits")
-    public long getCommits() { return commits; }
+    public Long getCommits() { return commits; }
     @JsonProperty("commits")
-    public void setCommits(long value) { this.commits = value; }
+    public void setCommits(Long value) { this.commits = value; }
 
     @JsonProperty("additions")
-    public long getAdditions() { return additions; }
+    public Long getAdditions() { return additions; }
     @JsonProperty("additions")
-    public void setAdditions(long value) { this.additions = value; }
+    public void setAdditions(Long value) { this.additions = value; }
 
     @JsonProperty("deletions")
-    public long getDeletions() { return deletions; }
+    public Long getDeletions() { return deletions; }
     @JsonProperty("deletions")
-    public void setDeletions(long value) { this.deletions = value; }
+    public void setDeletions(Long value) { this.deletions = value; }
 
     @JsonProperty("changed_files")
-    public long getChangedFiles() { return changedFiles; }
+    public Long getChangedFiles() { return changedFiles; }
     @JsonProperty("changed_files")
-    public void setChangedFiles(long value) { this.changedFiles = value; }
+    public void setChangedFiles(Long value) { this.changedFiles = value; }
 }

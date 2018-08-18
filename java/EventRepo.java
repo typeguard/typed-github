@@ -3,7 +3,7 @@ package io.quicktype;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.*;
 
-public class Repo {
+public class EventRepo {
     private long id;
     private String name;
     private String url;

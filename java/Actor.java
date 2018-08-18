@@ -7,7 +7,7 @@ public class Actor {
     private long id;
     private String login;
     private String displayLogin;
-    private GravatarID gravatarID;
+    private String gravatarID;
     private String url;
     private String avatarURL;
 
@@ -27,9 +27,9 @@ public class Actor {
     public void setDisplayLogin(String value) { this.displayLogin = value; }
 
     @JsonProperty("gravatar_id")
-    public GravatarID getGravatarID() { return gravatarID; }
+    public String getGravatarID() { return gravatarID; }
     @JsonProperty("gravatar_id")
-    public void setGravatarID(GravatarID value) { this.gravatarID = value; }
+    public void setGravatarID(String value) { this.gravatarID = value; }
 
     @JsonProperty("url")
     public String getURL() { return url; }

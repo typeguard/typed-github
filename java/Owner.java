@@ -3,11 +3,12 @@ package io.quicktype;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.*;
 
-public class User {
+public class Owner {
     private String login;
     private long id;
+    private String nodeID;
     private String avatarURL;
-    private GravatarID gravatarID;
+    private String gravatarID;
     private String url;
     private String htmlURL;
     private String followersURL;
@@ -19,7 +20,7 @@ public class User {
     private String reposURL;
     private String eventsURL;
     private String receivedEventsURL;
-    private UserType type;
+    private Type type;
     private boolean siteAdmin;
 
     @JsonProperty("login")
@@ -32,15 +33,20 @@ public class User {
     @JsonProperty("id")
     public void setID(long value) { this.id = value; }
 
+    @JsonProperty("node_id")
+    public String getNodeID() { return nodeID; }
+    @JsonProperty("node_id")
+    public void setNodeID(String value) { this.nodeID = value; }
+
     @JsonProperty("avatar_url")
     public String getAvatarURL() { return avatarURL; }
     @JsonProperty("avatar_url")
     public void setAvatarURL(String value) { this.avatarURL = value; }
 
     @JsonProperty("gravatar_id")
-    public GravatarID getGravatarID() { return gravatarID; }
+    public String getGravatarID() { return gravatarID; }
     @JsonProperty("gravatar_id")
-    public void setGravatarID(GravatarID value) { this.gravatarID = value; }
+    public void setGravatarID(String value) { this.gravatarID = value; }
 
     @JsonProperty("url")
     public String getURL() { return url; }
@@ -98,9 +104,9 @@ public class User {
     public void setReceivedEventsURL(String value) { this.receivedEventsURL = value; }
 
     @JsonProperty("type")
-    public UserType getType() { return type; }
+    public Type getType() { return type; }
     @JsonProperty("type")
-    public void setType(UserType value) { this.type = value; }
+    public void setType(Type value) { this.type = value; }
 
     @JsonProperty("site_admin")
     public boolean getSiteAdmin() { return siteAdmin; }

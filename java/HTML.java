@@ -3,7 +3,7 @@ package io.quicktype;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.*;
 
-public class Comments {
+public class HTML {
     private String href;
 
     @JsonProperty("href")

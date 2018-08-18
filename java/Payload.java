@@ -11,7 +11,6 @@ public class Payload {
     private String head;
     private String before;
     private Commit[] commits;
-    private Forkee forkee;
     private String action;
     private Long number;
     private PullRequest pullRequest;
@@ -19,7 +18,6 @@ public class Payload {
     private String masterBranch;
     private String description;
     private String pusherType;
-    private Issue issue;
     private Comment comment;
 
     @JsonProperty("push_id")
@@ -57,11 +55,6 @@ public class Payload {
     @JsonProperty("commits")
     public void setCommits(Commit[] value) { this.commits = value; }
 
-    @JsonProperty("forkee")
-    public Forkee getForkee() { return forkee; }
-    @JsonProperty("forkee")
-    public void setForkee(Forkee value) { this.forkee = value; }
-
     @JsonProperty("action")
     public String getAction() { return action; }
     @JsonProperty("action")
@@ -96,11 +89,6 @@ public class Payload {
     public String getPusherType() { return pusherType; }
     @JsonProperty("pusher_type")
     public void setPusherType(String value) { this.pusherType = value; }
-
-    @JsonProperty("issue")
-    public Issue getIssue() { return issue; }
-    @JsonProperty("issue")
-    public void setIssue(Issue value) { this.issue = value; }
 
     @JsonProperty("comment")
     public Comment getComment() { return comment; }

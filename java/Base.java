@@ -7,8 +7,8 @@ public class Base {
     private String label;
     private String ref;
     private String sha;
-    private User user;
-    private Forkee repo;
+    private Owner user;
+    private BaseRepo repo;
 
     @JsonProperty("label")
     public String getLabel() { return label; }
@@ -26,12 +26,12 @@ public class Base {
     public void setSHA(String value) { this.sha = value; }
 
     @JsonProperty("user")
-    public User getUser() { return user; }
+    public Owner getUser() { return user; }
     @JsonProperty("user")
-    public void setUser(User value) { this.user = value; }
+    public void setUser(Owner value) { this.user = value; }
 
     @JsonProperty("repo")
-    public Forkee getRepo() { return repo; }
+    public BaseRepo getRepo() { return repo; }
     @JsonProperty("repo")
-    public void setRepo(Forkee value) { this.repo = value; }
+    public void setRepo(BaseRepo value) { this.repo = value; }
 }

@@ -1,1584 +1,143 @@
 //  To parse this JSON data, first install
-// 
+//
 //      Boost     http://www.boost.org
 //      json.hpp  https://github.com/nlohmann/json
-// 
+//
 //  Then include this file, and then do
-// 
+//
 //     ApiData data = nlohmann::json::parse(jsonString);
 //     Emojis data = nlohmann::json::parse(jsonString);
 //     Events data = nlohmann::json::parse(jsonString);
 //     Gists data = nlohmann::json::parse(jsonString);
 //     Meta data = nlohmann::json::parse(jsonString);
 
+#pragma once
+
 #include "json.hpp"
+
+#include <boost/optional.hpp>
+#include <stdexcept>
+#include <regex>
+namespace nlohmann {
+    template <typename T>
+    struct adl_serializer<std::shared_ptr<T>> {
+        static void to_json(json& j, const std::shared_ptr<T>& opt) {
+            if (!opt) j = nullptr; else j = *opt;
+        }
+
+        static std::shared_ptr<T> from_json(const json& j) {
+            if (j.is_null()) return std::unique_ptr<T>(); else return std::unique_ptr<T>(new T(j.get<T>()));
+        }
+    };
+}
 
 namespace quicktype {
     using nlohmann::json;
 
-    struct ApiData {
-        std::string current_user_url;
-        std::string current_user_authorizations_html_url;
-        std::string authorizations_url;
-        std::string code_search_url;
-        std::string commit_search_url;
-        std::string emails_url;
-        std::string emojis_url;
-        std::string events_url;
-        std::string feeds_url;
-        std::string followers_url;
-        std::string following_url;
-        std::string gists_url;
-        std::string hub_url;
-        std::string issue_search_url;
-        std::string issues_url;
-        std::string keys_url;
-        std::string notifications_url;
-        std::string organization_repositories_url;
-        std::string organization_url;
-        std::string public_gists_url;
-        std::string rate_limit_url;
-        std::string repository_url;
-        std::string repository_search_url;
-        std::string current_user_repositories_url;
-        std::string starred_url;
-        std::string starred_gists_url;
-        std::string team_url;
-        std::string user_url;
-        std::string user_organizations_url;
-        std::string user_repositories_url;
-        std::string user_search_url;
-    };
+    inline json get_untyped(const json &j, const char *property) {
+        if (j.find(property) != j.end()) {
+            return j.at(property).get<json>();
+        }
+        return json();
+    }
 
-    struct Emojis {
-        std::string the_1;
-        std::string emojis_1;
-        std::string the_100;
-        std::string the_1234;
-        std::string the_1_st_place_medal;
-        std::string the_2_nd_place_medal;
-        std::string the_3_rd_place_medal;
-        std::string the_8_ball;
-        std::string a;
-        std::string ab;
-        std::string abc;
-        std::string abcd;
-        std::string accept;
-        std::string aerial_tramway;
-        std::string afghanistan;
-        std::string airplane;
-        std::string aland_islands;
-        std::string alarm_clock;
-        std::string albania;
-        std::string alembic;
-        std::string algeria;
-        std::string alien;
-        std::string ambulance;
-        std::string american_samoa;
-        std::string amphora;
-        std::string anchor;
-        std::string andorra;
-        std::string angel;
-        std::string anger;
-        std::string angola;
-        std::string angry;
-        std::string anguilla;
-        std::string anguished;
-        std::string ant;
-        std::string antarctica;
-        std::string antigua_barbuda;
-        std::string apple;
-        std::string aquarius;
-        std::string argentina;
-        std::string aries;
-        std::string armenia;
-        std::string arrow_backward;
-        std::string arrow_double_down;
-        std::string arrow_double_up;
-        std::string arrow_down;
-        std::string arrow_down_small;
-        std::string arrow_forward;
-        std::string arrow_heading_down;
-        std::string arrow_heading_up;
-        std::string arrow_left;
-        std::string arrow_lower_left;
-        std::string arrow_lower_right;
-        std::string arrow_right;
-        std::string arrow_right_hook;
-        std::string arrow_up;
-        std::string arrow_up_down;
-        std::string arrow_up_small;
-        std::string arrow_upper_left;
-        std::string arrow_upper_right;
-        std::string arrows_clockwise;
-        std::string arrows_counterclockwise;
-        std::string art;
-        std::string articulated_lorry;
-        std::string artificial_satellite;
-        std::string aruba;
-        std::string asterisk;
-        std::string astonished;
-        std::string athletic_shoe;
-        std::string atm;
-        std::string atom;
-        std::string atom_symbol;
-        std::string australia;
-        std::string austria;
-        std::string avocado;
-        std::string azerbaijan;
-        std::string b;
-        std::string baby;
-        std::string baby_bottle;
-        std::string baby_chick;
-        std::string baby_symbol;
-        std::string back;
-        std::string bacon;
-        std::string badminton;
-        std::string baggage_claim;
-        std::string baguette_bread;
-        std::string bahamas;
-        std::string bahrain;
-        std::string balance_scale;
-        std::string balloon;
-        std::string ballot_box;
-        std::string ballot_box_with_check;
-        std::string bamboo;
-        std::string banana;
-        std::string bangbang;
-        std::string bangladesh;
-        std::string bank;
-        std::string bar_chart;
-        std::string barbados;
-        std::string barber;
-        std::string baseball;
-        std::string basecamp;
-        std::string basecampy;
-        std::string basketball;
-        std::string basketball_man;
-        std::string basketball_woman;
-        std::string bat;
-        std::string bath;
-        std::string bathtub;
-        std::string battery;
-        std::string beach_umbrella;
-        std::string bear;
-        std::string bed;
-        std::string bee;
-        std::string beer;
-        std::string beers;
-        std::string beetle;
-        std::string beginner;
-        std::string belarus;
-        std::string belgium;
-        std::string belize;
-        std::string bell;
-        std::string bellhop_bell;
-        std::string benin;
-        std::string bento;
-        std::string bermuda;
-        std::string bhutan;
-        std::string bicyclist;
-        std::string bike;
-        std::string biking_man;
-        std::string biking_woman;
-        std::string bikini;
-        std::string biohazard;
-        std::string bird;
-        std::string birthday;
-        std::string black_circle;
-        std::string black_flag;
-        std::string black_heart;
-        std::string black_joker;
-        std::string black_large_square;
-        std::string black_medium_small_square;
-        std::string black_medium_square;
-        std::string black_nib;
-        std::string black_small_square;
-        std::string black_square_button;
-        std::string blonde_man;
-        std::string blonde_woman;
-        std::string blossom;
-        std::string blowfish;
-        std::string blue_book;
-        std::string blue_car;
-        std::string blue_heart;
-        std::string blush;
-        std::string boar;
-        std::string boat;
-        std::string bolivia;
-        std::string bomb;
-        std::string book;
-        std::string bookmark;
-        std::string bookmark_tabs;
-        std::string books;
-        std::string boom;
-        std::string boot;
-        std::string bosnia_herzegovina;
-        std::string botswana;
-        std::string bouquet;
-        std::string bow;
-        std::string bow_and_arrow;
-        std::string bowing_man;
-        std::string bowing_woman;
-        std::string bowling;
-        std::string bowtie;
-        std::string boxing_glove;
-        std::string boy;
-        std::string brazil;
-        std::string bread;
-        std::string bride_with_veil;
-        std::string bridge_at_night;
-        std::string briefcase;
-        std::string british_indian_ocean_territory;
-        std::string british_virgin_islands;
-        std::string broken_heart;
-        std::string brunei;
-        std::string bug;
-        std::string building_construction;
-        std::string bulb;
-        std::string bulgaria;
-        std::string bullettrain_front;
-        std::string bullettrain_side;
-        std::string burkina_faso;
-        std::string burrito;
-        std::string burundi;
-        std::string bus;
-        std::string business_suit_levitating;
-        std::string busstop;
-        std::string bust_in_silhouette;
-        std::string busts_in_silhouette;
-        std::string butterfly;
-        std::string cactus;
-        std::string cake;
-        std::string calendar;
-        std::string call_me_hand;
-        std::string calling;
-        std::string cambodia;
-        std::string camel;
-        std::string camera;
-        std::string camera_flash;
-        std::string cameroon;
-        std::string camping;
-        std::string canada;
-        std::string canary_islands;
-        std::string cancer;
-        std::string candle;
-        std::string candy;
-        std::string canoe;
-        std::string cape_verde;
-        std::string capital_abcd;
-        std::string capricorn;
-        std::string car;
-        std::string card_file_box;
-        std::string card_index;
-        std::string card_index_dividers;
-        std::string caribbean_netherlands;
-        std::string carousel_horse;
-        std::string carrot;
-        std::string cat;
-        std::string cat2;
-        std::string cayman_islands;
-        std::string cd;
-        std::string central_african_republic;
-        std::string chad;
-        std::string chains;
-        std::string champagne;
-        std::string chart;
-        std::string chart_with_downwards_trend;
-        std::string chart_with_upwards_trend;
-        std::string checkered_flag;
-        std::string cheese;
-        std::string cherries;
-        std::string cherry_blossom;
-        std::string chestnut;
-        std::string chicken;
-        std::string children_crossing;
-        std::string chile;
-        std::string chipmunk;
-        std::string chocolate_bar;
-        std::string christmas_island;
-        std::string christmas_tree;
-        std::string church;
-        std::string cinema;
-        std::string circus_tent;
-        std::string city_sunrise;
-        std::string city_sunset;
-        std::string cityscape;
-        std::string cl;
-        std::string clamp;
-        std::string clap;
-        std::string clapper;
-        std::string classical_building;
-        std::string clinking_glasses;
-        std::string clipboard;
-        std::string clock1;
-        std::string clock10;
-        std::string clock1030;
-        std::string clock11;
-        std::string clock1130;
-        std::string clock12;
-        std::string clock1230;
-        std::string clock130;
-        std::string clock2;
-        std::string clock230;
-        std::string clock3;
-        std::string clock330;
-        std::string clock4;
-        std::string clock430;
-        std::string clock5;
-        std::string clock530;
-        std::string clock6;
-        std::string clock630;
-        std::string clock7;
-        std::string clock730;
-        std::string clock8;
-        std::string clock830;
-        std::string clock9;
-        std::string clock930;
-        std::string closed_book;
-        std::string closed_lock_with_key;
-        std::string closed_umbrella;
-        std::string cloud;
-        std::string cloud_with_lightning;
-        std::string cloud_with_lightning_and_rain;
-        std::string cloud_with_rain;
-        std::string cloud_with_snow;
-        std::string clown_face;
-        std::string clubs;
-        std::string cn;
-        std::string cocktail;
-        std::string cocos_islands;
-        std::string coffee;
-        std::string coffin;
-        std::string cold_sweat;
-        std::string collision;
-        std::string colombia;
-        std::string comet;
-        std::string comoros;
-        std::string computer;
-        std::string computer_mouse;
-        std::string confetti_ball;
-        std::string confounded;
-        std::string confused;
-        std::string congo_brazzaville;
-        std::string congo_kinshasa;
-        std::string congratulations;
-        std::string construction;
-        std::string construction_worker;
-        std::string construction_worker_man;
-        std::string construction_worker_woman;
-        std::string control_knobs;
-        std::string convenience_store;
-        std::string cook_islands;
-        std::string cookie;
-        std::string cool;
-        std::string cop;
-        std::string copyright;
-        std::string corn;
-        std::string costa_rica;
-        std::string cote_divoire;
-        std::string couch_and_lamp;
-        std::string couple;
-        std::string couple_with_heart;
-        std::string couple_with_heart_man_man;
-        std::string couple_with_heart_woman_man;
-        std::string couple_with_heart_woman_woman;
-        std::string couplekiss_man_man;
-        std::string couplekiss_man_woman;
-        std::string couplekiss_woman_woman;
-        std::string cow;
-        std::string cow2;
-        std::string cowboy_hat_face;
-        std::string crab;
-        std::string crayon;
-        std::string credit_card;
-        std::string crescent_moon;
-        std::string cricket;
-        std::string croatia;
-        std::string crocodile;
-        std::string croissant;
-        std::string crossed_fingers;
-        std::string crossed_flags;
-        std::string crossed_swords;
-        std::string crown;
-        std::string cry;
-        std::string crying_cat_face;
-        std::string crystal_ball;
-        std::string cuba;
-        std::string cucumber;
-        std::string cupid;
-        std::string curacao;
-        std::string curly_loop;
-        std::string currency_exchange;
-        std::string curry;
-        std::string custard;
-        std::string customs;
-        std::string cyclone;
-        std::string cyprus;
-        std::string czech_republic;
-        std::string dagger;
-        std::string dancer;
-        std::string dancers;
-        std::string dancing_men;
-        std::string dancing_women;
-        std::string dango;
-        std::string dark_sunglasses;
-        std::string dart;
-        std::string dash;
-        std::string date;
-        std::string de;
-        std::string deciduous_tree;
-        std::string deer;
-        std::string denmark;
-        std::string department_store;
-        std::string derelict_house;
-        std::string desert;
-        std::string desert_island;
-        std::string desktop_computer;
-        std::string detective;
-        std::string diamond_shape_with_a_dot_inside;
-        std::string diamonds;
-        std::string disappointed;
-        std::string disappointed_relieved;
-        std::string dizzy;
-        std::string dizzy_face;
-        std::string djibouti;
-        std::string do_not_litter;
-        std::string dog;
-        std::string dog2;
-        std::string dollar;
-        std::string dolls;
-        std::string dolphin;
-        std::string dominica;
-        std::string dominican_republic;
-        std::string door;
-        std::string doughnut;
-        std::string dove;
-        std::string dragon;
-        std::string dragon_face;
-        std::string dress;
-        std::string dromedary_camel;
-        std::string drooling_face;
-        std::string droplet;
-        std::string drum;
-        std::string duck;
-        std::string dvd;
-        std::string e_mail;
-        std::string eagle;
-        std::string ear;
-        std::string ear_of_rice;
-        std::string earth_africa;
-        std::string earth_americas;
-        std::string earth_asia;
-        std::string ecuador;
-        std::string egg;
-        std::string eggplant;
-        std::string egypt;
-        std::string eight;
-        std::string eight_pointed_black_star;
-        std::string eight_spoked_asterisk;
-        std::string el_salvador;
-        std::string electric_plug;
-        std::string electron;
-        std::string elephant;
-        std::string email;
-        std::string end;
-        std::string envelope;
-        std::string envelope_with_arrow;
-        std::string equatorial_guinea;
-        std::string eritrea;
-        std::string es;
-        std::string estonia;
-        std::string ethiopia;
-        std::string eu;
-        std::string euro;
-        std::string european_castle;
-        std::string european_post_office;
-        std::string european_union;
-        std::string evergreen_tree;
-        std::string exclamation;
-        std::string expressionless;
-        std::string eye;
-        std::string eye_speech_bubble;
-        std::string eyeglasses;
-        std::string eyes;
-        std::string face_with_head_bandage;
-        std::string face_with_thermometer;
-        std::string facepunch;
-        std::string factory;
-        std::string falkland_islands;
-        std::string fallen_leaf;
-        std::string family;
-        std::string family_man_boy;
-        std::string family_man_boy_boy;
-        std::string family_man_girl;
-        std::string family_man_girl_boy;
-        std::string family_man_girl_girl;
-        std::string family_man_man_boy;
-        std::string family_man_man_boy_boy;
-        std::string family_man_man_girl;
-        std::string family_man_man_girl_boy;
-        std::string family_man_man_girl_girl;
-        std::string family_man_woman_boy;
-        std::string family_man_woman_boy_boy;
-        std::string family_man_woman_girl;
-        std::string family_man_woman_girl_boy;
-        std::string family_man_woman_girl_girl;
-        std::string family_woman_boy;
-        std::string family_woman_boy_boy;
-        std::string family_woman_girl;
-        std::string family_woman_girl_boy;
-        std::string family_woman_girl_girl;
-        std::string family_woman_woman_boy;
-        std::string family_woman_woman_boy_boy;
-        std::string family_woman_woman_girl;
-        std::string family_woman_woman_girl_boy;
-        std::string family_woman_woman_girl_girl;
-        std::string faroe_islands;
-        std::string fast_forward;
-        std::string fax;
-        std::string fearful;
-        std::string feelsgood;
-        std::string feet;
-        std::string female_detective;
-        std::string ferris_wheel;
-        std::string ferry;
-        std::string field_hockey;
-        std::string fiji;
-        std::string file_cabinet;
-        std::string file_folder;
-        std::string film_projector;
-        std::string film_strip;
-        std::string finland;
-        std::string finnadie;
-        std::string fire;
-        std::string fire_engine;
-        std::string fireworks;
-        std::string first_quarter_moon;
-        std::string first_quarter_moon_with_face;
-        std::string fish;
-        std::string fish_cake;
-        std::string fishing_pole_and_fish;
-        std::string fist;
-        std::string fist_left;
-        std::string fist_oncoming;
-        std::string fist_raised;
-        std::string fist_right;
-        std::string five;
-        std::string flags;
-        std::string flashlight;
-        std::string fleur_de_lis;
-        std::string flight_arrival;
-        std::string flight_departure;
-        std::string flipper;
-        std::string floppy_disk;
-        std::string flower_playing_cards;
-        std::string flushed;
-        std::string fog;
-        std::string foggy;
-        std::string football;
-        std::string footprints;
-        std::string fork_and_knife;
-        std::string fountain;
-        std::string fountain_pen;
-        std::string four;
-        std::string four_leaf_clover;
-        std::string fox_face;
-        std::string fr;
-        std::string framed_picture;
-        std::string free;
-        std::string french_guiana;
-        std::string french_polynesia;
-        std::string french_southern_territories;
-        std::string fried_egg;
-        std::string fried_shrimp;
-        std::string fries;
-        std::string frog;
-        std::string frowning;
-        std::string frowning_face;
-        std::string frowning_man;
-        std::string frowning_woman;
-        std::string fu;
-        std::string fuelpump;
-        std::string full_moon;
-        std::string full_moon_with_face;
-        std::string funeral_urn;
-        std::string gabon;
-        std::string gambia;
-        std::string game_die;
-        std::string gb;
-        std::string gear;
-        std::string gem;
-        std::string gemini;
-        std::string georgia;
-        std::string ghana;
-        std::string ghost;
-        std::string gibraltar;
-        std::string gift;
-        std::string gift_heart;
-        std::string girl;
-        std::string globe_with_meridians;
-        std::string goal_net;
-        std::string goat;
-        std::string goberserk;
-        std::string godmode;
-        std::string golf;
-        std::string golfing_man;
-        std::string golfing_woman;
-        std::string gorilla;
-        std::string grapes;
-        std::string greece;
-        std::string green_apple;
-        std::string green_book;
-        std::string green_heart;
-        std::string green_salad;
-        std::string greenland;
-        std::string grenada;
-        std::string grey_exclamation;
-        std::string grey_question;
-        std::string grimacing;
-        std::string grin;
-        std::string grinning;
-        std::string guadeloupe;
-        std::string guam;
-        std::string guardsman;
-        std::string guardswoman;
-        std::string guatemala;
-        std::string guernsey;
-        std::string guinea;
-        std::string guinea_bissau;
-        std::string guitar;
-        std::string gun;
-        std::string guyana;
-        std::string haircut;
-        std::string haircut_man;
-        std::string haircut_woman;
-        std::string haiti;
-        std::string hamburger;
-        std::string hammer;
-        std::string hammer_and_pick;
-        std::string hammer_and_wrench;
-        std::string hamster;
-        std::string hand;
-        std::string handbag;
-        std::string handshake;
-        std::string hankey;
-        std::string hash;
-        std::string hatched_chick;
-        std::string hatching_chick;
-        std::string headphones;
-        std::string hear_no_evil;
-        std::string heart;
-        std::string heart_decoration;
-        std::string heart_eyes;
-        std::string heart_eyes_cat;
-        std::string heartbeat;
-        std::string heartpulse;
-        std::string hearts;
-        std::string heavy_check_mark;
-        std::string heavy_division_sign;
-        std::string heavy_dollar_sign;
-        std::string heavy_exclamation_mark;
-        std::string heavy_heart_exclamation;
-        std::string heavy_minus_sign;
-        std::string heavy_multiplication_x;
-        std::string heavy_plus_sign;
-        std::string helicopter;
-        std::string herb;
-        std::string hibiscus;
-        std::string high_brightness;
-        std::string high_heel;
-        std::string hocho;
-        std::string hole;
-        std::string honduras;
-        std::string honey_pot;
-        std::string honeybee;
-        std::string hong_kong;
-        std::string horse;
-        std::string horse_racing;
-        std::string hospital;
-        std::string hot_pepper;
-        std::string hotdog;
-        std::string hotel;
-        std::string hotsprings;
-        std::string hourglass;
-        std::string hourglass_flowing_sand;
-        std::string house;
-        std::string house_with_garden;
-        std::string houses;
-        std::string hugs;
-        std::string hungary;
-        std::string hurtrealbad;
-        std::string hushed;
-        std::string ice_cream;
-        std::string ice_hockey;
-        std::string ice_skate;
-        std::string icecream;
-        std::string iceland;
-        std::string id;
-        std::string ideograph_advantage;
-        std::string imp;
-        std::string inbox_tray;
-        std::string incoming_envelope;
-        std::string india;
-        std::string indonesia;
-        std::string information_desk_person;
-        std::string information_source;
-        std::string innocent;
-        std::string interrobang;
-        std::string iphone;
-        std::string iran;
-        std::string iraq;
-        std::string ireland;
-        std::string isle_of_man;
-        std::string israel;
-        std::string it;
-        std::string izakaya_lantern;
-        std::string jack_o_lantern;
-        std::string jamaica;
-        std::string japan;
-        std::string japanese_castle;
-        std::string japanese_goblin;
-        std::string japanese_ogre;
-        std::string jeans;
-        std::string jersey;
-        std::string jordan;
-        std::string joy;
-        std::string joy_cat;
-        std::string joystick;
-        std::string jp;
-        std::string kaaba;
-        std::string kazakhstan;
-        std::string kenya;
-        std::string key;
-        std::string keyboard;
-        std::string keycap_ten;
-        std::string kick_scooter;
-        std::string kimono;
-        std::string kiribati;
-        std::string kiss;
-        std::string kissing;
-        std::string kissing_cat;
-        std::string kissing_closed_eyes;
-        std::string kissing_heart;
-        std::string kissing_smiling_eyes;
-        std::string kiwi_fruit;
-        std::string knife;
-        std::string koala;
-        std::string koko;
-        std::string kosovo;
-        std::string kr;
-        std::string kuwait;
-        std::string kyrgyzstan;
-        std::string label;
-        std::string lantern;
-        std::string laos;
-        std::string large_blue_circle;
-        std::string large_blue_diamond;
-        std::string large_orange_diamond;
-        std::string last_quarter_moon;
-        std::string last_quarter_moon_with_face;
-        std::string latin_cross;
-        std::string latvia;
-        std::string laughing;
-        std::string leaves;
-        std::string lebanon;
-        std::string ledger;
-        std::string left_luggage;
-        std::string left_right_arrow;
-        std::string leftwards_arrow_with_hook;
-        std::string lemon;
-        std::string leo;
-        std::string leopard;
-        std::string lesotho;
-        std::string level_slider;
-        std::string liberia;
-        std::string libra;
-        std::string libya;
-        std::string liechtenstein;
-        std::string light_rail;
-        std::string link;
-        std::string lion;
-        std::string lips;
-        std::string lipstick;
-        std::string lithuania;
-        std::string lizard;
-        std::string lock;
-        std::string lock_with_ink_pen;
-        std::string lollipop;
-        std::string loop;
-        std::string loud_sound;
-        std::string loudspeaker;
-        std::string love_hotel;
-        std::string love_letter;
-        std::string low_brightness;
-        std::string luxembourg;
-        std::string lying_face;
-        std::string m;
-        std::string macau;
-        std::string macedonia;
-        std::string madagascar;
-        std::string mag;
-        std::string mag_right;
-        std::string mahjong;
-        std::string mailbox;
-        std::string mailbox_closed;
-        std::string mailbox_with_mail;
-        std::string mailbox_with_no_mail;
-        std::string malawi;
-        std::string malaysia;
-        std::string maldives;
-        std::string male_detective;
-        std::string mali;
-        std::string malta;
-        std::string man;
-        std::string man_artist;
-        std::string man_astronaut;
-        std::string man_cartwheeling;
-        std::string man_cook;
-        std::string man_dancing;
-        std::string man_facepalming;
-        std::string man_factory_worker;
-        std::string man_farmer;
-        std::string man_firefighter;
-        std::string man_health_worker;
-        std::string man_in_tuxedo;
-        std::string man_judge;
-        std::string man_juggling;
-        std::string man_mechanic;
-        std::string man_office_worker;
-        std::string man_pilot;
-        std::string man_playing_handball;
-        std::string man_playing_water_polo;
-        std::string man_scientist;
-        std::string man_shrugging;
-        std::string man_singer;
-        std::string man_student;
-        std::string man_teacher;
-        std::string man_technologist;
-        std::string man_with_gua_pi_mao;
-        std::string man_with_turban;
-        std::string mandarin;
-        std::string mans_shoe;
-        std::string mantelpiece_clock;
-        std::string maple_leaf;
-        std::string marshall_islands;
-        std::string martial_arts_uniform;
-        std::string martinique;
-        std::string mask;
-        std::string massage;
-        std::string massage_man;
-        std::string massage_woman;
-        std::string mauritania;
-        std::string mauritius;
-        std::string mayotte;
-        std::string meat_on_bone;
-        std::string medal_military;
-        std::string medal_sports;
-        std::string mega;
-        std::string melon;
-        std::string memo;
-        std::string men_wrestling;
-        std::string menorah;
-        std::string mens;
-        std::string metal;
-        std::string metro;
-        std::string mexico;
-        std::string micronesia;
-        std::string microphone;
-        std::string microscope;
-        std::string middle_finger;
-        std::string milk_glass;
-        std::string milky_way;
-        std::string minibus;
-        std::string minidisc;
-        std::string mobile_phone_off;
-        std::string moldova;
-        std::string monaco;
-        std::string money_mouth_face;
-        std::string money_with_wings;
-        std::string moneybag;
-        std::string mongolia;
-        std::string monkey;
-        std::string monkey_face;
-        std::string monorail;
-        std::string montenegro;
-        std::string montserrat;
-        std::string moon;
-        std::string morocco;
-        std::string mortar_board;
-        std::string mosque;
-        std::string motor_boat;
-        std::string motor_scooter;
-        std::string motorcycle;
-        std::string motorway;
-        std::string mount_fuji;
-        std::string mountain;
-        std::string mountain_bicyclist;
-        std::string mountain_biking_man;
-        std::string mountain_biking_woman;
-        std::string mountain_cableway;
-        std::string mountain_railway;
-        std::string mountain_snow;
-        std::string mouse;
-        std::string mouse2;
-        std::string movie_camera;
-        std::string moyai;
-        std::string mozambique;
-        std::string mrs_claus;
-        std::string muscle;
-        std::string mushroom;
-        std::string musical_keyboard;
-        std::string musical_note;
-        std::string musical_score;
-        std::string mute;
-        std::string myanmar;
-        std::string nail_care;
-        std::string name_badge;
-        std::string namibia;
-        std::string national_park;
-        std::string nauru;
-        std::string nauseated_face;
-        std::string neckbeard;
-        std::string necktie;
-        std::string negative_squared_cross_mark;
-        std::string nepal;
-        std::string nerd_face;
-        std::string netherlands;
-        std::string neutral_face;
-        std::string emojis_new;
-        std::string new_caledonia;
-        std::string new_moon;
-        std::string new_moon_with_face;
-        std::string new_zealand;
-        std::string newspaper;
-        std::string newspaper_roll;
-        std::string next_track_button;
-        std::string ng;
-        std::string ng_man;
-        std::string ng_woman;
-        std::string nicaragua;
-        std::string niger;
-        std::string nigeria;
-        std::string night_with_stars;
-        std::string nine;
-        std::string niue;
-        std::string no_bell;
-        std::string no_bicycles;
-        std::string no_entry;
-        std::string no_entry_sign;
-        std::string no_good;
-        std::string no_good_man;
-        std::string no_good_woman;
-        std::string no_mobile_phones;
-        std::string no_mouth;
-        std::string no_pedestrians;
-        std::string no_smoking;
-        std::string non_potable_water;
-        std::string norfolk_island;
-        std::string north_korea;
-        std::string northern_mariana_islands;
-        std::string norway;
-        std::string nose;
-        std::string notebook;
-        std::string notebook_with_decorative_cover;
-        std::string notes;
-        std::string nut_and_bolt;
-        std::string o;
-        std::string o2;
-        std::string ocean;
-        std::string octocat;
-        std::string octopus;
-        std::string oden;
-        std::string office;
-        std::string oil_drum;
-        std::string ok;
-        std::string ok_hand;
-        std::string ok_man;
-        std::string ok_woman;
-        std::string old_key;
-        std::string older_man;
-        std::string older_woman;
-        std::string om;
-        std::string oman;
-        std::string on;
-        std::string oncoming_automobile;
-        std::string oncoming_bus;
-        std::string oncoming_police_car;
-        std::string oncoming_taxi;
-        std::string one;
-        std::string open_book;
-        std::string open_file_folder;
-        std::string open_hands;
-        std::string open_mouth;
-        std::string open_umbrella;
-        std::string ophiuchus;
-        std::string orange;
-        std::string orange_book;
-        std::string orthodox_cross;
-        std::string outbox_tray;
-        std::string owl;
-        std::string ox;
-        std::string package;
-        std::string page_facing_up;
-        std::string page_with_curl;
-        std::string pager;
-        std::string paintbrush;
-        std::string pakistan;
-        std::string palau;
-        std::string palestinian_territories;
-        std::string palm_tree;
-        std::string panama;
-        std::string pancakes;
-        std::string panda_face;
-        std::string paperclip;
-        std::string paperclips;
-        std::string papua_new_guinea;
-        std::string paraguay;
-        std::string parasol_on_ground;
-        std::string parking;
-        std::string part_alternation_mark;
-        std::string partly_sunny;
-        std::string passenger_ship;
-        std::string passport_control;
-        std::string pause_button;
-        std::string paw_prints;
-        std::string peace_symbol;
-        std::string peach;
-        std::string peanuts;
-        std::string pear;
-        std::string pen;
-        std::string pencil;
-        std::string pencil2;
-        std::string penguin;
-        std::string pensive;
-        std::string performing_arts;
-        std::string persevere;
-        std::string person_fencing;
-        std::string person_frowning;
-        std::string person_with_blond_hair;
-        std::string person_with_pouting_face;
-        std::string peru;
-        std::string philippines;
-        std::string phone;
-        std::string pick;
-        std::string pig;
-        std::string pig2;
-        std::string pig_nose;
-        std::string pill;
-        std::string pineapple;
-        std::string ping_pong;
-        std::string pisces;
-        std::string pitcairn_islands;
-        std::string pizza;
-        std::string place_of_worship;
-        std::string plate_with_cutlery;
-        std::string play_or_pause_button;
-        std::string point_down;
-        std::string point_left;
-        std::string point_right;
-        std::string point_up;
-        std::string point_up_2;
-        std::string poland;
-        std::string police_car;
-        std::string policeman;
-        std::string policewoman;
-        std::string poodle;
-        std::string poop;
-        std::string popcorn;
-        std::string portugal;
-        std::string post_office;
-        std::string postal_horn;
-        std::string postbox;
-        std::string potable_water;
-        std::string potato;
-        std::string pouch;
-        std::string poultry_leg;
-        std::string pound;
-        std::string pout;
-        std::string pouting_cat;
-        std::string pouting_man;
-        std::string pouting_woman;
-        std::string pray;
-        std::string prayer_beads;
-        std::string pregnant_woman;
-        std::string previous_track_button;
-        std::string prince;
-        std::string princess;
-        std::string printer;
-        std::string puerto_rico;
-        std::string punch;
-        std::string purple_heart;
-        std::string purse;
-        std::string pushpin;
-        std::string put_litter_in_its_place;
-        std::string qatar;
-        std::string question;
-        std::string rabbit;
-        std::string rabbit2;
-        std::string racehorse;
-        std::string racing_car;
-        std::string radio;
-        std::string radio_button;
-        std::string radioactive;
-        std::string rage;
-        std::string rage1;
-        std::string rage2;
-        std::string rage3;
-        std::string rage4;
-        std::string railway_car;
-        std::string railway_track;
-        std::string rainbow;
-        std::string rainbow_flag;
-        std::string raised_back_of_hand;
-        std::string raised_hand;
-        std::string raised_hand_with_fingers_splayed;
-        std::string raised_hands;
-        std::string raising_hand;
-        std::string raising_hand_man;
-        std::string raising_hand_woman;
-        std::string ram;
-        std::string ramen;
-        std::string rat;
-        std::string record_button;
-        std::string recycle;
-        std::string red_car;
-        std::string red_circle;
-        std::string registered;
-        std::string relaxed;
-        std::string relieved;
-        std::string reminder_ribbon;
-        std::string repeat;
-        std::string repeat_one;
-        std::string rescue_worker_helmet;
-        std::string restroom;
-        std::string reunion;
-        std::string revolving_hearts;
-        std::string rewind;
-        std::string rhinoceros;
-        std::string ribbon;
-        std::string rice;
-        std::string rice_ball;
-        std::string rice_cracker;
-        std::string rice_scene;
-        std::string right_anger_bubble;
-        std::string ring;
-        std::string robot;
-        std::string rocket;
-        std::string rofl;
-        std::string roll_eyes;
-        std::string roller_coaster;
-        std::string romania;
-        std::string rooster;
-        std::string rose;
-        std::string rosette;
-        std::string rotating_light;
-        std::string round_pushpin;
-        std::string rowboat;
-        std::string rowing_man;
-        std::string rowing_woman;
-        std::string ru;
-        std::string rugby_football;
-        std::string runner;
-        std::string running;
-        std::string running_man;
-        std::string running_shirt_with_sash;
-        std::string running_woman;
-        std::string rwanda;
-        std::string sa;
-        std::string sagittarius;
-        std::string sailboat;
-        std::string sake;
-        std::string samoa;
-        std::string san_marino;
-        std::string sandal;
-        std::string santa;
-        std::string sao_tome_principe;
-        std::string satellite;
-        std::string satisfied;
-        std::string saudi_arabia;
-        std::string saxophone;
-        std::string school;
-        std::string school_satchel;
-        std::string scissors;
-        std::string scorpion;
-        std::string scorpius;
-        std::string scream;
-        std::string scream_cat;
-        std::string scroll;
-        std::string seat;
-        std::string secret;
-        std::string see_no_evil;
-        std::string seedling;
-        std::string selfie;
-        std::string senegal;
-        std::string serbia;
-        std::string seven;
-        std::string seychelles;
-        std::string shallow_pan_of_food;
-        std::string shamrock;
-        std::string shark;
-        std::string shaved_ice;
-        std::string sheep;
-        std::string shell;
-        std::string shield;
-        std::string shinto_shrine;
-        std::string ship;
-        std::string shipit;
-        std::string shirt;
-        std::string shit;
-        std::string shoe;
-        std::string shopping;
-        std::string shopping_cart;
-        std::string shower;
-        std::string shrimp;
-        std::string sierra_leone;
-        std::string signal_strength;
-        std::string singapore;
-        std::string sint_maarten;
-        std::string six;
-        std::string six_pointed_star;
-        std::string ski;
-        std::string skier;
-        std::string skull;
-        std::string skull_and_crossbones;
-        std::string sleeping;
-        std::string sleeping_bed;
-        std::string sleepy;
-        std::string slightly_frowning_face;
-        std::string slightly_smiling_face;
-        std::string slot_machine;
-        std::string slovakia;
-        std::string slovenia;
-        std::string small_airplane;
-        std::string small_blue_diamond;
-        std::string small_orange_diamond;
-        std::string small_red_triangle;
-        std::string small_red_triangle_down;
-        std::string smile;
-        std::string smile_cat;
-        std::string smiley;
-        std::string smiley_cat;
-        std::string smiling_imp;
-        std::string smirk;
-        std::string smirk_cat;
-        std::string smoking;
-        std::string snail;
-        std::string snake;
-        std::string sneezing_face;
-        std::string snowboarder;
-        std::string snowflake;
-        std::string snowman;
-        std::string snowman_with_snow;
-        std::string sob;
-        std::string soccer;
-        std::string solomon_islands;
-        std::string somalia;
-        std::string soon;
-        std::string sos;
-        std::string sound;
-        std::string south_africa;
-        std::string south_georgia_south_sandwich_islands;
-        std::string south_sudan;
-        std::string space_invader;
-        std::string spades;
-        std::string spaghetti;
-        std::string sparkle;
-        std::string sparkler;
-        std::string sparkles;
-        std::string sparkling_heart;
-        std::string speak_no_evil;
-        std::string speaker;
-        std::string speaking_head;
-        std::string speech_balloon;
-        std::string speedboat;
-        std::string spider;
-        std::string spider_web;
-        std::string spiral_calendar;
-        std::string spiral_notepad;
-        std::string spoon;
-        std::string squid;
-        std::string squirrel;
-        std::string sri_lanka;
-        std::string st_barthelemy;
-        std::string st_helena;
-        std::string st_kitts_nevis;
-        std::string st_lucia;
-        std::string st_pierre_miquelon;
-        std::string st_vincent_grenadines;
-        std::string stadium;
-        std::string star;
-        std::string star2;
-        std::string star_and_crescent;
-        std::string star_of_david;
-        std::string stars;
-        std::string station;
-        std::string statue_of_liberty;
-        std::string steam_locomotive;
-        std::string stew;
-        std::string stop_button;
-        std::string stop_sign;
-        std::string stopwatch;
-        std::string straight_ruler;
-        std::string strawberry;
-        std::string stuck_out_tongue;
-        std::string stuck_out_tongue_closed_eyes;
-        std::string stuck_out_tongue_winking_eye;
-        std::string studio_microphone;
-        std::string stuffed_flatbread;
-        std::string sudan;
-        std::string sun_behind_large_cloud;
-        std::string sun_behind_rain_cloud;
-        std::string sun_behind_small_cloud;
-        std::string sun_with_face;
-        std::string sunflower;
-        std::string sunglasses;
-        std::string sunny;
-        std::string sunrise;
-        std::string sunrise_over_mountains;
-        std::string surfer;
-        std::string surfing_man;
-        std::string surfing_woman;
-        std::string suriname;
-        std::string sushi;
-        std::string suspect;
-        std::string suspension_railway;
-        std::string swaziland;
-        std::string sweat;
-        std::string sweat_drops;
-        std::string sweat_smile;
-        std::string sweden;
-        std::string sweet_potato;
-        std::string swimmer;
-        std::string swimming_man;
-        std::string swimming_woman;
-        std::string switzerland;
-        std::string symbols;
-        std::string synagogue;
-        std::string syria;
-        std::string syringe;
-        std::string taco;
-        std::string tada;
-        std::string taiwan;
-        std::string tajikistan;
-        std::string tanabata_tree;
-        std::string tangerine;
-        std::string tanzania;
-        std::string taurus;
-        std::string taxi;
-        std::string tea;
-        std::string telephone;
-        std::string telephone_receiver;
-        std::string telescope;
-        std::string tennis;
-        std::string tent;
-        std::string thailand;
-        std::string thermometer;
-        std::string thinking;
-        std::string thought_balloon;
-        std::string three;
-        std::string thumbsdown;
-        std::string thumbsup;
-        std::string ticket;
-        std::string tickets;
-        std::string tiger;
-        std::string tiger2;
-        std::string timer_clock;
-        std::string timor_leste;
-        std::string tipping_hand_man;
-        std::string tipping_hand_woman;
-        std::string tired_face;
-        std::string tm;
-        std::string togo;
-        std::string toilet;
-        std::string tokelau;
-        std::string tokyo_tower;
-        std::string tomato;
-        std::string tonga;
-        std::string tongue;
-        std::string top;
-        std::string tophat;
-        std::string tornado;
-        std::string tr;
-        std::string trackball;
-        std::string tractor;
-        std::string traffic_light;
-        std::string train;
-        std::string train2;
-        std::string tram;
-        std::string triangular_flag_on_post;
-        std::string triangular_ruler;
-        std::string trident;
-        std::string trinidad_tobago;
-        std::string triumph;
-        std::string trolleybus;
-        std::string trollface;
-        std::string trophy;
-        std::string tropical_drink;
-        std::string tropical_fish;
-        std::string truck;
-        std::string trumpet;
-        std::string tshirt;
-        std::string tulip;
-        std::string tumbler_glass;
-        std::string tunisia;
-        std::string turkey;
-        std::string turkmenistan;
-        std::string turks_caicos_islands;
-        std::string turtle;
-        std::string tuvalu;
-        std::string tv;
-        std::string twisted_rightwards_arrows;
-        std::string two;
-        std::string two_hearts;
-        std::string two_men_holding_hands;
-        std::string two_women_holding_hands;
-        std::string u5272;
-        std::string u5408;
-        std::string u55_b6;
-        std::string u6307;
-        std::string u6708;
-        std::string u6709;
-        std::string u6_e80;
-        std::string u7121;
-        std::string u7533;
-        std::string u7981;
-        std::string u7_a7_a;
-        std::string uganda;
-        std::string uk;
-        std::string ukraine;
-        std::string umbrella;
-        std::string unamused;
-        std::string underage;
-        std::string unicorn;
-        std::string united_arab_emirates;
-        std::string unlock;
-        std::string up;
-        std::string upside_down_face;
-        std::string uruguay;
-        std::string us;
-        std::string us_virgin_islands;
-        std::string uzbekistan;
-        std::string v;
-        std::string vanuatu;
-        std::string vatican_city;
-        std::string venezuela;
-        std::string vertical_traffic_light;
-        std::string vhs;
-        std::string vibration_mode;
-        std::string video_camera;
-        std::string video_game;
-        std::string vietnam;
-        std::string violin;
-        std::string virgo;
-        std::string volcano;
-        std::string volleyball;
-        std::string vs;
-        std::string vulcan_salute;
-        std::string walking;
-        std::string walking_man;
-        std::string walking_woman;
-        std::string wallis_futuna;
-        std::string waning_crescent_moon;
-        std::string waning_gibbous_moon;
-        std::string warning;
-        std::string wastebasket;
-        std::string watch;
-        std::string water_buffalo;
-        std::string watermelon;
-        std::string wave;
-        std::string wavy_dash;
-        std::string waxing_crescent_moon;
-        std::string waxing_gibbous_moon;
-        std::string wc;
-        std::string weary;
-        std::string wedding;
-        std::string weight_lifting_man;
-        std::string weight_lifting_woman;
-        std::string western_sahara;
-        std::string whale;
-        std::string whale2;
-        std::string wheel_of_dharma;
-        std::string wheelchair;
-        std::string white_check_mark;
-        std::string white_circle;
-        std::string white_flag;
-        std::string white_flower;
-        std::string white_large_square;
-        std::string white_medium_small_square;
-        std::string white_medium_square;
-        std::string white_small_square;
-        std::string white_square_button;
-        std::string wilted_flower;
-        std::string wind_chime;
-        std::string wind_face;
-        std::string wine_glass;
-        std::string wink;
-        std::string wolf;
-        std::string woman;
-        std::string woman_artist;
-        std::string woman_astronaut;
-        std::string woman_cartwheeling;
-        std::string woman_cook;
-        std::string woman_facepalming;
-        std::string woman_factory_worker;
-        std::string woman_farmer;
-        std::string woman_firefighter;
-        std::string woman_health_worker;
-        std::string woman_judge;
-        std::string woman_juggling;
-        std::string woman_mechanic;
-        std::string woman_office_worker;
-        std::string woman_pilot;
-        std::string woman_playing_handball;
-        std::string woman_playing_water_polo;
-        std::string woman_scientist;
-        std::string woman_shrugging;
-        std::string woman_singer;
-        std::string woman_student;
-        std::string woman_teacher;
-        std::string woman_technologist;
-        std::string woman_with_turban;
-        std::string womans_clothes;
-        std::string womans_hat;
-        std::string women_wrestling;
-        std::string womens;
-        std::string world_map;
-        std::string worried;
-        std::string wrench;
-        std::string writing_hand;
-        std::string x;
-        std::string yellow_heart;
-        std::string yemen;
-        std::string yen;
-        std::string yin_yang;
-        std::string yum;
-        std::string zambia;
-        std::string zap;
-        std::string zero;
-        std::string zimbabwe;
-        std::string zipper_mouth_face;
-        std::string zzz;
-    };
+    template <typename T>
+    inline std::shared_ptr<T> get_optional(const json &j, const char *property) {
+        if (j.find(property) != j.end()) {
+            return j.at(property).get<std::shared_ptr<T>>();
+        }
+        return std::shared_ptr<T>();
+    }
 
-    enum class GravatarID { EMPTY };
+    class Actor {
+        public:
+        Actor() = default;
+        virtual ~Actor() = default;
 
-    struct Actor {
+        private:
         int64_t id;
         std::string login;
-        std::unique_ptr<std::string> display_login;
-        GravatarID gravatar_id;
+        std::shared_ptr<std::string> display_login;
+        std::string gravatar_id;
         std::string url;
         std::string avatar_url;
+
+        public:
+        const int64_t & get_id() const { return id; }
+        int64_t & get_mutable_id() { return id; }
+        void set_id(const int64_t& value) { this->id = value; }
+
+        const std::string & get_login() const { return login; }
+        std::string & get_mutable_login() { return login; }
+        void set_login(const std::string& value) { this->login = value; }
+
+        std::shared_ptr<std::string> get_display_login() const { return display_login; }
+        void set_display_login(std::shared_ptr<std::string> value) { this->display_login = value; }
+
+        const std::string & get_gravatar_id() const { return gravatar_id; }
+        std::string & get_mutable_gravatar_id() { return gravatar_id; }
+        void set_gravatar_id(const std::string& value) { this->gravatar_id = value; }
+
+        const std::string & get_url() const { return url; }
+        std::string & get_mutable_url() { return url; }
+        void set_url(const std::string& value) { this->url = value; }
+
+        const std::string & get_avatar_url() const { return avatar_url; }
+        std::string & get_mutable_avatar_url() { return avatar_url; }
+        void set_avatar_url(const std::string& value) { this->avatar_url = value; }
     };
 
-    enum class UserType { ORGANIZATION, USER };
+    class Html {
+        public:
+        Html() = default;
+        virtual ~Html() = default;
 
-    struct User {
+        private:
+        std::string href;
+
+        public:
+        const std::string & get_href() const { return href; }
+        std::string & get_mutable_href() { return href; }
+        void set_href(const std::string& value) { this->href = value; }
+    };
+
+    class CommentLinks {
+        public:
+        CommentLinks() = default;
+        virtual ~CommentLinks() = default;
+
+        private:
+        Html self;
+        Html html;
+        Html pull_request;
+
+        public:
+        const Html & get_self() const { return self; }
+        Html & get_mutable_self() { return self; }
+        void set_self(const Html& value) { this->self = value; }
+
+        const Html & get_html() const { return html; }
+        Html & get_mutable_html() { return html; }
+        void set_html(const Html& value) { this->html = value; }
+
+        const Html & get_pull_request() const { return pull_request; }
+        Html & get_mutable_pull_request() { return pull_request; }
+        void set_pull_request(const Html& value) { this->pull_request = value; }
+    };
+
+    enum class Type : int { ORGANIZATION, USER };
+
+    class Owner {
+        public:
+        Owner() = default;
+        virtual ~Owner() = default;
+
+        private:
         std::string login;
         int64_t id;
+        std::string node_id;
         std::string avatar_url;
-        GravatarID gravatar_id;
+        std::string gravatar_id;
         std::string url;
         std::string html_url;
         std::string followers_url;
@@ -1590,43 +149,281 @@ namespace quicktype {
         std::string repos_url;
         std::string events_url;
         std::string received_events_url;
-        UserType type;
+        Type type;
         bool site_admin;
+
+        public:
+        const std::string & get_login() const { return login; }
+        std::string & get_mutable_login() { return login; }
+        void set_login(const std::string& value) { this->login = value; }
+
+        const int64_t & get_id() const { return id; }
+        int64_t & get_mutable_id() { return id; }
+        void set_id(const int64_t& value) { this->id = value; }
+
+        const std::string & get_node_id() const { return node_id; }
+        std::string & get_mutable_node_id() { return node_id; }
+        void set_node_id(const std::string& value) { this->node_id = value; }
+
+        const std::string & get_avatar_url() const { return avatar_url; }
+        std::string & get_mutable_avatar_url() { return avatar_url; }
+        void set_avatar_url(const std::string& value) { this->avatar_url = value; }
+
+        const std::string & get_gravatar_id() const { return gravatar_id; }
+        std::string & get_mutable_gravatar_id() { return gravatar_id; }
+        void set_gravatar_id(const std::string& value) { this->gravatar_id = value; }
+
+        const std::string & get_url() const { return url; }
+        std::string & get_mutable_url() { return url; }
+        void set_url(const std::string& value) { this->url = value; }
+
+        const std::string & get_html_url() const { return html_url; }
+        std::string & get_mutable_html_url() { return html_url; }
+        void set_html_url(const std::string& value) { this->html_url = value; }
+
+        const std::string & get_followers_url() const { return followers_url; }
+        std::string & get_mutable_followers_url() { return followers_url; }
+        void set_followers_url(const std::string& value) { this->followers_url = value; }
+
+        const std::string & get_following_url() const { return following_url; }
+        std::string & get_mutable_following_url() { return following_url; }
+        void set_following_url(const std::string& value) { this->following_url = value; }
+
+        const std::string & get_gists_url() const { return gists_url; }
+        std::string & get_mutable_gists_url() { return gists_url; }
+        void set_gists_url(const std::string& value) { this->gists_url = value; }
+
+        const std::string & get_starred_url() const { return starred_url; }
+        std::string & get_mutable_starred_url() { return starred_url; }
+        void set_starred_url(const std::string& value) { this->starred_url = value; }
+
+        const std::string & get_subscriptions_url() const { return subscriptions_url; }
+        std::string & get_mutable_subscriptions_url() { return subscriptions_url; }
+        void set_subscriptions_url(const std::string& value) { this->subscriptions_url = value; }
+
+        const std::string & get_organizations_url() const { return organizations_url; }
+        std::string & get_mutable_organizations_url() { return organizations_url; }
+        void set_organizations_url(const std::string& value) { this->organizations_url = value; }
+
+        const std::string & get_repos_url() const { return repos_url; }
+        std::string & get_mutable_repos_url() { return repos_url; }
+        void set_repos_url(const std::string& value) { this->repos_url = value; }
+
+        const std::string & get_events_url() const { return events_url; }
+        std::string & get_mutable_events_url() { return events_url; }
+        void set_events_url(const std::string& value) { this->events_url = value; }
+
+        const std::string & get_received_events_url() const { return received_events_url; }
+        std::string & get_mutable_received_events_url() { return received_events_url; }
+        void set_received_events_url(const std::string& value) { this->received_events_url = value; }
+
+        const Type & get_type() const { return type; }
+        Type & get_mutable_type() { return type; }
+        void set_type(const Type& value) { this->type = value; }
+
+        const bool & get_site_admin() const { return site_admin; }
+        bool & get_mutable_site_admin() { return site_admin; }
+        void set_site_admin(const bool& value) { this->site_admin = value; }
     };
 
-    struct Comment {
+    class Comment {
+        public:
+        Comment() = default;
+        virtual ~Comment() = default;
+
+        private:
         std::string url;
-        std::string html_url;
-        std::string issue_url;
+        int64_t pull_request_review_id;
         int64_t id;
-        struct User user;
+        std::string node_id;
+        std::string diff_hunk;
+        std::string path;
+        int64_t position;
+        int64_t original_position;
+        std::string commit_id;
+        std::string original_commit_id;
+        Owner user;
+        std::string body;
         std::string created_at;
         std::string updated_at;
+        std::string html_url;
+        std::string pull_request_url;
         std::string author_association;
-        std::string body;
+        CommentLinks links;
+
+        public:
+        const std::string & get_url() const { return url; }
+        std::string & get_mutable_url() { return url; }
+        void set_url(const std::string& value) { this->url = value; }
+
+        const int64_t & get_pull_request_review_id() const { return pull_request_review_id; }
+        int64_t & get_mutable_pull_request_review_id() { return pull_request_review_id; }
+        void set_pull_request_review_id(const int64_t& value) { this->pull_request_review_id = value; }
+
+        const int64_t & get_id() const { return id; }
+        int64_t & get_mutable_id() { return id; }
+        void set_id(const int64_t& value) { this->id = value; }
+
+        const std::string & get_node_id() const { return node_id; }
+        std::string & get_mutable_node_id() { return node_id; }
+        void set_node_id(const std::string& value) { this->node_id = value; }
+
+        const std::string & get_diff_hunk() const { return diff_hunk; }
+        std::string & get_mutable_diff_hunk() { return diff_hunk; }
+        void set_diff_hunk(const std::string& value) { this->diff_hunk = value; }
+
+        const std::string & get_path() const { return path; }
+        std::string & get_mutable_path() { return path; }
+        void set_path(const std::string& value) { this->path = value; }
+
+        const int64_t & get_position() const { return position; }
+        int64_t & get_mutable_position() { return position; }
+        void set_position(const int64_t& value) { this->position = value; }
+
+        const int64_t & get_original_position() const { return original_position; }
+        int64_t & get_mutable_original_position() { return original_position; }
+        void set_original_position(const int64_t& value) { this->original_position = value; }
+
+        const std::string & get_commit_id() const { return commit_id; }
+        std::string & get_mutable_commit_id() { return commit_id; }
+        void set_commit_id(const std::string& value) { this->commit_id = value; }
+
+        const std::string & get_original_commit_id() const { return original_commit_id; }
+        std::string & get_mutable_original_commit_id() { return original_commit_id; }
+        void set_original_commit_id(const std::string& value) { this->original_commit_id = value; }
+
+        const Owner & get_user() const { return user; }
+        Owner & get_mutable_user() { return user; }
+        void set_user(const Owner& value) { this->user = value; }
+
+        const std::string & get_body() const { return body; }
+        std::string & get_mutable_body() { return body; }
+        void set_body(const std::string& value) { this->body = value; }
+
+        const std::string & get_created_at() const { return created_at; }
+        std::string & get_mutable_created_at() { return created_at; }
+        void set_created_at(const std::string& value) { this->created_at = value; }
+
+        const std::string & get_updated_at() const { return updated_at; }
+        std::string & get_mutable_updated_at() { return updated_at; }
+        void set_updated_at(const std::string& value) { this->updated_at = value; }
+
+        const std::string & get_html_url() const { return html_url; }
+        std::string & get_mutable_html_url() { return html_url; }
+        void set_html_url(const std::string& value) { this->html_url = value; }
+
+        const std::string & get_pull_request_url() const { return pull_request_url; }
+        std::string & get_mutable_pull_request_url() { return pull_request_url; }
+        void set_pull_request_url(const std::string& value) { this->pull_request_url = value; }
+
+        const std::string & get_author_association() const { return author_association; }
+        std::string & get_mutable_author_association() { return author_association; }
+        void set_author_association(const std::string& value) { this->author_association = value; }
+
+        const CommentLinks & get_links() const { return links; }
+        CommentLinks & get_mutable_links() { return links; }
+        void set_links(const CommentLinks& value) { this->links = value; }
     };
 
-    struct Author {
+    class Author {
+        public:
+        Author() = default;
+        virtual ~Author() = default;
+
+        private:
         std::string email;
         std::string name;
+
+        public:
+        const std::string & get_email() const { return email; }
+        std::string & get_mutable_email() { return email; }
+        void set_email(const std::string& value) { this->email = value; }
+
+        const std::string & get_name() const { return name; }
+        std::string & get_mutable_name() { return name; }
+        void set_name(const std::string& value) { this->name = value; }
     };
 
-    struct Commit {
+    class Commit {
+        public:
+        Commit() = default;
+        virtual ~Commit() = default;
+
+        private:
         std::string sha;
-        struct Author author;
+        Author author;
         std::string message;
         bool distinct;
         std::string url;
+
+        public:
+        const std::string & get_sha() const { return sha; }
+        std::string & get_mutable_sha() { return sha; }
+        void set_sha(const std::string& value) { this->sha = value; }
+
+        const Author & get_author() const { return author; }
+        Author & get_mutable_author() { return author; }
+        void set_author(const Author& value) { this->author = value; }
+
+        const std::string & get_message() const { return message; }
+        std::string & get_mutable_message() { return message; }
+        void set_message(const std::string& value) { this->message = value; }
+
+        const bool & get_distinct() const { return distinct; }
+        bool & get_mutable_distinct() { return distinct; }
+        void set_distinct(const bool& value) { this->distinct = value; }
+
+        const std::string & get_url() const { return url; }
+        std::string & get_mutable_url() { return url; }
+        void set_url(const std::string& value) { this->url = value; }
     };
 
-    struct Forkee {
+    class License {
+        public:
+        License() = default;
+        virtual ~License() = default;
+
+        private:
+        std::string key;
+        std::string name;
+        std::shared_ptr<std::string> spdx_id;
+        std::shared_ptr<std::string> url;
+        std::string node_id;
+
+        public:
+        const std::string & get_key() const { return key; }
+        std::string & get_mutable_key() { return key; }
+        void set_key(const std::string& value) { this->key = value; }
+
+        const std::string & get_name() const { return name; }
+        std::string & get_mutable_name() { return name; }
+        void set_name(const std::string& value) { this->name = value; }
+
+        std::shared_ptr<std::string> get_spdx_id() const { return spdx_id; }
+        void set_spdx_id(std::shared_ptr<std::string> value) { this->spdx_id = value; }
+
+        std::shared_ptr<std::string> get_url() const { return url; }
+        void set_url(std::shared_ptr<std::string> value) { this->url = value; }
+
+        const std::string & get_node_id() const { return node_id; }
+        std::string & get_mutable_node_id() { return node_id; }
+        void set_node_id(const std::string& value) { this->node_id = value; }
+    };
+
+    class BaseRepo {
+        public:
+        BaseRepo() = default;
+        virtual ~BaseRepo() = default;
+
+        private:
         int64_t id;
+        std::string node_id;
         std::string name;
         std::string full_name;
-        struct User owner;
-        bool forkee_private;
+        Owner owner;
+        bool repo_private;
         std::string html_url;
-        std::unique_ptr<std::string> description;
+        std::shared_ptr<std::string> description;
         bool fork;
         std::string url;
         std::string forks_url;
@@ -1672,11 +469,11 @@ namespace quicktype {
         std::string ssh_url;
         std::string clone_url;
         std::string svn_url;
-        std::unique_ptr<std::string> homepage;
+        std::shared_ptr<std::string> homepage;
         int64_t size;
         int64_t stargazers_count;
         int64_t watchers_count;
-        std::unique_ptr<std::string> language;
+        std::string language;
         bool has_issues;
         bool has_projects;
         bool has_downloads;
@@ -1686,73 +483,391 @@ namespace quicktype {
         nlohmann::json mirror_url;
         bool archived;
         int64_t open_issues_count;
-        nlohmann::json license;
+        std::shared_ptr<License> license;
         int64_t forks;
         int64_t open_issues;
         int64_t watchers;
         std::string default_branch;
-        std::unique_ptr<bool> forkee_public;
+
+        public:
+        const int64_t & get_id() const { return id; }
+        int64_t & get_mutable_id() { return id; }
+        void set_id(const int64_t& value) { this->id = value; }
+
+        const std::string & get_node_id() const { return node_id; }
+        std::string & get_mutable_node_id() { return node_id; }
+        void set_node_id(const std::string& value) { this->node_id = value; }
+
+        const std::string & get_name() const { return name; }
+        std::string & get_mutable_name() { return name; }
+        void set_name(const std::string& value) { this->name = value; }
+
+        const std::string & get_full_name() const { return full_name; }
+        std::string & get_mutable_full_name() { return full_name; }
+        void set_full_name(const std::string& value) { this->full_name = value; }
+
+        const Owner & get_owner() const { return owner; }
+        Owner & get_mutable_owner() { return owner; }
+        void set_owner(const Owner& value) { this->owner = value; }
+
+        const bool & get_repo_private() const { return repo_private; }
+        bool & get_mutable_repo_private() { return repo_private; }
+        void set_repo_private(const bool& value) { this->repo_private = value; }
+
+        const std::string & get_html_url() const { return html_url; }
+        std::string & get_mutable_html_url() { return html_url; }
+        void set_html_url(const std::string& value) { this->html_url = value; }
+
+        std::shared_ptr<std::string> get_description() const { return description; }
+        void set_description(std::shared_ptr<std::string> value) { this->description = value; }
+
+        const bool & get_fork() const { return fork; }
+        bool & get_mutable_fork() { return fork; }
+        void set_fork(const bool& value) { this->fork = value; }
+
+        const std::string & get_url() const { return url; }
+        std::string & get_mutable_url() { return url; }
+        void set_url(const std::string& value) { this->url = value; }
+
+        const std::string & get_forks_url() const { return forks_url; }
+        std::string & get_mutable_forks_url() { return forks_url; }
+        void set_forks_url(const std::string& value) { this->forks_url = value; }
+
+        const std::string & get_keys_url() const { return keys_url; }
+        std::string & get_mutable_keys_url() { return keys_url; }
+        void set_keys_url(const std::string& value) { this->keys_url = value; }
+
+        const std::string & get_collaborators_url() const { return collaborators_url; }
+        std::string & get_mutable_collaborators_url() { return collaborators_url; }
+        void set_collaborators_url(const std::string& value) { this->collaborators_url = value; }
+
+        const std::string & get_teams_url() const { return teams_url; }
+        std::string & get_mutable_teams_url() { return teams_url; }
+        void set_teams_url(const std::string& value) { this->teams_url = value; }
+
+        const std::string & get_hooks_url() const { return hooks_url; }
+        std::string & get_mutable_hooks_url() { return hooks_url; }
+        void set_hooks_url(const std::string& value) { this->hooks_url = value; }
+
+        const std::string & get_issue_events_url() const { return issue_events_url; }
+        std::string & get_mutable_issue_events_url() { return issue_events_url; }
+        void set_issue_events_url(const std::string& value) { this->issue_events_url = value; }
+
+        const std::string & get_events_url() const { return events_url; }
+        std::string & get_mutable_events_url() { return events_url; }
+        void set_events_url(const std::string& value) { this->events_url = value; }
+
+        const std::string & get_assignees_url() const { return assignees_url; }
+        std::string & get_mutable_assignees_url() { return assignees_url; }
+        void set_assignees_url(const std::string& value) { this->assignees_url = value; }
+
+        const std::string & get_branches_url() const { return branches_url; }
+        std::string & get_mutable_branches_url() { return branches_url; }
+        void set_branches_url(const std::string& value) { this->branches_url = value; }
+
+        const std::string & get_tags_url() const { return tags_url; }
+        std::string & get_mutable_tags_url() { return tags_url; }
+        void set_tags_url(const std::string& value) { this->tags_url = value; }
+
+        const std::string & get_blobs_url() const { return blobs_url; }
+        std::string & get_mutable_blobs_url() { return blobs_url; }
+        void set_blobs_url(const std::string& value) { this->blobs_url = value; }
+
+        const std::string & get_git_tags_url() const { return git_tags_url; }
+        std::string & get_mutable_git_tags_url() { return git_tags_url; }
+        void set_git_tags_url(const std::string& value) { this->git_tags_url = value; }
+
+        const std::string & get_git_refs_url() const { return git_refs_url; }
+        std::string & get_mutable_git_refs_url() { return git_refs_url; }
+        void set_git_refs_url(const std::string& value) { this->git_refs_url = value; }
+
+        const std::string & get_trees_url() const { return trees_url; }
+        std::string & get_mutable_trees_url() { return trees_url; }
+        void set_trees_url(const std::string& value) { this->trees_url = value; }
+
+        const std::string & get_statuses_url() const { return statuses_url; }
+        std::string & get_mutable_statuses_url() { return statuses_url; }
+        void set_statuses_url(const std::string& value) { this->statuses_url = value; }
+
+        const std::string & get_languages_url() const { return languages_url; }
+        std::string & get_mutable_languages_url() { return languages_url; }
+        void set_languages_url(const std::string& value) { this->languages_url = value; }
+
+        const std::string & get_stargazers_url() const { return stargazers_url; }
+        std::string & get_mutable_stargazers_url() { return stargazers_url; }
+        void set_stargazers_url(const std::string& value) { this->stargazers_url = value; }
+
+        const std::string & get_contributors_url() const { return contributors_url; }
+        std::string & get_mutable_contributors_url() { return contributors_url; }
+        void set_contributors_url(const std::string& value) { this->contributors_url = value; }
+
+        const std::string & get_subscribers_url() const { return subscribers_url; }
+        std::string & get_mutable_subscribers_url() { return subscribers_url; }
+        void set_subscribers_url(const std::string& value) { this->subscribers_url = value; }
+
+        const std::string & get_subscription_url() const { return subscription_url; }
+        std::string & get_mutable_subscription_url() { return subscription_url; }
+        void set_subscription_url(const std::string& value) { this->subscription_url = value; }
+
+        const std::string & get_commits_url() const { return commits_url; }
+        std::string & get_mutable_commits_url() { return commits_url; }
+        void set_commits_url(const std::string& value) { this->commits_url = value; }
+
+        const std::string & get_git_commits_url() const { return git_commits_url; }
+        std::string & get_mutable_git_commits_url() { return git_commits_url; }
+        void set_git_commits_url(const std::string& value) { this->git_commits_url = value; }
+
+        const std::string & get_comments_url() const { return comments_url; }
+        std::string & get_mutable_comments_url() { return comments_url; }
+        void set_comments_url(const std::string& value) { this->comments_url = value; }
+
+        const std::string & get_issue_comment_url() const { return issue_comment_url; }
+        std::string & get_mutable_issue_comment_url() { return issue_comment_url; }
+        void set_issue_comment_url(const std::string& value) { this->issue_comment_url = value; }
+
+        const std::string & get_contents_url() const { return contents_url; }
+        std::string & get_mutable_contents_url() { return contents_url; }
+        void set_contents_url(const std::string& value) { this->contents_url = value; }
+
+        const std::string & get_compare_url() const { return compare_url; }
+        std::string & get_mutable_compare_url() { return compare_url; }
+        void set_compare_url(const std::string& value) { this->compare_url = value; }
+
+        const std::string & get_merges_url() const { return merges_url; }
+        std::string & get_mutable_merges_url() { return merges_url; }
+        void set_merges_url(const std::string& value) { this->merges_url = value; }
+
+        const std::string & get_archive_url() const { return archive_url; }
+        std::string & get_mutable_archive_url() { return archive_url; }
+        void set_archive_url(const std::string& value) { this->archive_url = value; }
+
+        const std::string & get_downloads_url() const { return downloads_url; }
+        std::string & get_mutable_downloads_url() { return downloads_url; }
+        void set_downloads_url(const std::string& value) { this->downloads_url = value; }
+
+        const std::string & get_issues_url() const { return issues_url; }
+        std::string & get_mutable_issues_url() { return issues_url; }
+        void set_issues_url(const std::string& value) { this->issues_url = value; }
+
+        const std::string & get_pulls_url() const { return pulls_url; }
+        std::string & get_mutable_pulls_url() { return pulls_url; }
+        void set_pulls_url(const std::string& value) { this->pulls_url = value; }
+
+        const std::string & get_milestones_url() const { return milestones_url; }
+        std::string & get_mutable_milestones_url() { return milestones_url; }
+        void set_milestones_url(const std::string& value) { this->milestones_url = value; }
+
+        const std::string & get_notifications_url() const { return notifications_url; }
+        std::string & get_mutable_notifications_url() { return notifications_url; }
+        void set_notifications_url(const std::string& value) { this->notifications_url = value; }
+
+        const std::string & get_labels_url() const { return labels_url; }
+        std::string & get_mutable_labels_url() { return labels_url; }
+        void set_labels_url(const std::string& value) { this->labels_url = value; }
+
+        const std::string & get_releases_url() const { return releases_url; }
+        std::string & get_mutable_releases_url() { return releases_url; }
+        void set_releases_url(const std::string& value) { this->releases_url = value; }
+
+        const std::string & get_deployments_url() const { return deployments_url; }
+        std::string & get_mutable_deployments_url() { return deployments_url; }
+        void set_deployments_url(const std::string& value) { this->deployments_url = value; }
+
+        const std::string & get_created_at() const { return created_at; }
+        std::string & get_mutable_created_at() { return created_at; }
+        void set_created_at(const std::string& value) { this->created_at = value; }
+
+        const std::string & get_updated_at() const { return updated_at; }
+        std::string & get_mutable_updated_at() { return updated_at; }
+        void set_updated_at(const std::string& value) { this->updated_at = value; }
+
+        const std::string & get_pushed_at() const { return pushed_at; }
+        std::string & get_mutable_pushed_at() { return pushed_at; }
+        void set_pushed_at(const std::string& value) { this->pushed_at = value; }
+
+        const std::string & get_git_url() const { return git_url; }
+        std::string & get_mutable_git_url() { return git_url; }
+        void set_git_url(const std::string& value) { this->git_url = value; }
+
+        const std::string & get_ssh_url() const { return ssh_url; }
+        std::string & get_mutable_ssh_url() { return ssh_url; }
+        void set_ssh_url(const std::string& value) { this->ssh_url = value; }
+
+        const std::string & get_clone_url() const { return clone_url; }
+        std::string & get_mutable_clone_url() { return clone_url; }
+        void set_clone_url(const std::string& value) { this->clone_url = value; }
+
+        const std::string & get_svn_url() const { return svn_url; }
+        std::string & get_mutable_svn_url() { return svn_url; }
+        void set_svn_url(const std::string& value) { this->svn_url = value; }
+
+        std::shared_ptr<std::string> get_homepage() const { return homepage; }
+        void set_homepage(std::shared_ptr<std::string> value) { this->homepage = value; }
+
+        const int64_t & get_size() const { return size; }
+        int64_t & get_mutable_size() { return size; }
+        void set_size(const int64_t& value) { this->size = value; }
+
+        const int64_t & get_stargazers_count() const { return stargazers_count; }
+        int64_t & get_mutable_stargazers_count() { return stargazers_count; }
+        void set_stargazers_count(const int64_t& value) { this->stargazers_count = value; }
+
+        const int64_t & get_watchers_count() const { return watchers_count; }
+        int64_t & get_mutable_watchers_count() { return watchers_count; }
+        void set_watchers_count(const int64_t& value) { this->watchers_count = value; }
+
+        const std::string & get_language() const { return language; }
+        std::string & get_mutable_language() { return language; }
+        void set_language(const std::string& value) { this->language = value; }
+
+        const bool & get_has_issues() const { return has_issues; }
+        bool & get_mutable_has_issues() { return has_issues; }
+        void set_has_issues(const bool& value) { this->has_issues = value; }
+
+        const bool & get_has_projects() const { return has_projects; }
+        bool & get_mutable_has_projects() { return has_projects; }
+        void set_has_projects(const bool& value) { this->has_projects = value; }
+
+        const bool & get_has_downloads() const { return has_downloads; }
+        bool & get_mutable_has_downloads() { return has_downloads; }
+        void set_has_downloads(const bool& value) { this->has_downloads = value; }
+
+        const bool & get_has_wiki() const { return has_wiki; }
+        bool & get_mutable_has_wiki() { return has_wiki; }
+        void set_has_wiki(const bool& value) { this->has_wiki = value; }
+
+        const bool & get_has_pages() const { return has_pages; }
+        bool & get_mutable_has_pages() { return has_pages; }
+        void set_has_pages(const bool& value) { this->has_pages = value; }
+
+        const int64_t & get_forks_count() const { return forks_count; }
+        int64_t & get_mutable_forks_count() { return forks_count; }
+        void set_forks_count(const int64_t& value) { this->forks_count = value; }
+
+        const nlohmann::json & get_mirror_url() const { return mirror_url; }
+        nlohmann::json & get_mutable_mirror_url() { return mirror_url; }
+        void set_mirror_url(const nlohmann::json& value) { this->mirror_url = value; }
+
+        const bool & get_archived() const { return archived; }
+        bool & get_mutable_archived() { return archived; }
+        void set_archived(const bool& value) { this->archived = value; }
+
+        const int64_t & get_open_issues_count() const { return open_issues_count; }
+        int64_t & get_mutable_open_issues_count() { return open_issues_count; }
+        void set_open_issues_count(const int64_t& value) { this->open_issues_count = value; }
+
+        std::shared_ptr<License> get_license() const { return license; }
+        void set_license(std::shared_ptr<License> value) { this->license = value; }
+
+        const int64_t & get_forks() const { return forks; }
+        int64_t & get_mutable_forks() { return forks; }
+        void set_forks(const int64_t& value) { this->forks = value; }
+
+        const int64_t & get_open_issues() const { return open_issues; }
+        int64_t & get_mutable_open_issues() { return open_issues; }
+        void set_open_issues(const int64_t& value) { this->open_issues = value; }
+
+        const int64_t & get_watchers() const { return watchers; }
+        int64_t & get_mutable_watchers() { return watchers; }
+        void set_watchers(const int64_t& value) { this->watchers = value; }
+
+        const std::string & get_default_branch() const { return default_branch; }
+        std::string & get_mutable_default_branch() { return default_branch; }
+        void set_default_branch(const std::string& value) { this->default_branch = value; }
     };
 
-    struct Label {
-        int64_t id;
-        std::string url;
-        std::string name;
-        std::string color;
-        bool label_default;
-    };
+    class Base {
+        public:
+        Base() = default;
+        virtual ~Base() = default;
 
-    struct Issue {
-        std::string url;
-        std::string repository_url;
-        std::string labels_url;
-        std::string comments_url;
-        std::string events_url;
-        std::string html_url;
-        int64_t id;
-        int64_t number;
-        std::string title;
-        struct User user;
-        std::vector<struct Label> labels;
-        std::string state;
-        bool locked;
-        std::unique_ptr<struct User> assignee;
-        std::vector<struct User> assignees;
-        nlohmann::json milestone;
-        int64_t comments;
-        std::string created_at;
-        std::string updated_at;
-        nlohmann::json closed_at;
-        std::string author_association;
-        std::string body;
-    };
-
-    struct Base {
+        private:
         std::string label;
         std::string ref;
         std::string sha;
-        struct User user;
-        struct Forkee repo;
+        Owner user;
+        BaseRepo repo;
+
+        public:
+        const std::string & get_label() const { return label; }
+        std::string & get_mutable_label() { return label; }
+        void set_label(const std::string& value) { this->label = value; }
+
+        const std::string & get_ref() const { return ref; }
+        std::string & get_mutable_ref() { return ref; }
+        void set_ref(const std::string& value) { this->ref = value; }
+
+        const std::string & get_sha() const { return sha; }
+        std::string & get_mutable_sha() { return sha; }
+        void set_sha(const std::string& value) { this->sha = value; }
+
+        const Owner & get_user() const { return user; }
+        Owner & get_mutable_user() { return user; }
+        void set_user(const Owner& value) { this->user = value; }
+
+        const BaseRepo & get_repo() const { return repo; }
+        BaseRepo & get_mutable_repo() { return repo; }
+        void set_repo(const BaseRepo& value) { this->repo = value; }
     };
 
-    struct Comments {
-        std::string href;
+    class PullRequestLinks {
+        public:
+        PullRequestLinks() = default;
+        virtual ~PullRequestLinks() = default;
+
+        private:
+        Html self;
+        Html html;
+        Html issue;
+        Html comments;
+        Html review_comments;
+        Html review_comment;
+        Html commits;
+        Html statuses;
+
+        public:
+        const Html & get_self() const { return self; }
+        Html & get_mutable_self() { return self; }
+        void set_self(const Html& value) { this->self = value; }
+
+        const Html & get_html() const { return html; }
+        Html & get_mutable_html() { return html; }
+        void set_html(const Html& value) { this->html = value; }
+
+        const Html & get_issue() const { return issue; }
+        Html & get_mutable_issue() { return issue; }
+        void set_issue(const Html& value) { this->issue = value; }
+
+        const Html & get_comments() const { return comments; }
+        Html & get_mutable_comments() { return comments; }
+        void set_comments(const Html& value) { this->comments = value; }
+
+        const Html & get_review_comments() const { return review_comments; }
+        Html & get_mutable_review_comments() { return review_comments; }
+        void set_review_comments(const Html& value) { this->review_comments = value; }
+
+        const Html & get_review_comment() const { return review_comment; }
+        Html & get_mutable_review_comment() { return review_comment; }
+        void set_review_comment(const Html& value) { this->review_comment = value; }
+
+        const Html & get_commits() const { return commits; }
+        Html & get_mutable_commits() { return commits; }
+        void set_commits(const Html& value) { this->commits = value; }
+
+        const Html & get_statuses() const { return statuses; }
+        Html & get_mutable_statuses() { return statuses; }
+        void set_statuses(const Html& value) { this->statuses = value; }
     };
 
-    struct Links {
-        struct Comments self;
-        struct Comments html;
-        struct Comments issue;
-        struct Comments comments;
-        struct Comments review_comments;
-        struct Comments review_comment;
-        struct Comments commits;
-        struct Comments statuses;
-    };
+    class PullRequest {
+        public:
+        PullRequest() = default;
+        virtual ~PullRequest() = default;
 
-    struct PullRequest {
+        private:
         std::string url;
         int64_t id;
+        std::string node_id;
         std::string html_url;
         std::string diff_url;
         std::string patch_url;
@@ -1761,13 +876,13 @@ namespace quicktype {
         std::string state;
         bool locked;
         std::string title;
-        struct User user;
-        std::string body;
+        Owner user;
+        std::shared_ptr<std::string> body;
         std::string created_at;
         std::string updated_at;
         nlohmann::json closed_at;
         nlohmann::json merged_at;
-        nlohmann::json merge_commit_sha;
+        std::shared_ptr<std::string> merge_commit_sha;
         nlohmann::json assignee;
         std::vector<nlohmann::json> assignees;
         std::vector<nlohmann::json> requested_reviewers;
@@ -1779,3900 +894,1141 @@ namespace quicktype {
         std::string review_comment_url;
         std::string comments_url;
         std::string statuses_url;
-        struct Base head;
-        struct Base base;
-        struct Links links;
+        Base head;
+        Base base;
+        PullRequestLinks links;
         std::string author_association;
-        bool merged;
+        std::shared_ptr<bool> merged;
         nlohmann::json mergeable;
         nlohmann::json rebaseable;
-        std::string mergeable_state;
+        std::shared_ptr<std::string> mergeable_state;
         nlohmann::json merged_by;
-        int64_t comments;
-        int64_t review_comments;
-        bool maintainer_can_modify;
-        int64_t commits;
-        int64_t additions;
-        int64_t deletions;
-        int64_t changed_files;
+        std::shared_ptr<int64_t> comments;
+        std::shared_ptr<int64_t> review_comments;
+        std::shared_ptr<bool> maintainer_can_modify;
+        std::shared_ptr<int64_t> commits;
+        std::shared_ptr<int64_t> additions;
+        std::shared_ptr<int64_t> deletions;
+        std::shared_ptr<int64_t> changed_files;
+
+        public:
+        const std::string & get_url() const { return url; }
+        std::string & get_mutable_url() { return url; }
+        void set_url(const std::string& value) { this->url = value; }
+
+        const int64_t & get_id() const { return id; }
+        int64_t & get_mutable_id() { return id; }
+        void set_id(const int64_t& value) { this->id = value; }
+
+        const std::string & get_node_id() const { return node_id; }
+        std::string & get_mutable_node_id() { return node_id; }
+        void set_node_id(const std::string& value) { this->node_id = value; }
+
+        const std::string & get_html_url() const { return html_url; }
+        std::string & get_mutable_html_url() { return html_url; }
+        void set_html_url(const std::string& value) { this->html_url = value; }
+
+        const std::string & get_diff_url() const { return diff_url; }
+        std::string & get_mutable_diff_url() { return diff_url; }
+        void set_diff_url(const std::string& value) { this->diff_url = value; }
+
+        const std::string & get_patch_url() const { return patch_url; }
+        std::string & get_mutable_patch_url() { return patch_url; }
+        void set_patch_url(const std::string& value) { this->patch_url = value; }
+
+        const std::string & get_issue_url() const { return issue_url; }
+        std::string & get_mutable_issue_url() { return issue_url; }
+        void set_issue_url(const std::string& value) { this->issue_url = value; }
+
+        const int64_t & get_number() const { return number; }
+        int64_t & get_mutable_number() { return number; }
+        void set_number(const int64_t& value) { this->number = value; }
+
+        const std::string & get_state() const { return state; }
+        std::string & get_mutable_state() { return state; }
+        void set_state(const std::string& value) { this->state = value; }
+
+        const bool & get_locked() const { return locked; }
+        bool & get_mutable_locked() { return locked; }
+        void set_locked(const bool& value) { this->locked = value; }
+
+        const std::string & get_title() const { return title; }
+        std::string & get_mutable_title() { return title; }
+        void set_title(const std::string& value) { this->title = value; }
+
+        const Owner & get_user() const { return user; }
+        Owner & get_mutable_user() { return user; }
+        void set_user(const Owner& value) { this->user = value; }
+
+        std::shared_ptr<std::string> get_body() const { return body; }
+        void set_body(std::shared_ptr<std::string> value) { this->body = value; }
+
+        const std::string & get_created_at() const { return created_at; }
+        std::string & get_mutable_created_at() { return created_at; }
+        void set_created_at(const std::string& value) { this->created_at = value; }
+
+        const std::string & get_updated_at() const { return updated_at; }
+        std::string & get_mutable_updated_at() { return updated_at; }
+        void set_updated_at(const std::string& value) { this->updated_at = value; }
+
+        const nlohmann::json & get_closed_at() const { return closed_at; }
+        nlohmann::json & get_mutable_closed_at() { return closed_at; }
+        void set_closed_at(const nlohmann::json& value) { this->closed_at = value; }
+
+        const nlohmann::json & get_merged_at() const { return merged_at; }
+        nlohmann::json & get_mutable_merged_at() { return merged_at; }
+        void set_merged_at(const nlohmann::json& value) { this->merged_at = value; }
+
+        std::shared_ptr<std::string> get_merge_commit_sha() const { return merge_commit_sha; }
+        void set_merge_commit_sha(std::shared_ptr<std::string> value) { this->merge_commit_sha = value; }
+
+        const nlohmann::json & get_assignee() const { return assignee; }
+        nlohmann::json & get_mutable_assignee() { return assignee; }
+        void set_assignee(const nlohmann::json& value) { this->assignee = value; }
+
+        const std::vector<nlohmann::json> & get_assignees() const { return assignees; }
+        std::vector<nlohmann::json> & get_mutable_assignees() { return assignees; }
+        void set_assignees(const std::vector<nlohmann::json>& value) { this->assignees = value; }
+
+        const std::vector<nlohmann::json> & get_requested_reviewers() const { return requested_reviewers; }
+        std::vector<nlohmann::json> & get_mutable_requested_reviewers() { return requested_reviewers; }
+        void set_requested_reviewers(const std::vector<nlohmann::json>& value) { this->requested_reviewers = value; }
+
+        const std::vector<nlohmann::json> & get_requested_teams() const { return requested_teams; }
+        std::vector<nlohmann::json> & get_mutable_requested_teams() { return requested_teams; }
+        void set_requested_teams(const std::vector<nlohmann::json>& value) { this->requested_teams = value; }
+
+        const std::vector<nlohmann::json> & get_labels() const { return labels; }
+        std::vector<nlohmann::json> & get_mutable_labels() { return labels; }
+        void set_labels(const std::vector<nlohmann::json>& value) { this->labels = value; }
+
+        const nlohmann::json & get_milestone() const { return milestone; }
+        nlohmann::json & get_mutable_milestone() { return milestone; }
+        void set_milestone(const nlohmann::json& value) { this->milestone = value; }
+
+        const std::string & get_commits_url() const { return commits_url; }
+        std::string & get_mutable_commits_url() { return commits_url; }
+        void set_commits_url(const std::string& value) { this->commits_url = value; }
+
+        const std::string & get_review_comments_url() const { return review_comments_url; }
+        std::string & get_mutable_review_comments_url() { return review_comments_url; }
+        void set_review_comments_url(const std::string& value) { this->review_comments_url = value; }
+
+        const std::string & get_review_comment_url() const { return review_comment_url; }
+        std::string & get_mutable_review_comment_url() { return review_comment_url; }
+        void set_review_comment_url(const std::string& value) { this->review_comment_url = value; }
+
+        const std::string & get_comments_url() const { return comments_url; }
+        std::string & get_mutable_comments_url() { return comments_url; }
+        void set_comments_url(const std::string& value) { this->comments_url = value; }
+
+        const std::string & get_statuses_url() const { return statuses_url; }
+        std::string & get_mutable_statuses_url() { return statuses_url; }
+        void set_statuses_url(const std::string& value) { this->statuses_url = value; }
+
+        const Base & get_head() const { return head; }
+        Base & get_mutable_head() { return head; }
+        void set_head(const Base& value) { this->head = value; }
+
+        const Base & get_base() const { return base; }
+        Base & get_mutable_base() { return base; }
+        void set_base(const Base& value) { this->base = value; }
+
+        const PullRequestLinks & get_links() const { return links; }
+        PullRequestLinks & get_mutable_links() { return links; }
+        void set_links(const PullRequestLinks& value) { this->links = value; }
+
+        const std::string & get_author_association() const { return author_association; }
+        std::string & get_mutable_author_association() { return author_association; }
+        void set_author_association(const std::string& value) { this->author_association = value; }
+
+        std::shared_ptr<bool> get_merged() const { return merged; }
+        void set_merged(std::shared_ptr<bool> value) { this->merged = value; }
+
+        const nlohmann::json & get_mergeable() const { return mergeable; }
+        nlohmann::json & get_mutable_mergeable() { return mergeable; }
+        void set_mergeable(const nlohmann::json& value) { this->mergeable = value; }
+
+        const nlohmann::json & get_rebaseable() const { return rebaseable; }
+        nlohmann::json & get_mutable_rebaseable() { return rebaseable; }
+        void set_rebaseable(const nlohmann::json& value) { this->rebaseable = value; }
+
+        std::shared_ptr<std::string> get_mergeable_state() const { return mergeable_state; }
+        void set_mergeable_state(std::shared_ptr<std::string> value) { this->mergeable_state = value; }
+
+        const nlohmann::json & get_merged_by() const { return merged_by; }
+        nlohmann::json & get_mutable_merged_by() { return merged_by; }
+        void set_merged_by(const nlohmann::json& value) { this->merged_by = value; }
+
+        std::shared_ptr<int64_t> get_comments() const { return comments; }
+        void set_comments(std::shared_ptr<int64_t> value) { this->comments = value; }
+
+        std::shared_ptr<int64_t> get_review_comments() const { return review_comments; }
+        void set_review_comments(std::shared_ptr<int64_t> value) { this->review_comments = value; }
+
+        std::shared_ptr<bool> get_maintainer_can_modify() const { return maintainer_can_modify; }
+        void set_maintainer_can_modify(std::shared_ptr<bool> value) { this->maintainer_can_modify = value; }
+
+        std::shared_ptr<int64_t> get_commits() const { return commits; }
+        void set_commits(std::shared_ptr<int64_t> value) { this->commits = value; }
+
+        std::shared_ptr<int64_t> get_additions() const { return additions; }
+        void set_additions(std::shared_ptr<int64_t> value) { this->additions = value; }
+
+        std::shared_ptr<int64_t> get_deletions() const { return deletions; }
+        void set_deletions(std::shared_ptr<int64_t> value) { this->deletions = value; }
+
+        std::shared_ptr<int64_t> get_changed_files() const { return changed_files; }
+        void set_changed_files(std::shared_ptr<int64_t> value) { this->changed_files = value; }
     };
 
-    struct Payload {
-        std::unique_ptr<int64_t> push_id;
-        std::unique_ptr<int64_t> size;
-        std::unique_ptr<int64_t> distinct_size;
-        std::unique_ptr<std::string> ref;
-        std::unique_ptr<std::string> head;
-        std::unique_ptr<std::string> before;
-        std::unique_ptr<std::vector<struct Commit>> commits;
-        std::unique_ptr<struct Forkee> forkee;
-        std::unique_ptr<std::string> action;
-        std::unique_ptr<int64_t> number;
-        std::unique_ptr<struct PullRequest> pull_request;
-        std::unique_ptr<std::string> ref_type;
-        std::unique_ptr<std::string> master_branch;
-        std::unique_ptr<std::string> description;
-        std::unique_ptr<std::string> pusher_type;
-        std::unique_ptr<struct Issue> issue;
-        std::unique_ptr<struct Comment> comment;
+    class Payload {
+        public:
+        Payload() = default;
+        virtual ~Payload() = default;
+
+        private:
+        std::shared_ptr<int64_t> push_id;
+        std::shared_ptr<int64_t> size;
+        std::shared_ptr<int64_t> distinct_size;
+        std::shared_ptr<std::string> ref;
+        std::shared_ptr<std::string> head;
+        std::shared_ptr<std::string> before;
+        std::shared_ptr<std::vector<Commit>> commits;
+        std::shared_ptr<std::string> action;
+        std::shared_ptr<int64_t> number;
+        std::shared_ptr<PullRequest> pull_request;
+        std::shared_ptr<std::string> ref_type;
+        std::shared_ptr<std::string> master_branch;
+        std::shared_ptr<std::string> description;
+        std::shared_ptr<std::string> pusher_type;
+        std::shared_ptr<Comment> comment;
+
+        public:
+        std::shared_ptr<int64_t> get_push_id() const { return push_id; }
+        void set_push_id(std::shared_ptr<int64_t> value) { this->push_id = value; }
+
+        std::shared_ptr<int64_t> get_size() const { return size; }
+        void set_size(std::shared_ptr<int64_t> value) { this->size = value; }
+
+        std::shared_ptr<int64_t> get_distinct_size() const { return distinct_size; }
+        void set_distinct_size(std::shared_ptr<int64_t> value) { this->distinct_size = value; }
+
+        std::shared_ptr<std::string> get_ref() const { return ref; }
+        void set_ref(std::shared_ptr<std::string> value) { this->ref = value; }
+
+        std::shared_ptr<std::string> get_head() const { return head; }
+        void set_head(std::shared_ptr<std::string> value) { this->head = value; }
+
+        std::shared_ptr<std::string> get_before() const { return before; }
+        void set_before(std::shared_ptr<std::string> value) { this->before = value; }
+
+        std::shared_ptr<std::vector<Commit>> get_commits() const { return commits; }
+        void set_commits(std::shared_ptr<std::vector<Commit>> value) { this->commits = value; }
+
+        std::shared_ptr<std::string> get_action() const { return action; }
+        void set_action(std::shared_ptr<std::string> value) { this->action = value; }
+
+        std::shared_ptr<int64_t> get_number() const { return number; }
+        void set_number(std::shared_ptr<int64_t> value) { this->number = value; }
+
+        std::shared_ptr<PullRequest> get_pull_request() const { return pull_request; }
+        void set_pull_request(std::shared_ptr<PullRequest> value) { this->pull_request = value; }
+
+        std::shared_ptr<std::string> get_ref_type() const { return ref_type; }
+        void set_ref_type(std::shared_ptr<std::string> value) { this->ref_type = value; }
+
+        std::shared_ptr<std::string> get_master_branch() const { return master_branch; }
+        void set_master_branch(std::shared_ptr<std::string> value) { this->master_branch = value; }
+
+        std::shared_ptr<std::string> get_description() const { return description; }
+        void set_description(std::shared_ptr<std::string> value) { this->description = value; }
+
+        std::shared_ptr<std::string> get_pusher_type() const { return pusher_type; }
+        void set_pusher_type(std::shared_ptr<std::string> value) { this->pusher_type = value; }
+
+        std::shared_ptr<Comment> get_comment() const { return comment; }
+        void set_comment(std::shared_ptr<Comment> value) { this->comment = value; }
     };
 
-    struct Repo {
+    class EventRepo {
+        public:
+        EventRepo() = default;
+        virtual ~EventRepo() = default;
+
+        private:
         int64_t id;
         std::string name;
         std::string url;
+
+        public:
+        const int64_t & get_id() const { return id; }
+        int64_t & get_mutable_id() { return id; }
+        void set_id(const int64_t& value) { this->id = value; }
+
+        const std::string & get_name() const { return name; }
+        std::string & get_mutable_name() { return name; }
+        void set_name(const std::string& value) { this->name = value; }
+
+        const std::string & get_url() const { return url; }
+        std::string & get_mutable_url() { return url; }
+        void set_url(const std::string& value) { this->url = value; }
     };
 
-    struct Event {
+    class Event {
+        public:
+        Event() = default;
+        virtual ~Event() = default;
+
+        private:
         std::string id;
         std::string type;
-        struct Actor actor;
-        struct Repo repo;
-        struct Payload payload;
+        Actor actor;
+        EventRepo repo;
+        Payload payload;
         bool event_public;
         std::string created_at;
-        std::unique_ptr<struct Actor> org;
+        std::shared_ptr<Actor> org;
+
+        public:
+        const std::string & get_id() const { return id; }
+        std::string & get_mutable_id() { return id; }
+        void set_id(const std::string& value) { this->id = value; }
+
+        const std::string & get_type() const { return type; }
+        std::string & get_mutable_type() { return type; }
+        void set_type(const std::string& value) { this->type = value; }
+
+        const Actor & get_actor() const { return actor; }
+        Actor & get_mutable_actor() { return actor; }
+        void set_actor(const Actor& value) { this->actor = value; }
+
+        const EventRepo & get_repo() const { return repo; }
+        EventRepo & get_mutable_repo() { return repo; }
+        void set_repo(const EventRepo& value) { this->repo = value; }
+
+        const Payload & get_payload() const { return payload; }
+        Payload & get_mutable_payload() { return payload; }
+        void set_payload(const Payload& value) { this->payload = value; }
+
+        const bool & get_event_public() const { return event_public; }
+        bool & get_mutable_event_public() { return event_public; }
+        void set_event_public(const bool& value) { this->event_public = value; }
+
+        const std::string & get_created_at() const { return created_at; }
+        std::string & get_mutable_created_at() { return created_at; }
+        void set_created_at(const std::string& value) { this->created_at = value; }
+
+        std::shared_ptr<Actor> get_org() const { return org; }
+        void set_org(std::shared_ptr<Actor> value) { this->org = value; }
     };
 
-    enum class FileType { APPLICATION_JAVASCRIPT, APPLICATION_X_PYTHON, TEXT_CSS, TEXT_HTML, TEXT_PLAIN };
+    class File {
+        public:
+        File() = default;
+        virtual ~File() = default;
 
-    struct File {
+        private:
         std::string filename;
-        FileType type;
-        std::unique_ptr<std::string> language;
+        std::string type;
+        std::shared_ptr<std::string> language;
         std::string raw_url;
         int64_t size;
+
+        public:
+        const std::string & get_filename() const { return filename; }
+        std::string & get_mutable_filename() { return filename; }
+        void set_filename(const std::string& value) { this->filename = value; }
+
+        const std::string & get_type() const { return type; }
+        std::string & get_mutable_type() { return type; }
+        void set_type(const std::string& value) { this->type = value; }
+
+        std::shared_ptr<std::string> get_language() const { return language; }
+        void set_language(std::shared_ptr<std::string> value) { this->language = value; }
+
+        const std::string & get_raw_url() const { return raw_url; }
+        std::string & get_mutable_raw_url() { return raw_url; }
+        void set_raw_url(const std::string& value) { this->raw_url = value; }
+
+        const int64_t & get_size() const { return size; }
+        int64_t & get_mutable_size() { return size; }
+        void set_size(const int64_t& value) { this->size = value; }
     };
 
-    struct Gist {
+    class Gist {
+        public:
+        Gist() = default;
+        virtual ~Gist() = default;
+
+        private:
         std::string url;
         std::string forks_url;
         std::string commits_url;
         std::string id;
+        std::string node_id;
         std::string git_pull_url;
         std::string git_push_url;
         std::string html_url;
-        std::map<std::string, struct File> files;
+        std::map<std::string, File> files;
         bool gist_public;
         std::string created_at;
         std::string updated_at;
-        std::unique_ptr<std::string> description;
+        std::shared_ptr<std::string> description;
         int64_t comments;
         nlohmann::json user;
         std::string comments_url;
+        Owner owner;
         bool truncated;
-        std::unique_ptr<struct User> owner;
+
+        public:
+        const std::string & get_url() const { return url; }
+        std::string & get_mutable_url() { return url; }
+        void set_url(const std::string& value) { this->url = value; }
+
+        const std::string & get_forks_url() const { return forks_url; }
+        std::string & get_mutable_forks_url() { return forks_url; }
+        void set_forks_url(const std::string& value) { this->forks_url = value; }
+
+        const std::string & get_commits_url() const { return commits_url; }
+        std::string & get_mutable_commits_url() { return commits_url; }
+        void set_commits_url(const std::string& value) { this->commits_url = value; }
+
+        const std::string & get_id() const { return id; }
+        std::string & get_mutable_id() { return id; }
+        void set_id(const std::string& value) { this->id = value; }
+
+        const std::string & get_node_id() const { return node_id; }
+        std::string & get_mutable_node_id() { return node_id; }
+        void set_node_id(const std::string& value) { this->node_id = value; }
+
+        const std::string & get_git_pull_url() const { return git_pull_url; }
+        std::string & get_mutable_git_pull_url() { return git_pull_url; }
+        void set_git_pull_url(const std::string& value) { this->git_pull_url = value; }
+
+        const std::string & get_git_push_url() const { return git_push_url; }
+        std::string & get_mutable_git_push_url() { return git_push_url; }
+        void set_git_push_url(const std::string& value) { this->git_push_url = value; }
+
+        const std::string & get_html_url() const { return html_url; }
+        std::string & get_mutable_html_url() { return html_url; }
+        void set_html_url(const std::string& value) { this->html_url = value; }
+
+        const std::map<std::string, File> & get_files() const { return files; }
+        std::map<std::string, File> & get_mutable_files() { return files; }
+        void set_files(const std::map<std::string, File>& value) { this->files = value; }
+
+        const bool & get_gist_public() const { return gist_public; }
+        bool & get_mutable_gist_public() { return gist_public; }
+        void set_gist_public(const bool& value) { this->gist_public = value; }
+
+        const std::string & get_created_at() const { return created_at; }
+        std::string & get_mutable_created_at() { return created_at; }
+        void set_created_at(const std::string& value) { this->created_at = value; }
+
+        const std::string & get_updated_at() const { return updated_at; }
+        std::string & get_mutable_updated_at() { return updated_at; }
+        void set_updated_at(const std::string& value) { this->updated_at = value; }
+
+        std::shared_ptr<std::string> get_description() const { return description; }
+        void set_description(std::shared_ptr<std::string> value) { this->description = value; }
+
+        const int64_t & get_comments() const { return comments; }
+        int64_t & get_mutable_comments() { return comments; }
+        void set_comments(const int64_t& value) { this->comments = value; }
+
+        const nlohmann::json & get_user() const { return user; }
+        nlohmann::json & get_mutable_user() { return user; }
+        void set_user(const nlohmann::json& value) { this->user = value; }
+
+        const std::string & get_comments_url() const { return comments_url; }
+        std::string & get_mutable_comments_url() { return comments_url; }
+        void set_comments_url(const std::string& value) { this->comments_url = value; }
+
+        const Owner & get_owner() const { return owner; }
+        Owner & get_mutable_owner() { return owner; }
+        void set_owner(const Owner& value) { this->owner = value; }
+
+        const bool & get_truncated() const { return truncated; }
+        bool & get_mutable_truncated() { return truncated; }
+        void set_truncated(const bool& value) { this->truncated = value; }
     };
 
-    struct Meta {
+    class Meta {
+        public:
+        Meta() = default;
+        virtual ~Meta() = default;
+
+        private:
         bool verifiable_password_authentication;
         std::string github_services_sha;
         std::vector<std::string> hooks;
         std::vector<std::string> git;
         std::vector<std::string> pages;
         std::vector<std::string> importer;
+
+        public:
+        const bool & get_verifiable_password_authentication() const { return verifiable_password_authentication; }
+        bool & get_mutable_verifiable_password_authentication() { return verifiable_password_authentication; }
+        void set_verifiable_password_authentication(const bool& value) { this->verifiable_password_authentication = value; }
+
+        const std::string & get_github_services_sha() const { return github_services_sha; }
+        std::string & get_mutable_github_services_sha() { return github_services_sha; }
+        void set_github_services_sha(const std::string& value) { this->github_services_sha = value; }
+
+        const std::vector<std::string> & get_hooks() const { return hooks; }
+        std::vector<std::string> & get_mutable_hooks() { return hooks; }
+        void set_hooks(const std::vector<std::string>& value) { this->hooks = value; }
+
+        const std::vector<std::string> & get_git() const { return git; }
+        std::vector<std::string> & get_mutable_git() { return git; }
+        void set_git(const std::vector<std::string>& value) { this->git = value; }
+
+        const std::vector<std::string> & get_pages() const { return pages; }
+        std::vector<std::string> & get_mutable_pages() { return pages; }
+        void set_pages(const std::vector<std::string>& value) { this->pages = value; }
+
+        const std::vector<std::string> & get_importer() const { return importer; }
+        std::vector<std::string> & get_mutable_importer() { return importer; }
+        void set_importer(const std::vector<std::string>& value) { this->importer = value; }
     };
 
-    typedef std::vector<struct Event> Events;
-    typedef std::vector<struct Gist> Gists;
-    
-    inline json get_untyped(const json &j, const char *property) {
-        if (j.find(property) != j.end()) {
-            return j.at(property).get<json>();
-        }
-        return json();
-    }
-    
-    template <typename T>
-    inline std::unique_ptr<T> get_optional(const json &j, const char *property) {
-        if (j.find(property) != j.end())
-            return j.at(property).get<std::unique_ptr<T>>();
-        return std::unique_ptr<T>();
-    }
+    typedef std::map<std::string, std::string> ApiData;
+    typedef std::map<std::string, std::string> Emojis;
+    typedef std::vector<Event> Events;
+    typedef std::vector<Gist> Gists;
+}
+
+namespace quicktype {
+    typedef std::map<std::string, std::string> ApiData;
+    typedef std::map<std::string, std::string> Emojis;
+    typedef std::vector<Event> Events;
+    typedef std::vector<Gist> Gists;
 }
 
 namespace nlohmann {
-    template <typename T>
-    struct adl_serializer<std::unique_ptr<T>> {
-        static void to_json(json& j, const std::unique_ptr<T>& opt) {
-            if (!opt)
-                j = nullptr;
-            else
-                j = *opt;
-        }
-
-        static std::unique_ptr<T> from_json(const json& j) {
-            if (j.is_null())
-                return std::unique_ptr<T>();
-            else
-                return std::unique_ptr<T>(new T(j.get<T>()));
-        }
-    };
-
-    inline void from_json(const json& _j, struct quicktype::ApiData& _x) {
-        _x.current_user_url = _j.at("current_user_url").get<std::string>();
-        _x.current_user_authorizations_html_url = _j.at("current_user_authorizations_html_url").get<std::string>();
-        _x.authorizations_url = _j.at("authorizations_url").get<std::string>();
-        _x.code_search_url = _j.at("code_search_url").get<std::string>();
-        _x.commit_search_url = _j.at("commit_search_url").get<std::string>();
-        _x.emails_url = _j.at("emails_url").get<std::string>();
-        _x.emojis_url = _j.at("emojis_url").get<std::string>();
-        _x.events_url = _j.at("events_url").get<std::string>();
-        _x.feeds_url = _j.at("feeds_url").get<std::string>();
-        _x.followers_url = _j.at("followers_url").get<std::string>();
-        _x.following_url = _j.at("following_url").get<std::string>();
-        _x.gists_url = _j.at("gists_url").get<std::string>();
-        _x.hub_url = _j.at("hub_url").get<std::string>();
-        _x.issue_search_url = _j.at("issue_search_url").get<std::string>();
-        _x.issues_url = _j.at("issues_url").get<std::string>();
-        _x.keys_url = _j.at("keys_url").get<std::string>();
-        _x.notifications_url = _j.at("notifications_url").get<std::string>();
-        _x.organization_repositories_url = _j.at("organization_repositories_url").get<std::string>();
-        _x.organization_url = _j.at("organization_url").get<std::string>();
-        _x.public_gists_url = _j.at("public_gists_url").get<std::string>();
-        _x.rate_limit_url = _j.at("rate_limit_url").get<std::string>();
-        _x.repository_url = _j.at("repository_url").get<std::string>();
-        _x.repository_search_url = _j.at("repository_search_url").get<std::string>();
-        _x.current_user_repositories_url = _j.at("current_user_repositories_url").get<std::string>();
-        _x.starred_url = _j.at("starred_url").get<std::string>();
-        _x.starred_gists_url = _j.at("starred_gists_url").get<std::string>();
-        _x.team_url = _j.at("team_url").get<std::string>();
-        _x.user_url = _j.at("user_url").get<std::string>();
-        _x.user_organizations_url = _j.at("user_organizations_url").get<std::string>();
-        _x.user_repositories_url = _j.at("user_repositories_url").get<std::string>();
-        _x.user_search_url = _j.at("user_search_url").get<std::string>();
+    inline void from_json(const json& _j, quicktype::Actor& _x) {
+        _x.set_id( _j.at("id").get<int64_t>() );
+        _x.set_login( _j.at("login").get<std::string>() );
+        _x.set_display_login( quicktype::get_optional<std::string>(_j, "display_login") );
+        _x.set_gravatar_id( _j.at("gravatar_id").get<std::string>() );
+        _x.set_url( _j.at("url").get<std::string>() );
+        _x.set_avatar_url( _j.at("avatar_url").get<std::string>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::ApiData& _x) {
+    inline void to_json(json& _j, const quicktype::Actor& _x) {
         _j = json::object();
-        _j["current_user_url"] = _x.current_user_url;
-        _j["current_user_authorizations_html_url"] = _x.current_user_authorizations_html_url;
-        _j["authorizations_url"] = _x.authorizations_url;
-        _j["code_search_url"] = _x.code_search_url;
-        _j["commit_search_url"] = _x.commit_search_url;
-        _j["emails_url"] = _x.emails_url;
-        _j["emojis_url"] = _x.emojis_url;
-        _j["events_url"] = _x.events_url;
-        _j["feeds_url"] = _x.feeds_url;
-        _j["followers_url"] = _x.followers_url;
-        _j["following_url"] = _x.following_url;
-        _j["gists_url"] = _x.gists_url;
-        _j["hub_url"] = _x.hub_url;
-        _j["issue_search_url"] = _x.issue_search_url;
-        _j["issues_url"] = _x.issues_url;
-        _j["keys_url"] = _x.keys_url;
-        _j["notifications_url"] = _x.notifications_url;
-        _j["organization_repositories_url"] = _x.organization_repositories_url;
-        _j["organization_url"] = _x.organization_url;
-        _j["public_gists_url"] = _x.public_gists_url;
-        _j["rate_limit_url"] = _x.rate_limit_url;
-        _j["repository_url"] = _x.repository_url;
-        _j["repository_search_url"] = _x.repository_search_url;
-        _j["current_user_repositories_url"] = _x.current_user_repositories_url;
-        _j["starred_url"] = _x.starred_url;
-        _j["starred_gists_url"] = _x.starred_gists_url;
-        _j["team_url"] = _x.team_url;
-        _j["user_url"] = _x.user_url;
-        _j["user_organizations_url"] = _x.user_organizations_url;
-        _j["user_repositories_url"] = _x.user_repositories_url;
-        _j["user_search_url"] = _x.user_search_url;
+        _j["id"] = _x.get_id();
+        _j["login"] = _x.get_login();
+        _j["display_login"] = _x.get_display_login();
+        _j["gravatar_id"] = _x.get_gravatar_id();
+        _j["url"] = _x.get_url();
+        _j["avatar_url"] = _x.get_avatar_url();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Emojis& _x) {
-        _x.the_1 = _j.at("+1").get<std::string>();
-        _x.emojis_1 = _j.at("-1").get<std::string>();
-        _x.the_100 = _j.at("100").get<std::string>();
-        _x.the_1234 = _j.at("1234").get<std::string>();
-        _x.the_1_st_place_medal = _j.at("1st_place_medal").get<std::string>();
-        _x.the_2_nd_place_medal = _j.at("2nd_place_medal").get<std::string>();
-        _x.the_3_rd_place_medal = _j.at("3rd_place_medal").get<std::string>();
-        _x.the_8_ball = _j.at("8ball").get<std::string>();
-        _x.a = _j.at("a").get<std::string>();
-        _x.ab = _j.at("ab").get<std::string>();
-        _x.abc = _j.at("abc").get<std::string>();
-        _x.abcd = _j.at("abcd").get<std::string>();
-        _x.accept = _j.at("accept").get<std::string>();
-        _x.aerial_tramway = _j.at("aerial_tramway").get<std::string>();
-        _x.afghanistan = _j.at("afghanistan").get<std::string>();
-        _x.airplane = _j.at("airplane").get<std::string>();
-        _x.aland_islands = _j.at("aland_islands").get<std::string>();
-        _x.alarm_clock = _j.at("alarm_clock").get<std::string>();
-        _x.albania = _j.at("albania").get<std::string>();
-        _x.alembic = _j.at("alembic").get<std::string>();
-        _x.algeria = _j.at("algeria").get<std::string>();
-        _x.alien = _j.at("alien").get<std::string>();
-        _x.ambulance = _j.at("ambulance").get<std::string>();
-        _x.american_samoa = _j.at("american_samoa").get<std::string>();
-        _x.amphora = _j.at("amphora").get<std::string>();
-        _x.anchor = _j.at("anchor").get<std::string>();
-        _x.andorra = _j.at("andorra").get<std::string>();
-        _x.angel = _j.at("angel").get<std::string>();
-        _x.anger = _j.at("anger").get<std::string>();
-        _x.angola = _j.at("angola").get<std::string>();
-        _x.angry = _j.at("angry").get<std::string>();
-        _x.anguilla = _j.at("anguilla").get<std::string>();
-        _x.anguished = _j.at("anguished").get<std::string>();
-        _x.ant = _j.at("ant").get<std::string>();
-        _x.antarctica = _j.at("antarctica").get<std::string>();
-        _x.antigua_barbuda = _j.at("antigua_barbuda").get<std::string>();
-        _x.apple = _j.at("apple").get<std::string>();
-        _x.aquarius = _j.at("aquarius").get<std::string>();
-        _x.argentina = _j.at("argentina").get<std::string>();
-        _x.aries = _j.at("aries").get<std::string>();
-        _x.armenia = _j.at("armenia").get<std::string>();
-        _x.arrow_backward = _j.at("arrow_backward").get<std::string>();
-        _x.arrow_double_down = _j.at("arrow_double_down").get<std::string>();
-        _x.arrow_double_up = _j.at("arrow_double_up").get<std::string>();
-        _x.arrow_down = _j.at("arrow_down").get<std::string>();
-        _x.arrow_down_small = _j.at("arrow_down_small").get<std::string>();
-        _x.arrow_forward = _j.at("arrow_forward").get<std::string>();
-        _x.arrow_heading_down = _j.at("arrow_heading_down").get<std::string>();
-        _x.arrow_heading_up = _j.at("arrow_heading_up").get<std::string>();
-        _x.arrow_left = _j.at("arrow_left").get<std::string>();
-        _x.arrow_lower_left = _j.at("arrow_lower_left").get<std::string>();
-        _x.arrow_lower_right = _j.at("arrow_lower_right").get<std::string>();
-        _x.arrow_right = _j.at("arrow_right").get<std::string>();
-        _x.arrow_right_hook = _j.at("arrow_right_hook").get<std::string>();
-        _x.arrow_up = _j.at("arrow_up").get<std::string>();
-        _x.arrow_up_down = _j.at("arrow_up_down").get<std::string>();
-        _x.arrow_up_small = _j.at("arrow_up_small").get<std::string>();
-        _x.arrow_upper_left = _j.at("arrow_upper_left").get<std::string>();
-        _x.arrow_upper_right = _j.at("arrow_upper_right").get<std::string>();
-        _x.arrows_clockwise = _j.at("arrows_clockwise").get<std::string>();
-        _x.arrows_counterclockwise = _j.at("arrows_counterclockwise").get<std::string>();
-        _x.art = _j.at("art").get<std::string>();
-        _x.articulated_lorry = _j.at("articulated_lorry").get<std::string>();
-        _x.artificial_satellite = _j.at("artificial_satellite").get<std::string>();
-        _x.aruba = _j.at("aruba").get<std::string>();
-        _x.asterisk = _j.at("asterisk").get<std::string>();
-        _x.astonished = _j.at("astonished").get<std::string>();
-        _x.athletic_shoe = _j.at("athletic_shoe").get<std::string>();
-        _x.atm = _j.at("atm").get<std::string>();
-        _x.atom = _j.at("atom").get<std::string>();
-        _x.atom_symbol = _j.at("atom_symbol").get<std::string>();
-        _x.australia = _j.at("australia").get<std::string>();
-        _x.austria = _j.at("austria").get<std::string>();
-        _x.avocado = _j.at("avocado").get<std::string>();
-        _x.azerbaijan = _j.at("azerbaijan").get<std::string>();
-        _x.b = _j.at("b").get<std::string>();
-        _x.baby = _j.at("baby").get<std::string>();
-        _x.baby_bottle = _j.at("baby_bottle").get<std::string>();
-        _x.baby_chick = _j.at("baby_chick").get<std::string>();
-        _x.baby_symbol = _j.at("baby_symbol").get<std::string>();
-        _x.back = _j.at("back").get<std::string>();
-        _x.bacon = _j.at("bacon").get<std::string>();
-        _x.badminton = _j.at("badminton").get<std::string>();
-        _x.baggage_claim = _j.at("baggage_claim").get<std::string>();
-        _x.baguette_bread = _j.at("baguette_bread").get<std::string>();
-        _x.bahamas = _j.at("bahamas").get<std::string>();
-        _x.bahrain = _j.at("bahrain").get<std::string>();
-        _x.balance_scale = _j.at("balance_scale").get<std::string>();
-        _x.balloon = _j.at("balloon").get<std::string>();
-        _x.ballot_box = _j.at("ballot_box").get<std::string>();
-        _x.ballot_box_with_check = _j.at("ballot_box_with_check").get<std::string>();
-        _x.bamboo = _j.at("bamboo").get<std::string>();
-        _x.banana = _j.at("banana").get<std::string>();
-        _x.bangbang = _j.at("bangbang").get<std::string>();
-        _x.bangladesh = _j.at("bangladesh").get<std::string>();
-        _x.bank = _j.at("bank").get<std::string>();
-        _x.bar_chart = _j.at("bar_chart").get<std::string>();
-        _x.barbados = _j.at("barbados").get<std::string>();
-        _x.barber = _j.at("barber").get<std::string>();
-        _x.baseball = _j.at("baseball").get<std::string>();
-        _x.basecamp = _j.at("basecamp").get<std::string>();
-        _x.basecampy = _j.at("basecampy").get<std::string>();
-        _x.basketball = _j.at("basketball").get<std::string>();
-        _x.basketball_man = _j.at("basketball_man").get<std::string>();
-        _x.basketball_woman = _j.at("basketball_woman").get<std::string>();
-        _x.bat = _j.at("bat").get<std::string>();
-        _x.bath = _j.at("bath").get<std::string>();
-        _x.bathtub = _j.at("bathtub").get<std::string>();
-        _x.battery = _j.at("battery").get<std::string>();
-        _x.beach_umbrella = _j.at("beach_umbrella").get<std::string>();
-        _x.bear = _j.at("bear").get<std::string>();
-        _x.bed = _j.at("bed").get<std::string>();
-        _x.bee = _j.at("bee").get<std::string>();
-        _x.beer = _j.at("beer").get<std::string>();
-        _x.beers = _j.at("beers").get<std::string>();
-        _x.beetle = _j.at("beetle").get<std::string>();
-        _x.beginner = _j.at("beginner").get<std::string>();
-        _x.belarus = _j.at("belarus").get<std::string>();
-        _x.belgium = _j.at("belgium").get<std::string>();
-        _x.belize = _j.at("belize").get<std::string>();
-        _x.bell = _j.at("bell").get<std::string>();
-        _x.bellhop_bell = _j.at("bellhop_bell").get<std::string>();
-        _x.benin = _j.at("benin").get<std::string>();
-        _x.bento = _j.at("bento").get<std::string>();
-        _x.bermuda = _j.at("bermuda").get<std::string>();
-        _x.bhutan = _j.at("bhutan").get<std::string>();
-        _x.bicyclist = _j.at("bicyclist").get<std::string>();
-        _x.bike = _j.at("bike").get<std::string>();
-        _x.biking_man = _j.at("biking_man").get<std::string>();
-        _x.biking_woman = _j.at("biking_woman").get<std::string>();
-        _x.bikini = _j.at("bikini").get<std::string>();
-        _x.biohazard = _j.at("biohazard").get<std::string>();
-        _x.bird = _j.at("bird").get<std::string>();
-        _x.birthday = _j.at("birthday").get<std::string>();
-        _x.black_circle = _j.at("black_circle").get<std::string>();
-        _x.black_flag = _j.at("black_flag").get<std::string>();
-        _x.black_heart = _j.at("black_heart").get<std::string>();
-        _x.black_joker = _j.at("black_joker").get<std::string>();
-        _x.black_large_square = _j.at("black_large_square").get<std::string>();
-        _x.black_medium_small_square = _j.at("black_medium_small_square").get<std::string>();
-        _x.black_medium_square = _j.at("black_medium_square").get<std::string>();
-        _x.black_nib = _j.at("black_nib").get<std::string>();
-        _x.black_small_square = _j.at("black_small_square").get<std::string>();
-        _x.black_square_button = _j.at("black_square_button").get<std::string>();
-        _x.blonde_man = _j.at("blonde_man").get<std::string>();
-        _x.blonde_woman = _j.at("blonde_woman").get<std::string>();
-        _x.blossom = _j.at("blossom").get<std::string>();
-        _x.blowfish = _j.at("blowfish").get<std::string>();
-        _x.blue_book = _j.at("blue_book").get<std::string>();
-        _x.blue_car = _j.at("blue_car").get<std::string>();
-        _x.blue_heart = _j.at("blue_heart").get<std::string>();
-        _x.blush = _j.at("blush").get<std::string>();
-        _x.boar = _j.at("boar").get<std::string>();
-        _x.boat = _j.at("boat").get<std::string>();
-        _x.bolivia = _j.at("bolivia").get<std::string>();
-        _x.bomb = _j.at("bomb").get<std::string>();
-        _x.book = _j.at("book").get<std::string>();
-        _x.bookmark = _j.at("bookmark").get<std::string>();
-        _x.bookmark_tabs = _j.at("bookmark_tabs").get<std::string>();
-        _x.books = _j.at("books").get<std::string>();
-        _x.boom = _j.at("boom").get<std::string>();
-        _x.boot = _j.at("boot").get<std::string>();
-        _x.bosnia_herzegovina = _j.at("bosnia_herzegovina").get<std::string>();
-        _x.botswana = _j.at("botswana").get<std::string>();
-        _x.bouquet = _j.at("bouquet").get<std::string>();
-        _x.bow = _j.at("bow").get<std::string>();
-        _x.bow_and_arrow = _j.at("bow_and_arrow").get<std::string>();
-        _x.bowing_man = _j.at("bowing_man").get<std::string>();
-        _x.bowing_woman = _j.at("bowing_woman").get<std::string>();
-        _x.bowling = _j.at("bowling").get<std::string>();
-        _x.bowtie = _j.at("bowtie").get<std::string>();
-        _x.boxing_glove = _j.at("boxing_glove").get<std::string>();
-        _x.boy = _j.at("boy").get<std::string>();
-        _x.brazil = _j.at("brazil").get<std::string>();
-        _x.bread = _j.at("bread").get<std::string>();
-        _x.bride_with_veil = _j.at("bride_with_veil").get<std::string>();
-        _x.bridge_at_night = _j.at("bridge_at_night").get<std::string>();
-        _x.briefcase = _j.at("briefcase").get<std::string>();
-        _x.british_indian_ocean_territory = _j.at("british_indian_ocean_territory").get<std::string>();
-        _x.british_virgin_islands = _j.at("british_virgin_islands").get<std::string>();
-        _x.broken_heart = _j.at("broken_heart").get<std::string>();
-        _x.brunei = _j.at("brunei").get<std::string>();
-        _x.bug = _j.at("bug").get<std::string>();
-        _x.building_construction = _j.at("building_construction").get<std::string>();
-        _x.bulb = _j.at("bulb").get<std::string>();
-        _x.bulgaria = _j.at("bulgaria").get<std::string>();
-        _x.bullettrain_front = _j.at("bullettrain_front").get<std::string>();
-        _x.bullettrain_side = _j.at("bullettrain_side").get<std::string>();
-        _x.burkina_faso = _j.at("burkina_faso").get<std::string>();
-        _x.burrito = _j.at("burrito").get<std::string>();
-        _x.burundi = _j.at("burundi").get<std::string>();
-        _x.bus = _j.at("bus").get<std::string>();
-        _x.business_suit_levitating = _j.at("business_suit_levitating").get<std::string>();
-        _x.busstop = _j.at("busstop").get<std::string>();
-        _x.bust_in_silhouette = _j.at("bust_in_silhouette").get<std::string>();
-        _x.busts_in_silhouette = _j.at("busts_in_silhouette").get<std::string>();
-        _x.butterfly = _j.at("butterfly").get<std::string>();
-        _x.cactus = _j.at("cactus").get<std::string>();
-        _x.cake = _j.at("cake").get<std::string>();
-        _x.calendar = _j.at("calendar").get<std::string>();
-        _x.call_me_hand = _j.at("call_me_hand").get<std::string>();
-        _x.calling = _j.at("calling").get<std::string>();
-        _x.cambodia = _j.at("cambodia").get<std::string>();
-        _x.camel = _j.at("camel").get<std::string>();
-        _x.camera = _j.at("camera").get<std::string>();
-        _x.camera_flash = _j.at("camera_flash").get<std::string>();
-        _x.cameroon = _j.at("cameroon").get<std::string>();
-        _x.camping = _j.at("camping").get<std::string>();
-        _x.canada = _j.at("canada").get<std::string>();
-        _x.canary_islands = _j.at("canary_islands").get<std::string>();
-        _x.cancer = _j.at("cancer").get<std::string>();
-        _x.candle = _j.at("candle").get<std::string>();
-        _x.candy = _j.at("candy").get<std::string>();
-        _x.canoe = _j.at("canoe").get<std::string>();
-        _x.cape_verde = _j.at("cape_verde").get<std::string>();
-        _x.capital_abcd = _j.at("capital_abcd").get<std::string>();
-        _x.capricorn = _j.at("capricorn").get<std::string>();
-        _x.car = _j.at("car").get<std::string>();
-        _x.card_file_box = _j.at("card_file_box").get<std::string>();
-        _x.card_index = _j.at("card_index").get<std::string>();
-        _x.card_index_dividers = _j.at("card_index_dividers").get<std::string>();
-        _x.caribbean_netherlands = _j.at("caribbean_netherlands").get<std::string>();
-        _x.carousel_horse = _j.at("carousel_horse").get<std::string>();
-        _x.carrot = _j.at("carrot").get<std::string>();
-        _x.cat = _j.at("cat").get<std::string>();
-        _x.cat2 = _j.at("cat2").get<std::string>();
-        _x.cayman_islands = _j.at("cayman_islands").get<std::string>();
-        _x.cd = _j.at("cd").get<std::string>();
-        _x.central_african_republic = _j.at("central_african_republic").get<std::string>();
-        _x.chad = _j.at("chad").get<std::string>();
-        _x.chains = _j.at("chains").get<std::string>();
-        _x.champagne = _j.at("champagne").get<std::string>();
-        _x.chart = _j.at("chart").get<std::string>();
-        _x.chart_with_downwards_trend = _j.at("chart_with_downwards_trend").get<std::string>();
-        _x.chart_with_upwards_trend = _j.at("chart_with_upwards_trend").get<std::string>();
-        _x.checkered_flag = _j.at("checkered_flag").get<std::string>();
-        _x.cheese = _j.at("cheese").get<std::string>();
-        _x.cherries = _j.at("cherries").get<std::string>();
-        _x.cherry_blossom = _j.at("cherry_blossom").get<std::string>();
-        _x.chestnut = _j.at("chestnut").get<std::string>();
-        _x.chicken = _j.at("chicken").get<std::string>();
-        _x.children_crossing = _j.at("children_crossing").get<std::string>();
-        _x.chile = _j.at("chile").get<std::string>();
-        _x.chipmunk = _j.at("chipmunk").get<std::string>();
-        _x.chocolate_bar = _j.at("chocolate_bar").get<std::string>();
-        _x.christmas_island = _j.at("christmas_island").get<std::string>();
-        _x.christmas_tree = _j.at("christmas_tree").get<std::string>();
-        _x.church = _j.at("church").get<std::string>();
-        _x.cinema = _j.at("cinema").get<std::string>();
-        _x.circus_tent = _j.at("circus_tent").get<std::string>();
-        _x.city_sunrise = _j.at("city_sunrise").get<std::string>();
-        _x.city_sunset = _j.at("city_sunset").get<std::string>();
-        _x.cityscape = _j.at("cityscape").get<std::string>();
-        _x.cl = _j.at("cl").get<std::string>();
-        _x.clamp = _j.at("clamp").get<std::string>();
-        _x.clap = _j.at("clap").get<std::string>();
-        _x.clapper = _j.at("clapper").get<std::string>();
-        _x.classical_building = _j.at("classical_building").get<std::string>();
-        _x.clinking_glasses = _j.at("clinking_glasses").get<std::string>();
-        _x.clipboard = _j.at("clipboard").get<std::string>();
-        _x.clock1 = _j.at("clock1").get<std::string>();
-        _x.clock10 = _j.at("clock10").get<std::string>();
-        _x.clock1030 = _j.at("clock1030").get<std::string>();
-        _x.clock11 = _j.at("clock11").get<std::string>();
-        _x.clock1130 = _j.at("clock1130").get<std::string>();
-        _x.clock12 = _j.at("clock12").get<std::string>();
-        _x.clock1230 = _j.at("clock1230").get<std::string>();
-        _x.clock130 = _j.at("clock130").get<std::string>();
-        _x.clock2 = _j.at("clock2").get<std::string>();
-        _x.clock230 = _j.at("clock230").get<std::string>();
-        _x.clock3 = _j.at("clock3").get<std::string>();
-        _x.clock330 = _j.at("clock330").get<std::string>();
-        _x.clock4 = _j.at("clock4").get<std::string>();
-        _x.clock430 = _j.at("clock430").get<std::string>();
-        _x.clock5 = _j.at("clock5").get<std::string>();
-        _x.clock530 = _j.at("clock530").get<std::string>();
-        _x.clock6 = _j.at("clock6").get<std::string>();
-        _x.clock630 = _j.at("clock630").get<std::string>();
-        _x.clock7 = _j.at("clock7").get<std::string>();
-        _x.clock730 = _j.at("clock730").get<std::string>();
-        _x.clock8 = _j.at("clock8").get<std::string>();
-        _x.clock830 = _j.at("clock830").get<std::string>();
-        _x.clock9 = _j.at("clock9").get<std::string>();
-        _x.clock930 = _j.at("clock930").get<std::string>();
-        _x.closed_book = _j.at("closed_book").get<std::string>();
-        _x.closed_lock_with_key = _j.at("closed_lock_with_key").get<std::string>();
-        _x.closed_umbrella = _j.at("closed_umbrella").get<std::string>();
-        _x.cloud = _j.at("cloud").get<std::string>();
-        _x.cloud_with_lightning = _j.at("cloud_with_lightning").get<std::string>();
-        _x.cloud_with_lightning_and_rain = _j.at("cloud_with_lightning_and_rain").get<std::string>();
-        _x.cloud_with_rain = _j.at("cloud_with_rain").get<std::string>();
-        _x.cloud_with_snow = _j.at("cloud_with_snow").get<std::string>();
-        _x.clown_face = _j.at("clown_face").get<std::string>();
-        _x.clubs = _j.at("clubs").get<std::string>();
-        _x.cn = _j.at("cn").get<std::string>();
-        _x.cocktail = _j.at("cocktail").get<std::string>();
-        _x.cocos_islands = _j.at("cocos_islands").get<std::string>();
-        _x.coffee = _j.at("coffee").get<std::string>();
-        _x.coffin = _j.at("coffin").get<std::string>();
-        _x.cold_sweat = _j.at("cold_sweat").get<std::string>();
-        _x.collision = _j.at("collision").get<std::string>();
-        _x.colombia = _j.at("colombia").get<std::string>();
-        _x.comet = _j.at("comet").get<std::string>();
-        _x.comoros = _j.at("comoros").get<std::string>();
-        _x.computer = _j.at("computer").get<std::string>();
-        _x.computer_mouse = _j.at("computer_mouse").get<std::string>();
-        _x.confetti_ball = _j.at("confetti_ball").get<std::string>();
-        _x.confounded = _j.at("confounded").get<std::string>();
-        _x.confused = _j.at("confused").get<std::string>();
-        _x.congo_brazzaville = _j.at("congo_brazzaville").get<std::string>();
-        _x.congo_kinshasa = _j.at("congo_kinshasa").get<std::string>();
-        _x.congratulations = _j.at("congratulations").get<std::string>();
-        _x.construction = _j.at("construction").get<std::string>();
-        _x.construction_worker = _j.at("construction_worker").get<std::string>();
-        _x.construction_worker_man = _j.at("construction_worker_man").get<std::string>();
-        _x.construction_worker_woman = _j.at("construction_worker_woman").get<std::string>();
-        _x.control_knobs = _j.at("control_knobs").get<std::string>();
-        _x.convenience_store = _j.at("convenience_store").get<std::string>();
-        _x.cook_islands = _j.at("cook_islands").get<std::string>();
-        _x.cookie = _j.at("cookie").get<std::string>();
-        _x.cool = _j.at("cool").get<std::string>();
-        _x.cop = _j.at("cop").get<std::string>();
-        _x.copyright = _j.at("copyright").get<std::string>();
-        _x.corn = _j.at("corn").get<std::string>();
-        _x.costa_rica = _j.at("costa_rica").get<std::string>();
-        _x.cote_divoire = _j.at("cote_divoire").get<std::string>();
-        _x.couch_and_lamp = _j.at("couch_and_lamp").get<std::string>();
-        _x.couple = _j.at("couple").get<std::string>();
-        _x.couple_with_heart = _j.at("couple_with_heart").get<std::string>();
-        _x.couple_with_heart_man_man = _j.at("couple_with_heart_man_man").get<std::string>();
-        _x.couple_with_heart_woman_man = _j.at("couple_with_heart_woman_man").get<std::string>();
-        _x.couple_with_heart_woman_woman = _j.at("couple_with_heart_woman_woman").get<std::string>();
-        _x.couplekiss_man_man = _j.at("couplekiss_man_man").get<std::string>();
-        _x.couplekiss_man_woman = _j.at("couplekiss_man_woman").get<std::string>();
-        _x.couplekiss_woman_woman = _j.at("couplekiss_woman_woman").get<std::string>();
-        _x.cow = _j.at("cow").get<std::string>();
-        _x.cow2 = _j.at("cow2").get<std::string>();
-        _x.cowboy_hat_face = _j.at("cowboy_hat_face").get<std::string>();
-        _x.crab = _j.at("crab").get<std::string>();
-        _x.crayon = _j.at("crayon").get<std::string>();
-        _x.credit_card = _j.at("credit_card").get<std::string>();
-        _x.crescent_moon = _j.at("crescent_moon").get<std::string>();
-        _x.cricket = _j.at("cricket").get<std::string>();
-        _x.croatia = _j.at("croatia").get<std::string>();
-        _x.crocodile = _j.at("crocodile").get<std::string>();
-        _x.croissant = _j.at("croissant").get<std::string>();
-        _x.crossed_fingers = _j.at("crossed_fingers").get<std::string>();
-        _x.crossed_flags = _j.at("crossed_flags").get<std::string>();
-        _x.crossed_swords = _j.at("crossed_swords").get<std::string>();
-        _x.crown = _j.at("crown").get<std::string>();
-        _x.cry = _j.at("cry").get<std::string>();
-        _x.crying_cat_face = _j.at("crying_cat_face").get<std::string>();
-        _x.crystal_ball = _j.at("crystal_ball").get<std::string>();
-        _x.cuba = _j.at("cuba").get<std::string>();
-        _x.cucumber = _j.at("cucumber").get<std::string>();
-        _x.cupid = _j.at("cupid").get<std::string>();
-        _x.curacao = _j.at("curacao").get<std::string>();
-        _x.curly_loop = _j.at("curly_loop").get<std::string>();
-        _x.currency_exchange = _j.at("currency_exchange").get<std::string>();
-        _x.curry = _j.at("curry").get<std::string>();
-        _x.custard = _j.at("custard").get<std::string>();
-        _x.customs = _j.at("customs").get<std::string>();
-        _x.cyclone = _j.at("cyclone").get<std::string>();
-        _x.cyprus = _j.at("cyprus").get<std::string>();
-        _x.czech_republic = _j.at("czech_republic").get<std::string>();
-        _x.dagger = _j.at("dagger").get<std::string>();
-        _x.dancer = _j.at("dancer").get<std::string>();
-        _x.dancers = _j.at("dancers").get<std::string>();
-        _x.dancing_men = _j.at("dancing_men").get<std::string>();
-        _x.dancing_women = _j.at("dancing_women").get<std::string>();
-        _x.dango = _j.at("dango").get<std::string>();
-        _x.dark_sunglasses = _j.at("dark_sunglasses").get<std::string>();
-        _x.dart = _j.at("dart").get<std::string>();
-        _x.dash = _j.at("dash").get<std::string>();
-        _x.date = _j.at("date").get<std::string>();
-        _x.de = _j.at("de").get<std::string>();
-        _x.deciduous_tree = _j.at("deciduous_tree").get<std::string>();
-        _x.deer = _j.at("deer").get<std::string>();
-        _x.denmark = _j.at("denmark").get<std::string>();
-        _x.department_store = _j.at("department_store").get<std::string>();
-        _x.derelict_house = _j.at("derelict_house").get<std::string>();
-        _x.desert = _j.at("desert").get<std::string>();
-        _x.desert_island = _j.at("desert_island").get<std::string>();
-        _x.desktop_computer = _j.at("desktop_computer").get<std::string>();
-        _x.detective = _j.at("detective").get<std::string>();
-        _x.diamond_shape_with_a_dot_inside = _j.at("diamond_shape_with_a_dot_inside").get<std::string>();
-        _x.diamonds = _j.at("diamonds").get<std::string>();
-        _x.disappointed = _j.at("disappointed").get<std::string>();
-        _x.disappointed_relieved = _j.at("disappointed_relieved").get<std::string>();
-        _x.dizzy = _j.at("dizzy").get<std::string>();
-        _x.dizzy_face = _j.at("dizzy_face").get<std::string>();
-        _x.djibouti = _j.at("djibouti").get<std::string>();
-        _x.do_not_litter = _j.at("do_not_litter").get<std::string>();
-        _x.dog = _j.at("dog").get<std::string>();
-        _x.dog2 = _j.at("dog2").get<std::string>();
-        _x.dollar = _j.at("dollar").get<std::string>();
-        _x.dolls = _j.at("dolls").get<std::string>();
-        _x.dolphin = _j.at("dolphin").get<std::string>();
-        _x.dominica = _j.at("dominica").get<std::string>();
-        _x.dominican_republic = _j.at("dominican_republic").get<std::string>();
-        _x.door = _j.at("door").get<std::string>();
-        _x.doughnut = _j.at("doughnut").get<std::string>();
-        _x.dove = _j.at("dove").get<std::string>();
-        _x.dragon = _j.at("dragon").get<std::string>();
-        _x.dragon_face = _j.at("dragon_face").get<std::string>();
-        _x.dress = _j.at("dress").get<std::string>();
-        _x.dromedary_camel = _j.at("dromedary_camel").get<std::string>();
-        _x.drooling_face = _j.at("drooling_face").get<std::string>();
-        _x.droplet = _j.at("droplet").get<std::string>();
-        _x.drum = _j.at("drum").get<std::string>();
-        _x.duck = _j.at("duck").get<std::string>();
-        _x.dvd = _j.at("dvd").get<std::string>();
-        _x.e_mail = _j.at("e-mail").get<std::string>();
-        _x.eagle = _j.at("eagle").get<std::string>();
-        _x.ear = _j.at("ear").get<std::string>();
-        _x.ear_of_rice = _j.at("ear_of_rice").get<std::string>();
-        _x.earth_africa = _j.at("earth_africa").get<std::string>();
-        _x.earth_americas = _j.at("earth_americas").get<std::string>();
-        _x.earth_asia = _j.at("earth_asia").get<std::string>();
-        _x.ecuador = _j.at("ecuador").get<std::string>();
-        _x.egg = _j.at("egg").get<std::string>();
-        _x.eggplant = _j.at("eggplant").get<std::string>();
-        _x.egypt = _j.at("egypt").get<std::string>();
-        _x.eight = _j.at("eight").get<std::string>();
-        _x.eight_pointed_black_star = _j.at("eight_pointed_black_star").get<std::string>();
-        _x.eight_spoked_asterisk = _j.at("eight_spoked_asterisk").get<std::string>();
-        _x.el_salvador = _j.at("el_salvador").get<std::string>();
-        _x.electric_plug = _j.at("electric_plug").get<std::string>();
-        _x.electron = _j.at("electron").get<std::string>();
-        _x.elephant = _j.at("elephant").get<std::string>();
-        _x.email = _j.at("email").get<std::string>();
-        _x.end = _j.at("end").get<std::string>();
-        _x.envelope = _j.at("envelope").get<std::string>();
-        _x.envelope_with_arrow = _j.at("envelope_with_arrow").get<std::string>();
-        _x.equatorial_guinea = _j.at("equatorial_guinea").get<std::string>();
-        _x.eritrea = _j.at("eritrea").get<std::string>();
-        _x.es = _j.at("es").get<std::string>();
-        _x.estonia = _j.at("estonia").get<std::string>();
-        _x.ethiopia = _j.at("ethiopia").get<std::string>();
-        _x.eu = _j.at("eu").get<std::string>();
-        _x.euro = _j.at("euro").get<std::string>();
-        _x.european_castle = _j.at("european_castle").get<std::string>();
-        _x.european_post_office = _j.at("european_post_office").get<std::string>();
-        _x.european_union = _j.at("european_union").get<std::string>();
-        _x.evergreen_tree = _j.at("evergreen_tree").get<std::string>();
-        _x.exclamation = _j.at("exclamation").get<std::string>();
-        _x.expressionless = _j.at("expressionless").get<std::string>();
-        _x.eye = _j.at("eye").get<std::string>();
-        _x.eye_speech_bubble = _j.at("eye_speech_bubble").get<std::string>();
-        _x.eyeglasses = _j.at("eyeglasses").get<std::string>();
-        _x.eyes = _j.at("eyes").get<std::string>();
-        _x.face_with_head_bandage = _j.at("face_with_head_bandage").get<std::string>();
-        _x.face_with_thermometer = _j.at("face_with_thermometer").get<std::string>();
-        _x.facepunch = _j.at("facepunch").get<std::string>();
-        _x.factory = _j.at("factory").get<std::string>();
-        _x.falkland_islands = _j.at("falkland_islands").get<std::string>();
-        _x.fallen_leaf = _j.at("fallen_leaf").get<std::string>();
-        _x.family = _j.at("family").get<std::string>();
-        _x.family_man_boy = _j.at("family_man_boy").get<std::string>();
-        _x.family_man_boy_boy = _j.at("family_man_boy_boy").get<std::string>();
-        _x.family_man_girl = _j.at("family_man_girl").get<std::string>();
-        _x.family_man_girl_boy = _j.at("family_man_girl_boy").get<std::string>();
-        _x.family_man_girl_girl = _j.at("family_man_girl_girl").get<std::string>();
-        _x.family_man_man_boy = _j.at("family_man_man_boy").get<std::string>();
-        _x.family_man_man_boy_boy = _j.at("family_man_man_boy_boy").get<std::string>();
-        _x.family_man_man_girl = _j.at("family_man_man_girl").get<std::string>();
-        _x.family_man_man_girl_boy = _j.at("family_man_man_girl_boy").get<std::string>();
-        _x.family_man_man_girl_girl = _j.at("family_man_man_girl_girl").get<std::string>();
-        _x.family_man_woman_boy = _j.at("family_man_woman_boy").get<std::string>();
-        _x.family_man_woman_boy_boy = _j.at("family_man_woman_boy_boy").get<std::string>();
-        _x.family_man_woman_girl = _j.at("family_man_woman_girl").get<std::string>();
-        _x.family_man_woman_girl_boy = _j.at("family_man_woman_girl_boy").get<std::string>();
-        _x.family_man_woman_girl_girl = _j.at("family_man_woman_girl_girl").get<std::string>();
-        _x.family_woman_boy = _j.at("family_woman_boy").get<std::string>();
-        _x.family_woman_boy_boy = _j.at("family_woman_boy_boy").get<std::string>();
-        _x.family_woman_girl = _j.at("family_woman_girl").get<std::string>();
-        _x.family_woman_girl_boy = _j.at("family_woman_girl_boy").get<std::string>();
-        _x.family_woman_girl_girl = _j.at("family_woman_girl_girl").get<std::string>();
-        _x.family_woman_woman_boy = _j.at("family_woman_woman_boy").get<std::string>();
-        _x.family_woman_woman_boy_boy = _j.at("family_woman_woman_boy_boy").get<std::string>();
-        _x.family_woman_woman_girl = _j.at("family_woman_woman_girl").get<std::string>();
-        _x.family_woman_woman_girl_boy = _j.at("family_woman_woman_girl_boy").get<std::string>();
-        _x.family_woman_woman_girl_girl = _j.at("family_woman_woman_girl_girl").get<std::string>();
-        _x.faroe_islands = _j.at("faroe_islands").get<std::string>();
-        _x.fast_forward = _j.at("fast_forward").get<std::string>();
-        _x.fax = _j.at("fax").get<std::string>();
-        _x.fearful = _j.at("fearful").get<std::string>();
-        _x.feelsgood = _j.at("feelsgood").get<std::string>();
-        _x.feet = _j.at("feet").get<std::string>();
-        _x.female_detective = _j.at("female_detective").get<std::string>();
-        _x.ferris_wheel = _j.at("ferris_wheel").get<std::string>();
-        _x.ferry = _j.at("ferry").get<std::string>();
-        _x.field_hockey = _j.at("field_hockey").get<std::string>();
-        _x.fiji = _j.at("fiji").get<std::string>();
-        _x.file_cabinet = _j.at("file_cabinet").get<std::string>();
-        _x.file_folder = _j.at("file_folder").get<std::string>();
-        _x.film_projector = _j.at("film_projector").get<std::string>();
-        _x.film_strip = _j.at("film_strip").get<std::string>();
-        _x.finland = _j.at("finland").get<std::string>();
-        _x.finnadie = _j.at("finnadie").get<std::string>();
-        _x.fire = _j.at("fire").get<std::string>();
-        _x.fire_engine = _j.at("fire_engine").get<std::string>();
-        _x.fireworks = _j.at("fireworks").get<std::string>();
-        _x.first_quarter_moon = _j.at("first_quarter_moon").get<std::string>();
-        _x.first_quarter_moon_with_face = _j.at("first_quarter_moon_with_face").get<std::string>();
-        _x.fish = _j.at("fish").get<std::string>();
-        _x.fish_cake = _j.at("fish_cake").get<std::string>();
-        _x.fishing_pole_and_fish = _j.at("fishing_pole_and_fish").get<std::string>();
-        _x.fist = _j.at("fist").get<std::string>();
-        _x.fist_left = _j.at("fist_left").get<std::string>();
-        _x.fist_oncoming = _j.at("fist_oncoming").get<std::string>();
-        _x.fist_raised = _j.at("fist_raised").get<std::string>();
-        _x.fist_right = _j.at("fist_right").get<std::string>();
-        _x.five = _j.at("five").get<std::string>();
-        _x.flags = _j.at("flags").get<std::string>();
-        _x.flashlight = _j.at("flashlight").get<std::string>();
-        _x.fleur_de_lis = _j.at("fleur_de_lis").get<std::string>();
-        _x.flight_arrival = _j.at("flight_arrival").get<std::string>();
-        _x.flight_departure = _j.at("flight_departure").get<std::string>();
-        _x.flipper = _j.at("flipper").get<std::string>();
-        _x.floppy_disk = _j.at("floppy_disk").get<std::string>();
-        _x.flower_playing_cards = _j.at("flower_playing_cards").get<std::string>();
-        _x.flushed = _j.at("flushed").get<std::string>();
-        _x.fog = _j.at("fog").get<std::string>();
-        _x.foggy = _j.at("foggy").get<std::string>();
-        _x.football = _j.at("football").get<std::string>();
-        _x.footprints = _j.at("footprints").get<std::string>();
-        _x.fork_and_knife = _j.at("fork_and_knife").get<std::string>();
-        _x.fountain = _j.at("fountain").get<std::string>();
-        _x.fountain_pen = _j.at("fountain_pen").get<std::string>();
-        _x.four = _j.at("four").get<std::string>();
-        _x.four_leaf_clover = _j.at("four_leaf_clover").get<std::string>();
-        _x.fox_face = _j.at("fox_face").get<std::string>();
-        _x.fr = _j.at("fr").get<std::string>();
-        _x.framed_picture = _j.at("framed_picture").get<std::string>();
-        _x.free = _j.at("free").get<std::string>();
-        _x.french_guiana = _j.at("french_guiana").get<std::string>();
-        _x.french_polynesia = _j.at("french_polynesia").get<std::string>();
-        _x.french_southern_territories = _j.at("french_southern_territories").get<std::string>();
-        _x.fried_egg = _j.at("fried_egg").get<std::string>();
-        _x.fried_shrimp = _j.at("fried_shrimp").get<std::string>();
-        _x.fries = _j.at("fries").get<std::string>();
-        _x.frog = _j.at("frog").get<std::string>();
-        _x.frowning = _j.at("frowning").get<std::string>();
-        _x.frowning_face = _j.at("frowning_face").get<std::string>();
-        _x.frowning_man = _j.at("frowning_man").get<std::string>();
-        _x.frowning_woman = _j.at("frowning_woman").get<std::string>();
-        _x.fu = _j.at("fu").get<std::string>();
-        _x.fuelpump = _j.at("fuelpump").get<std::string>();
-        _x.full_moon = _j.at("full_moon").get<std::string>();
-        _x.full_moon_with_face = _j.at("full_moon_with_face").get<std::string>();
-        _x.funeral_urn = _j.at("funeral_urn").get<std::string>();
-        _x.gabon = _j.at("gabon").get<std::string>();
-        _x.gambia = _j.at("gambia").get<std::string>();
-        _x.game_die = _j.at("game_die").get<std::string>();
-        _x.gb = _j.at("gb").get<std::string>();
-        _x.gear = _j.at("gear").get<std::string>();
-        _x.gem = _j.at("gem").get<std::string>();
-        _x.gemini = _j.at("gemini").get<std::string>();
-        _x.georgia = _j.at("georgia").get<std::string>();
-        _x.ghana = _j.at("ghana").get<std::string>();
-        _x.ghost = _j.at("ghost").get<std::string>();
-        _x.gibraltar = _j.at("gibraltar").get<std::string>();
-        _x.gift = _j.at("gift").get<std::string>();
-        _x.gift_heart = _j.at("gift_heart").get<std::string>();
-        _x.girl = _j.at("girl").get<std::string>();
-        _x.globe_with_meridians = _j.at("globe_with_meridians").get<std::string>();
-        _x.goal_net = _j.at("goal_net").get<std::string>();
-        _x.goat = _j.at("goat").get<std::string>();
-        _x.goberserk = _j.at("goberserk").get<std::string>();
-        _x.godmode = _j.at("godmode").get<std::string>();
-        _x.golf = _j.at("golf").get<std::string>();
-        _x.golfing_man = _j.at("golfing_man").get<std::string>();
-        _x.golfing_woman = _j.at("golfing_woman").get<std::string>();
-        _x.gorilla = _j.at("gorilla").get<std::string>();
-        _x.grapes = _j.at("grapes").get<std::string>();
-        _x.greece = _j.at("greece").get<std::string>();
-        _x.green_apple = _j.at("green_apple").get<std::string>();
-        _x.green_book = _j.at("green_book").get<std::string>();
-        _x.green_heart = _j.at("green_heart").get<std::string>();
-        _x.green_salad = _j.at("green_salad").get<std::string>();
-        _x.greenland = _j.at("greenland").get<std::string>();
-        _x.grenada = _j.at("grenada").get<std::string>();
-        _x.grey_exclamation = _j.at("grey_exclamation").get<std::string>();
-        _x.grey_question = _j.at("grey_question").get<std::string>();
-        _x.grimacing = _j.at("grimacing").get<std::string>();
-        _x.grin = _j.at("grin").get<std::string>();
-        _x.grinning = _j.at("grinning").get<std::string>();
-        _x.guadeloupe = _j.at("guadeloupe").get<std::string>();
-        _x.guam = _j.at("guam").get<std::string>();
-        _x.guardsman = _j.at("guardsman").get<std::string>();
-        _x.guardswoman = _j.at("guardswoman").get<std::string>();
-        _x.guatemala = _j.at("guatemala").get<std::string>();
-        _x.guernsey = _j.at("guernsey").get<std::string>();
-        _x.guinea = _j.at("guinea").get<std::string>();
-        _x.guinea_bissau = _j.at("guinea_bissau").get<std::string>();
-        _x.guitar = _j.at("guitar").get<std::string>();
-        _x.gun = _j.at("gun").get<std::string>();
-        _x.guyana = _j.at("guyana").get<std::string>();
-        _x.haircut = _j.at("haircut").get<std::string>();
-        _x.haircut_man = _j.at("haircut_man").get<std::string>();
-        _x.haircut_woman = _j.at("haircut_woman").get<std::string>();
-        _x.haiti = _j.at("haiti").get<std::string>();
-        _x.hamburger = _j.at("hamburger").get<std::string>();
-        _x.hammer = _j.at("hammer").get<std::string>();
-        _x.hammer_and_pick = _j.at("hammer_and_pick").get<std::string>();
-        _x.hammer_and_wrench = _j.at("hammer_and_wrench").get<std::string>();
-        _x.hamster = _j.at("hamster").get<std::string>();
-        _x.hand = _j.at("hand").get<std::string>();
-        _x.handbag = _j.at("handbag").get<std::string>();
-        _x.handshake = _j.at("handshake").get<std::string>();
-        _x.hankey = _j.at("hankey").get<std::string>();
-        _x.hash = _j.at("hash").get<std::string>();
-        _x.hatched_chick = _j.at("hatched_chick").get<std::string>();
-        _x.hatching_chick = _j.at("hatching_chick").get<std::string>();
-        _x.headphones = _j.at("headphones").get<std::string>();
-        _x.hear_no_evil = _j.at("hear_no_evil").get<std::string>();
-        _x.heart = _j.at("heart").get<std::string>();
-        _x.heart_decoration = _j.at("heart_decoration").get<std::string>();
-        _x.heart_eyes = _j.at("heart_eyes").get<std::string>();
-        _x.heart_eyes_cat = _j.at("heart_eyes_cat").get<std::string>();
-        _x.heartbeat = _j.at("heartbeat").get<std::string>();
-        _x.heartpulse = _j.at("heartpulse").get<std::string>();
-        _x.hearts = _j.at("hearts").get<std::string>();
-        _x.heavy_check_mark = _j.at("heavy_check_mark").get<std::string>();
-        _x.heavy_division_sign = _j.at("heavy_division_sign").get<std::string>();
-        _x.heavy_dollar_sign = _j.at("heavy_dollar_sign").get<std::string>();
-        _x.heavy_exclamation_mark = _j.at("heavy_exclamation_mark").get<std::string>();
-        _x.heavy_heart_exclamation = _j.at("heavy_heart_exclamation").get<std::string>();
-        _x.heavy_minus_sign = _j.at("heavy_minus_sign").get<std::string>();
-        _x.heavy_multiplication_x = _j.at("heavy_multiplication_x").get<std::string>();
-        _x.heavy_plus_sign = _j.at("heavy_plus_sign").get<std::string>();
-        _x.helicopter = _j.at("helicopter").get<std::string>();
-        _x.herb = _j.at("herb").get<std::string>();
-        _x.hibiscus = _j.at("hibiscus").get<std::string>();
-        _x.high_brightness = _j.at("high_brightness").get<std::string>();
-        _x.high_heel = _j.at("high_heel").get<std::string>();
-        _x.hocho = _j.at("hocho").get<std::string>();
-        _x.hole = _j.at("hole").get<std::string>();
-        _x.honduras = _j.at("honduras").get<std::string>();
-        _x.honey_pot = _j.at("honey_pot").get<std::string>();
-        _x.honeybee = _j.at("honeybee").get<std::string>();
-        _x.hong_kong = _j.at("hong_kong").get<std::string>();
-        _x.horse = _j.at("horse").get<std::string>();
-        _x.horse_racing = _j.at("horse_racing").get<std::string>();
-        _x.hospital = _j.at("hospital").get<std::string>();
-        _x.hot_pepper = _j.at("hot_pepper").get<std::string>();
-        _x.hotdog = _j.at("hotdog").get<std::string>();
-        _x.hotel = _j.at("hotel").get<std::string>();
-        _x.hotsprings = _j.at("hotsprings").get<std::string>();
-        _x.hourglass = _j.at("hourglass").get<std::string>();
-        _x.hourglass_flowing_sand = _j.at("hourglass_flowing_sand").get<std::string>();
-        _x.house = _j.at("house").get<std::string>();
-        _x.house_with_garden = _j.at("house_with_garden").get<std::string>();
-        _x.houses = _j.at("houses").get<std::string>();
-        _x.hugs = _j.at("hugs").get<std::string>();
-        _x.hungary = _j.at("hungary").get<std::string>();
-        _x.hurtrealbad = _j.at("hurtrealbad").get<std::string>();
-        _x.hushed = _j.at("hushed").get<std::string>();
-        _x.ice_cream = _j.at("ice_cream").get<std::string>();
-        _x.ice_hockey = _j.at("ice_hockey").get<std::string>();
-        _x.ice_skate = _j.at("ice_skate").get<std::string>();
-        _x.icecream = _j.at("icecream").get<std::string>();
-        _x.iceland = _j.at("iceland").get<std::string>();
-        _x.id = _j.at("id").get<std::string>();
-        _x.ideograph_advantage = _j.at("ideograph_advantage").get<std::string>();
-        _x.imp = _j.at("imp").get<std::string>();
-        _x.inbox_tray = _j.at("inbox_tray").get<std::string>();
-        _x.incoming_envelope = _j.at("incoming_envelope").get<std::string>();
-        _x.india = _j.at("india").get<std::string>();
-        _x.indonesia = _j.at("indonesia").get<std::string>();
-        _x.information_desk_person = _j.at("information_desk_person").get<std::string>();
-        _x.information_source = _j.at("information_source").get<std::string>();
-        _x.innocent = _j.at("innocent").get<std::string>();
-        _x.interrobang = _j.at("interrobang").get<std::string>();
-        _x.iphone = _j.at("iphone").get<std::string>();
-        _x.iran = _j.at("iran").get<std::string>();
-        _x.iraq = _j.at("iraq").get<std::string>();
-        _x.ireland = _j.at("ireland").get<std::string>();
-        _x.isle_of_man = _j.at("isle_of_man").get<std::string>();
-        _x.israel = _j.at("israel").get<std::string>();
-        _x.it = _j.at("it").get<std::string>();
-        _x.izakaya_lantern = _j.at("izakaya_lantern").get<std::string>();
-        _x.jack_o_lantern = _j.at("jack_o_lantern").get<std::string>();
-        _x.jamaica = _j.at("jamaica").get<std::string>();
-        _x.japan = _j.at("japan").get<std::string>();
-        _x.japanese_castle = _j.at("japanese_castle").get<std::string>();
-        _x.japanese_goblin = _j.at("japanese_goblin").get<std::string>();
-        _x.japanese_ogre = _j.at("japanese_ogre").get<std::string>();
-        _x.jeans = _j.at("jeans").get<std::string>();
-        _x.jersey = _j.at("jersey").get<std::string>();
-        _x.jordan = _j.at("jordan").get<std::string>();
-        _x.joy = _j.at("joy").get<std::string>();
-        _x.joy_cat = _j.at("joy_cat").get<std::string>();
-        _x.joystick = _j.at("joystick").get<std::string>();
-        _x.jp = _j.at("jp").get<std::string>();
-        _x.kaaba = _j.at("kaaba").get<std::string>();
-        _x.kazakhstan = _j.at("kazakhstan").get<std::string>();
-        _x.kenya = _j.at("kenya").get<std::string>();
-        _x.key = _j.at("key").get<std::string>();
-        _x.keyboard = _j.at("keyboard").get<std::string>();
-        _x.keycap_ten = _j.at("keycap_ten").get<std::string>();
-        _x.kick_scooter = _j.at("kick_scooter").get<std::string>();
-        _x.kimono = _j.at("kimono").get<std::string>();
-        _x.kiribati = _j.at("kiribati").get<std::string>();
-        _x.kiss = _j.at("kiss").get<std::string>();
-        _x.kissing = _j.at("kissing").get<std::string>();
-        _x.kissing_cat = _j.at("kissing_cat").get<std::string>();
-        _x.kissing_closed_eyes = _j.at("kissing_closed_eyes").get<std::string>();
-        _x.kissing_heart = _j.at("kissing_heart").get<std::string>();
-        _x.kissing_smiling_eyes = _j.at("kissing_smiling_eyes").get<std::string>();
-        _x.kiwi_fruit = _j.at("kiwi_fruit").get<std::string>();
-        _x.knife = _j.at("knife").get<std::string>();
-        _x.koala = _j.at("koala").get<std::string>();
-        _x.koko = _j.at("koko").get<std::string>();
-        _x.kosovo = _j.at("kosovo").get<std::string>();
-        _x.kr = _j.at("kr").get<std::string>();
-        _x.kuwait = _j.at("kuwait").get<std::string>();
-        _x.kyrgyzstan = _j.at("kyrgyzstan").get<std::string>();
-        _x.label = _j.at("label").get<std::string>();
-        _x.lantern = _j.at("lantern").get<std::string>();
-        _x.laos = _j.at("laos").get<std::string>();
-        _x.large_blue_circle = _j.at("large_blue_circle").get<std::string>();
-        _x.large_blue_diamond = _j.at("large_blue_diamond").get<std::string>();
-        _x.large_orange_diamond = _j.at("large_orange_diamond").get<std::string>();
-        _x.last_quarter_moon = _j.at("last_quarter_moon").get<std::string>();
-        _x.last_quarter_moon_with_face = _j.at("last_quarter_moon_with_face").get<std::string>();
-        _x.latin_cross = _j.at("latin_cross").get<std::string>();
-        _x.latvia = _j.at("latvia").get<std::string>();
-        _x.laughing = _j.at("laughing").get<std::string>();
-        _x.leaves = _j.at("leaves").get<std::string>();
-        _x.lebanon = _j.at("lebanon").get<std::string>();
-        _x.ledger = _j.at("ledger").get<std::string>();
-        _x.left_luggage = _j.at("left_luggage").get<std::string>();
-        _x.left_right_arrow = _j.at("left_right_arrow").get<std::string>();
-        _x.leftwards_arrow_with_hook = _j.at("leftwards_arrow_with_hook").get<std::string>();
-        _x.lemon = _j.at("lemon").get<std::string>();
-        _x.leo = _j.at("leo").get<std::string>();
-        _x.leopard = _j.at("leopard").get<std::string>();
-        _x.lesotho = _j.at("lesotho").get<std::string>();
-        _x.level_slider = _j.at("level_slider").get<std::string>();
-        _x.liberia = _j.at("liberia").get<std::string>();
-        _x.libra = _j.at("libra").get<std::string>();
-        _x.libya = _j.at("libya").get<std::string>();
-        _x.liechtenstein = _j.at("liechtenstein").get<std::string>();
-        _x.light_rail = _j.at("light_rail").get<std::string>();
-        _x.link = _j.at("link").get<std::string>();
-        _x.lion = _j.at("lion").get<std::string>();
-        _x.lips = _j.at("lips").get<std::string>();
-        _x.lipstick = _j.at("lipstick").get<std::string>();
-        _x.lithuania = _j.at("lithuania").get<std::string>();
-        _x.lizard = _j.at("lizard").get<std::string>();
-        _x.lock = _j.at("lock").get<std::string>();
-        _x.lock_with_ink_pen = _j.at("lock_with_ink_pen").get<std::string>();
-        _x.lollipop = _j.at("lollipop").get<std::string>();
-        _x.loop = _j.at("loop").get<std::string>();
-        _x.loud_sound = _j.at("loud_sound").get<std::string>();
-        _x.loudspeaker = _j.at("loudspeaker").get<std::string>();
-        _x.love_hotel = _j.at("love_hotel").get<std::string>();
-        _x.love_letter = _j.at("love_letter").get<std::string>();
-        _x.low_brightness = _j.at("low_brightness").get<std::string>();
-        _x.luxembourg = _j.at("luxembourg").get<std::string>();
-        _x.lying_face = _j.at("lying_face").get<std::string>();
-        _x.m = _j.at("m").get<std::string>();
-        _x.macau = _j.at("macau").get<std::string>();
-        _x.macedonia = _j.at("macedonia").get<std::string>();
-        _x.madagascar = _j.at("madagascar").get<std::string>();
-        _x.mag = _j.at("mag").get<std::string>();
-        _x.mag_right = _j.at("mag_right").get<std::string>();
-        _x.mahjong = _j.at("mahjong").get<std::string>();
-        _x.mailbox = _j.at("mailbox").get<std::string>();
-        _x.mailbox_closed = _j.at("mailbox_closed").get<std::string>();
-        _x.mailbox_with_mail = _j.at("mailbox_with_mail").get<std::string>();
-        _x.mailbox_with_no_mail = _j.at("mailbox_with_no_mail").get<std::string>();
-        _x.malawi = _j.at("malawi").get<std::string>();
-        _x.malaysia = _j.at("malaysia").get<std::string>();
-        _x.maldives = _j.at("maldives").get<std::string>();
-        _x.male_detective = _j.at("male_detective").get<std::string>();
-        _x.mali = _j.at("mali").get<std::string>();
-        _x.malta = _j.at("malta").get<std::string>();
-        _x.man = _j.at("man").get<std::string>();
-        _x.man_artist = _j.at("man_artist").get<std::string>();
-        _x.man_astronaut = _j.at("man_astronaut").get<std::string>();
-        _x.man_cartwheeling = _j.at("man_cartwheeling").get<std::string>();
-        _x.man_cook = _j.at("man_cook").get<std::string>();
-        _x.man_dancing = _j.at("man_dancing").get<std::string>();
-        _x.man_facepalming = _j.at("man_facepalming").get<std::string>();
-        _x.man_factory_worker = _j.at("man_factory_worker").get<std::string>();
-        _x.man_farmer = _j.at("man_farmer").get<std::string>();
-        _x.man_firefighter = _j.at("man_firefighter").get<std::string>();
-        _x.man_health_worker = _j.at("man_health_worker").get<std::string>();
-        _x.man_in_tuxedo = _j.at("man_in_tuxedo").get<std::string>();
-        _x.man_judge = _j.at("man_judge").get<std::string>();
-        _x.man_juggling = _j.at("man_juggling").get<std::string>();
-        _x.man_mechanic = _j.at("man_mechanic").get<std::string>();
-        _x.man_office_worker = _j.at("man_office_worker").get<std::string>();
-        _x.man_pilot = _j.at("man_pilot").get<std::string>();
-        _x.man_playing_handball = _j.at("man_playing_handball").get<std::string>();
-        _x.man_playing_water_polo = _j.at("man_playing_water_polo").get<std::string>();
-        _x.man_scientist = _j.at("man_scientist").get<std::string>();
-        _x.man_shrugging = _j.at("man_shrugging").get<std::string>();
-        _x.man_singer = _j.at("man_singer").get<std::string>();
-        _x.man_student = _j.at("man_student").get<std::string>();
-        _x.man_teacher = _j.at("man_teacher").get<std::string>();
-        _x.man_technologist = _j.at("man_technologist").get<std::string>();
-        _x.man_with_gua_pi_mao = _j.at("man_with_gua_pi_mao").get<std::string>();
-        _x.man_with_turban = _j.at("man_with_turban").get<std::string>();
-        _x.mandarin = _j.at("mandarin").get<std::string>();
-        _x.mans_shoe = _j.at("mans_shoe").get<std::string>();
-        _x.mantelpiece_clock = _j.at("mantelpiece_clock").get<std::string>();
-        _x.maple_leaf = _j.at("maple_leaf").get<std::string>();
-        _x.marshall_islands = _j.at("marshall_islands").get<std::string>();
-        _x.martial_arts_uniform = _j.at("martial_arts_uniform").get<std::string>();
-        _x.martinique = _j.at("martinique").get<std::string>();
-        _x.mask = _j.at("mask").get<std::string>();
-        _x.massage = _j.at("massage").get<std::string>();
-        _x.massage_man = _j.at("massage_man").get<std::string>();
-        _x.massage_woman = _j.at("massage_woman").get<std::string>();
-        _x.mauritania = _j.at("mauritania").get<std::string>();
-        _x.mauritius = _j.at("mauritius").get<std::string>();
-        _x.mayotte = _j.at("mayotte").get<std::string>();
-        _x.meat_on_bone = _j.at("meat_on_bone").get<std::string>();
-        _x.medal_military = _j.at("medal_military").get<std::string>();
-        _x.medal_sports = _j.at("medal_sports").get<std::string>();
-        _x.mega = _j.at("mega").get<std::string>();
-        _x.melon = _j.at("melon").get<std::string>();
-        _x.memo = _j.at("memo").get<std::string>();
-        _x.men_wrestling = _j.at("men_wrestling").get<std::string>();
-        _x.menorah = _j.at("menorah").get<std::string>();
-        _x.mens = _j.at("mens").get<std::string>();
-        _x.metal = _j.at("metal").get<std::string>();
-        _x.metro = _j.at("metro").get<std::string>();
-        _x.mexico = _j.at("mexico").get<std::string>();
-        _x.micronesia = _j.at("micronesia").get<std::string>();
-        _x.microphone = _j.at("microphone").get<std::string>();
-        _x.microscope = _j.at("microscope").get<std::string>();
-        _x.middle_finger = _j.at("middle_finger").get<std::string>();
-        _x.milk_glass = _j.at("milk_glass").get<std::string>();
-        _x.milky_way = _j.at("milky_way").get<std::string>();
-        _x.minibus = _j.at("minibus").get<std::string>();
-        _x.minidisc = _j.at("minidisc").get<std::string>();
-        _x.mobile_phone_off = _j.at("mobile_phone_off").get<std::string>();
-        _x.moldova = _j.at("moldova").get<std::string>();
-        _x.monaco = _j.at("monaco").get<std::string>();
-        _x.money_mouth_face = _j.at("money_mouth_face").get<std::string>();
-        _x.money_with_wings = _j.at("money_with_wings").get<std::string>();
-        _x.moneybag = _j.at("moneybag").get<std::string>();
-        _x.mongolia = _j.at("mongolia").get<std::string>();
-        _x.monkey = _j.at("monkey").get<std::string>();
-        _x.monkey_face = _j.at("monkey_face").get<std::string>();
-        _x.monorail = _j.at("monorail").get<std::string>();
-        _x.montenegro = _j.at("montenegro").get<std::string>();
-        _x.montserrat = _j.at("montserrat").get<std::string>();
-        _x.moon = _j.at("moon").get<std::string>();
-        _x.morocco = _j.at("morocco").get<std::string>();
-        _x.mortar_board = _j.at("mortar_board").get<std::string>();
-        _x.mosque = _j.at("mosque").get<std::string>();
-        _x.motor_boat = _j.at("motor_boat").get<std::string>();
-        _x.motor_scooter = _j.at("motor_scooter").get<std::string>();
-        _x.motorcycle = _j.at("motorcycle").get<std::string>();
-        _x.motorway = _j.at("motorway").get<std::string>();
-        _x.mount_fuji = _j.at("mount_fuji").get<std::string>();
-        _x.mountain = _j.at("mountain").get<std::string>();
-        _x.mountain_bicyclist = _j.at("mountain_bicyclist").get<std::string>();
-        _x.mountain_biking_man = _j.at("mountain_biking_man").get<std::string>();
-        _x.mountain_biking_woman = _j.at("mountain_biking_woman").get<std::string>();
-        _x.mountain_cableway = _j.at("mountain_cableway").get<std::string>();
-        _x.mountain_railway = _j.at("mountain_railway").get<std::string>();
-        _x.mountain_snow = _j.at("mountain_snow").get<std::string>();
-        _x.mouse = _j.at("mouse").get<std::string>();
-        _x.mouse2 = _j.at("mouse2").get<std::string>();
-        _x.movie_camera = _j.at("movie_camera").get<std::string>();
-        _x.moyai = _j.at("moyai").get<std::string>();
-        _x.mozambique = _j.at("mozambique").get<std::string>();
-        _x.mrs_claus = _j.at("mrs_claus").get<std::string>();
-        _x.muscle = _j.at("muscle").get<std::string>();
-        _x.mushroom = _j.at("mushroom").get<std::string>();
-        _x.musical_keyboard = _j.at("musical_keyboard").get<std::string>();
-        _x.musical_note = _j.at("musical_note").get<std::string>();
-        _x.musical_score = _j.at("musical_score").get<std::string>();
-        _x.mute = _j.at("mute").get<std::string>();
-        _x.myanmar = _j.at("myanmar").get<std::string>();
-        _x.nail_care = _j.at("nail_care").get<std::string>();
-        _x.name_badge = _j.at("name_badge").get<std::string>();
-        _x.namibia = _j.at("namibia").get<std::string>();
-        _x.national_park = _j.at("national_park").get<std::string>();
-        _x.nauru = _j.at("nauru").get<std::string>();
-        _x.nauseated_face = _j.at("nauseated_face").get<std::string>();
-        _x.neckbeard = _j.at("neckbeard").get<std::string>();
-        _x.necktie = _j.at("necktie").get<std::string>();
-        _x.negative_squared_cross_mark = _j.at("negative_squared_cross_mark").get<std::string>();
-        _x.nepal = _j.at("nepal").get<std::string>();
-        _x.nerd_face = _j.at("nerd_face").get<std::string>();
-        _x.netherlands = _j.at("netherlands").get<std::string>();
-        _x.neutral_face = _j.at("neutral_face").get<std::string>();
-        _x.emojis_new = _j.at("new").get<std::string>();
-        _x.new_caledonia = _j.at("new_caledonia").get<std::string>();
-        _x.new_moon = _j.at("new_moon").get<std::string>();
-        _x.new_moon_with_face = _j.at("new_moon_with_face").get<std::string>();
-        _x.new_zealand = _j.at("new_zealand").get<std::string>();
-        _x.newspaper = _j.at("newspaper").get<std::string>();
-        _x.newspaper_roll = _j.at("newspaper_roll").get<std::string>();
-        _x.next_track_button = _j.at("next_track_button").get<std::string>();
-        _x.ng = _j.at("ng").get<std::string>();
-        _x.ng_man = _j.at("ng_man").get<std::string>();
-        _x.ng_woman = _j.at("ng_woman").get<std::string>();
-        _x.nicaragua = _j.at("nicaragua").get<std::string>();
-        _x.niger = _j.at("niger").get<std::string>();
-        _x.nigeria = _j.at("nigeria").get<std::string>();
-        _x.night_with_stars = _j.at("night_with_stars").get<std::string>();
-        _x.nine = _j.at("nine").get<std::string>();
-        _x.niue = _j.at("niue").get<std::string>();
-        _x.no_bell = _j.at("no_bell").get<std::string>();
-        _x.no_bicycles = _j.at("no_bicycles").get<std::string>();
-        _x.no_entry = _j.at("no_entry").get<std::string>();
-        _x.no_entry_sign = _j.at("no_entry_sign").get<std::string>();
-        _x.no_good = _j.at("no_good").get<std::string>();
-        _x.no_good_man = _j.at("no_good_man").get<std::string>();
-        _x.no_good_woman = _j.at("no_good_woman").get<std::string>();
-        _x.no_mobile_phones = _j.at("no_mobile_phones").get<std::string>();
-        _x.no_mouth = _j.at("no_mouth").get<std::string>();
-        _x.no_pedestrians = _j.at("no_pedestrians").get<std::string>();
-        _x.no_smoking = _j.at("no_smoking").get<std::string>();
-        _x.non_potable_water = _j.at("non-potable_water").get<std::string>();
-        _x.norfolk_island = _j.at("norfolk_island").get<std::string>();
-        _x.north_korea = _j.at("north_korea").get<std::string>();
-        _x.northern_mariana_islands = _j.at("northern_mariana_islands").get<std::string>();
-        _x.norway = _j.at("norway").get<std::string>();
-        _x.nose = _j.at("nose").get<std::string>();
-        _x.notebook = _j.at("notebook").get<std::string>();
-        _x.notebook_with_decorative_cover = _j.at("notebook_with_decorative_cover").get<std::string>();
-        _x.notes = _j.at("notes").get<std::string>();
-        _x.nut_and_bolt = _j.at("nut_and_bolt").get<std::string>();
-        _x.o = _j.at("o").get<std::string>();
-        _x.o2 = _j.at("o2").get<std::string>();
-        _x.ocean = _j.at("ocean").get<std::string>();
-        _x.octocat = _j.at("octocat").get<std::string>();
-        _x.octopus = _j.at("octopus").get<std::string>();
-        _x.oden = _j.at("oden").get<std::string>();
-        _x.office = _j.at("office").get<std::string>();
-        _x.oil_drum = _j.at("oil_drum").get<std::string>();
-        _x.ok = _j.at("ok").get<std::string>();
-        _x.ok_hand = _j.at("ok_hand").get<std::string>();
-        _x.ok_man = _j.at("ok_man").get<std::string>();
-        _x.ok_woman = _j.at("ok_woman").get<std::string>();
-        _x.old_key = _j.at("old_key").get<std::string>();
-        _x.older_man = _j.at("older_man").get<std::string>();
-        _x.older_woman = _j.at("older_woman").get<std::string>();
-        _x.om = _j.at("om").get<std::string>();
-        _x.oman = _j.at("oman").get<std::string>();
-        _x.on = _j.at("on").get<std::string>();
-        _x.oncoming_automobile = _j.at("oncoming_automobile").get<std::string>();
-        _x.oncoming_bus = _j.at("oncoming_bus").get<std::string>();
-        _x.oncoming_police_car = _j.at("oncoming_police_car").get<std::string>();
-        _x.oncoming_taxi = _j.at("oncoming_taxi").get<std::string>();
-        _x.one = _j.at("one").get<std::string>();
-        _x.open_book = _j.at("open_book").get<std::string>();
-        _x.open_file_folder = _j.at("open_file_folder").get<std::string>();
-        _x.open_hands = _j.at("open_hands").get<std::string>();
-        _x.open_mouth = _j.at("open_mouth").get<std::string>();
-        _x.open_umbrella = _j.at("open_umbrella").get<std::string>();
-        _x.ophiuchus = _j.at("ophiuchus").get<std::string>();
-        _x.orange = _j.at("orange").get<std::string>();
-        _x.orange_book = _j.at("orange_book").get<std::string>();
-        _x.orthodox_cross = _j.at("orthodox_cross").get<std::string>();
-        _x.outbox_tray = _j.at("outbox_tray").get<std::string>();
-        _x.owl = _j.at("owl").get<std::string>();
-        _x.ox = _j.at("ox").get<std::string>();
-        _x.package = _j.at("package").get<std::string>();
-        _x.page_facing_up = _j.at("page_facing_up").get<std::string>();
-        _x.page_with_curl = _j.at("page_with_curl").get<std::string>();
-        _x.pager = _j.at("pager").get<std::string>();
-        _x.paintbrush = _j.at("paintbrush").get<std::string>();
-        _x.pakistan = _j.at("pakistan").get<std::string>();
-        _x.palau = _j.at("palau").get<std::string>();
-        _x.palestinian_territories = _j.at("palestinian_territories").get<std::string>();
-        _x.palm_tree = _j.at("palm_tree").get<std::string>();
-        _x.panama = _j.at("panama").get<std::string>();
-        _x.pancakes = _j.at("pancakes").get<std::string>();
-        _x.panda_face = _j.at("panda_face").get<std::string>();
-        _x.paperclip = _j.at("paperclip").get<std::string>();
-        _x.paperclips = _j.at("paperclips").get<std::string>();
-        _x.papua_new_guinea = _j.at("papua_new_guinea").get<std::string>();
-        _x.paraguay = _j.at("paraguay").get<std::string>();
-        _x.parasol_on_ground = _j.at("parasol_on_ground").get<std::string>();
-        _x.parking = _j.at("parking").get<std::string>();
-        _x.part_alternation_mark = _j.at("part_alternation_mark").get<std::string>();
-        _x.partly_sunny = _j.at("partly_sunny").get<std::string>();
-        _x.passenger_ship = _j.at("passenger_ship").get<std::string>();
-        _x.passport_control = _j.at("passport_control").get<std::string>();
-        _x.pause_button = _j.at("pause_button").get<std::string>();
-        _x.paw_prints = _j.at("paw_prints").get<std::string>();
-        _x.peace_symbol = _j.at("peace_symbol").get<std::string>();
-        _x.peach = _j.at("peach").get<std::string>();
-        _x.peanuts = _j.at("peanuts").get<std::string>();
-        _x.pear = _j.at("pear").get<std::string>();
-        _x.pen = _j.at("pen").get<std::string>();
-        _x.pencil = _j.at("pencil").get<std::string>();
-        _x.pencil2 = _j.at("pencil2").get<std::string>();
-        _x.penguin = _j.at("penguin").get<std::string>();
-        _x.pensive = _j.at("pensive").get<std::string>();
-        _x.performing_arts = _j.at("performing_arts").get<std::string>();
-        _x.persevere = _j.at("persevere").get<std::string>();
-        _x.person_fencing = _j.at("person_fencing").get<std::string>();
-        _x.person_frowning = _j.at("person_frowning").get<std::string>();
-        _x.person_with_blond_hair = _j.at("person_with_blond_hair").get<std::string>();
-        _x.person_with_pouting_face = _j.at("person_with_pouting_face").get<std::string>();
-        _x.peru = _j.at("peru").get<std::string>();
-        _x.philippines = _j.at("philippines").get<std::string>();
-        _x.phone = _j.at("phone").get<std::string>();
-        _x.pick = _j.at("pick").get<std::string>();
-        _x.pig = _j.at("pig").get<std::string>();
-        _x.pig2 = _j.at("pig2").get<std::string>();
-        _x.pig_nose = _j.at("pig_nose").get<std::string>();
-        _x.pill = _j.at("pill").get<std::string>();
-        _x.pineapple = _j.at("pineapple").get<std::string>();
-        _x.ping_pong = _j.at("ping_pong").get<std::string>();
-        _x.pisces = _j.at("pisces").get<std::string>();
-        _x.pitcairn_islands = _j.at("pitcairn_islands").get<std::string>();
-        _x.pizza = _j.at("pizza").get<std::string>();
-        _x.place_of_worship = _j.at("place_of_worship").get<std::string>();
-        _x.plate_with_cutlery = _j.at("plate_with_cutlery").get<std::string>();
-        _x.play_or_pause_button = _j.at("play_or_pause_button").get<std::string>();
-        _x.point_down = _j.at("point_down").get<std::string>();
-        _x.point_left = _j.at("point_left").get<std::string>();
-        _x.point_right = _j.at("point_right").get<std::string>();
-        _x.point_up = _j.at("point_up").get<std::string>();
-        _x.point_up_2 = _j.at("point_up_2").get<std::string>();
-        _x.poland = _j.at("poland").get<std::string>();
-        _x.police_car = _j.at("police_car").get<std::string>();
-        _x.policeman = _j.at("policeman").get<std::string>();
-        _x.policewoman = _j.at("policewoman").get<std::string>();
-        _x.poodle = _j.at("poodle").get<std::string>();
-        _x.poop = _j.at("poop").get<std::string>();
-        _x.popcorn = _j.at("popcorn").get<std::string>();
-        _x.portugal = _j.at("portugal").get<std::string>();
-        _x.post_office = _j.at("post_office").get<std::string>();
-        _x.postal_horn = _j.at("postal_horn").get<std::string>();
-        _x.postbox = _j.at("postbox").get<std::string>();
-        _x.potable_water = _j.at("potable_water").get<std::string>();
-        _x.potato = _j.at("potato").get<std::string>();
-        _x.pouch = _j.at("pouch").get<std::string>();
-        _x.poultry_leg = _j.at("poultry_leg").get<std::string>();
-        _x.pound = _j.at("pound").get<std::string>();
-        _x.pout = _j.at("pout").get<std::string>();
-        _x.pouting_cat = _j.at("pouting_cat").get<std::string>();
-        _x.pouting_man = _j.at("pouting_man").get<std::string>();
-        _x.pouting_woman = _j.at("pouting_woman").get<std::string>();
-        _x.pray = _j.at("pray").get<std::string>();
-        _x.prayer_beads = _j.at("prayer_beads").get<std::string>();
-        _x.pregnant_woman = _j.at("pregnant_woman").get<std::string>();
-        _x.previous_track_button = _j.at("previous_track_button").get<std::string>();
-        _x.prince = _j.at("prince").get<std::string>();
-        _x.princess = _j.at("princess").get<std::string>();
-        _x.printer = _j.at("printer").get<std::string>();
-        _x.puerto_rico = _j.at("puerto_rico").get<std::string>();
-        _x.punch = _j.at("punch").get<std::string>();
-        _x.purple_heart = _j.at("purple_heart").get<std::string>();
-        _x.purse = _j.at("purse").get<std::string>();
-        _x.pushpin = _j.at("pushpin").get<std::string>();
-        _x.put_litter_in_its_place = _j.at("put_litter_in_its_place").get<std::string>();
-        _x.qatar = _j.at("qatar").get<std::string>();
-        _x.question = _j.at("question").get<std::string>();
-        _x.rabbit = _j.at("rabbit").get<std::string>();
-        _x.rabbit2 = _j.at("rabbit2").get<std::string>();
-        _x.racehorse = _j.at("racehorse").get<std::string>();
-        _x.racing_car = _j.at("racing_car").get<std::string>();
-        _x.radio = _j.at("radio").get<std::string>();
-        _x.radio_button = _j.at("radio_button").get<std::string>();
-        _x.radioactive = _j.at("radioactive").get<std::string>();
-        _x.rage = _j.at("rage").get<std::string>();
-        _x.rage1 = _j.at("rage1").get<std::string>();
-        _x.rage2 = _j.at("rage2").get<std::string>();
-        _x.rage3 = _j.at("rage3").get<std::string>();
-        _x.rage4 = _j.at("rage4").get<std::string>();
-        _x.railway_car = _j.at("railway_car").get<std::string>();
-        _x.railway_track = _j.at("railway_track").get<std::string>();
-        _x.rainbow = _j.at("rainbow").get<std::string>();
-        _x.rainbow_flag = _j.at("rainbow_flag").get<std::string>();
-        _x.raised_back_of_hand = _j.at("raised_back_of_hand").get<std::string>();
-        _x.raised_hand = _j.at("raised_hand").get<std::string>();
-        _x.raised_hand_with_fingers_splayed = _j.at("raised_hand_with_fingers_splayed").get<std::string>();
-        _x.raised_hands = _j.at("raised_hands").get<std::string>();
-        _x.raising_hand = _j.at("raising_hand").get<std::string>();
-        _x.raising_hand_man = _j.at("raising_hand_man").get<std::string>();
-        _x.raising_hand_woman = _j.at("raising_hand_woman").get<std::string>();
-        _x.ram = _j.at("ram").get<std::string>();
-        _x.ramen = _j.at("ramen").get<std::string>();
-        _x.rat = _j.at("rat").get<std::string>();
-        _x.record_button = _j.at("record_button").get<std::string>();
-        _x.recycle = _j.at("recycle").get<std::string>();
-        _x.red_car = _j.at("red_car").get<std::string>();
-        _x.red_circle = _j.at("red_circle").get<std::string>();
-        _x.registered = _j.at("registered").get<std::string>();
-        _x.relaxed = _j.at("relaxed").get<std::string>();
-        _x.relieved = _j.at("relieved").get<std::string>();
-        _x.reminder_ribbon = _j.at("reminder_ribbon").get<std::string>();
-        _x.repeat = _j.at("repeat").get<std::string>();
-        _x.repeat_one = _j.at("repeat_one").get<std::string>();
-        _x.rescue_worker_helmet = _j.at("rescue_worker_helmet").get<std::string>();
-        _x.restroom = _j.at("restroom").get<std::string>();
-        _x.reunion = _j.at("reunion").get<std::string>();
-        _x.revolving_hearts = _j.at("revolving_hearts").get<std::string>();
-        _x.rewind = _j.at("rewind").get<std::string>();
-        _x.rhinoceros = _j.at("rhinoceros").get<std::string>();
-        _x.ribbon = _j.at("ribbon").get<std::string>();
-        _x.rice = _j.at("rice").get<std::string>();
-        _x.rice_ball = _j.at("rice_ball").get<std::string>();
-        _x.rice_cracker = _j.at("rice_cracker").get<std::string>();
-        _x.rice_scene = _j.at("rice_scene").get<std::string>();
-        _x.right_anger_bubble = _j.at("right_anger_bubble").get<std::string>();
-        _x.ring = _j.at("ring").get<std::string>();
-        _x.robot = _j.at("robot").get<std::string>();
-        _x.rocket = _j.at("rocket").get<std::string>();
-        _x.rofl = _j.at("rofl").get<std::string>();
-        _x.roll_eyes = _j.at("roll_eyes").get<std::string>();
-        _x.roller_coaster = _j.at("roller_coaster").get<std::string>();
-        _x.romania = _j.at("romania").get<std::string>();
-        _x.rooster = _j.at("rooster").get<std::string>();
-        _x.rose = _j.at("rose").get<std::string>();
-        _x.rosette = _j.at("rosette").get<std::string>();
-        _x.rotating_light = _j.at("rotating_light").get<std::string>();
-        _x.round_pushpin = _j.at("round_pushpin").get<std::string>();
-        _x.rowboat = _j.at("rowboat").get<std::string>();
-        _x.rowing_man = _j.at("rowing_man").get<std::string>();
-        _x.rowing_woman = _j.at("rowing_woman").get<std::string>();
-        _x.ru = _j.at("ru").get<std::string>();
-        _x.rugby_football = _j.at("rugby_football").get<std::string>();
-        _x.runner = _j.at("runner").get<std::string>();
-        _x.running = _j.at("running").get<std::string>();
-        _x.running_man = _j.at("running_man").get<std::string>();
-        _x.running_shirt_with_sash = _j.at("running_shirt_with_sash").get<std::string>();
-        _x.running_woman = _j.at("running_woman").get<std::string>();
-        _x.rwanda = _j.at("rwanda").get<std::string>();
-        _x.sa = _j.at("sa").get<std::string>();
-        _x.sagittarius = _j.at("sagittarius").get<std::string>();
-        _x.sailboat = _j.at("sailboat").get<std::string>();
-        _x.sake = _j.at("sake").get<std::string>();
-        _x.samoa = _j.at("samoa").get<std::string>();
-        _x.san_marino = _j.at("san_marino").get<std::string>();
-        _x.sandal = _j.at("sandal").get<std::string>();
-        _x.santa = _j.at("santa").get<std::string>();
-        _x.sao_tome_principe = _j.at("sao_tome_principe").get<std::string>();
-        _x.satellite = _j.at("satellite").get<std::string>();
-        _x.satisfied = _j.at("satisfied").get<std::string>();
-        _x.saudi_arabia = _j.at("saudi_arabia").get<std::string>();
-        _x.saxophone = _j.at("saxophone").get<std::string>();
-        _x.school = _j.at("school").get<std::string>();
-        _x.school_satchel = _j.at("school_satchel").get<std::string>();
-        _x.scissors = _j.at("scissors").get<std::string>();
-        _x.scorpion = _j.at("scorpion").get<std::string>();
-        _x.scorpius = _j.at("scorpius").get<std::string>();
-        _x.scream = _j.at("scream").get<std::string>();
-        _x.scream_cat = _j.at("scream_cat").get<std::string>();
-        _x.scroll = _j.at("scroll").get<std::string>();
-        _x.seat = _j.at("seat").get<std::string>();
-        _x.secret = _j.at("secret").get<std::string>();
-        _x.see_no_evil = _j.at("see_no_evil").get<std::string>();
-        _x.seedling = _j.at("seedling").get<std::string>();
-        _x.selfie = _j.at("selfie").get<std::string>();
-        _x.senegal = _j.at("senegal").get<std::string>();
-        _x.serbia = _j.at("serbia").get<std::string>();
-        _x.seven = _j.at("seven").get<std::string>();
-        _x.seychelles = _j.at("seychelles").get<std::string>();
-        _x.shallow_pan_of_food = _j.at("shallow_pan_of_food").get<std::string>();
-        _x.shamrock = _j.at("shamrock").get<std::string>();
-        _x.shark = _j.at("shark").get<std::string>();
-        _x.shaved_ice = _j.at("shaved_ice").get<std::string>();
-        _x.sheep = _j.at("sheep").get<std::string>();
-        _x.shell = _j.at("shell").get<std::string>();
-        _x.shield = _j.at("shield").get<std::string>();
-        _x.shinto_shrine = _j.at("shinto_shrine").get<std::string>();
-        _x.ship = _j.at("ship").get<std::string>();
-        _x.shipit = _j.at("shipit").get<std::string>();
-        _x.shirt = _j.at("shirt").get<std::string>();
-        _x.shit = _j.at("shit").get<std::string>();
-        _x.shoe = _j.at("shoe").get<std::string>();
-        _x.shopping = _j.at("shopping").get<std::string>();
-        _x.shopping_cart = _j.at("shopping_cart").get<std::string>();
-        _x.shower = _j.at("shower").get<std::string>();
-        _x.shrimp = _j.at("shrimp").get<std::string>();
-        _x.sierra_leone = _j.at("sierra_leone").get<std::string>();
-        _x.signal_strength = _j.at("signal_strength").get<std::string>();
-        _x.singapore = _j.at("singapore").get<std::string>();
-        _x.sint_maarten = _j.at("sint_maarten").get<std::string>();
-        _x.six = _j.at("six").get<std::string>();
-        _x.six_pointed_star = _j.at("six_pointed_star").get<std::string>();
-        _x.ski = _j.at("ski").get<std::string>();
-        _x.skier = _j.at("skier").get<std::string>();
-        _x.skull = _j.at("skull").get<std::string>();
-        _x.skull_and_crossbones = _j.at("skull_and_crossbones").get<std::string>();
-        _x.sleeping = _j.at("sleeping").get<std::string>();
-        _x.sleeping_bed = _j.at("sleeping_bed").get<std::string>();
-        _x.sleepy = _j.at("sleepy").get<std::string>();
-        _x.slightly_frowning_face = _j.at("slightly_frowning_face").get<std::string>();
-        _x.slightly_smiling_face = _j.at("slightly_smiling_face").get<std::string>();
-        _x.slot_machine = _j.at("slot_machine").get<std::string>();
-        _x.slovakia = _j.at("slovakia").get<std::string>();
-        _x.slovenia = _j.at("slovenia").get<std::string>();
-        _x.small_airplane = _j.at("small_airplane").get<std::string>();
-        _x.small_blue_diamond = _j.at("small_blue_diamond").get<std::string>();
-        _x.small_orange_diamond = _j.at("small_orange_diamond").get<std::string>();
-        _x.small_red_triangle = _j.at("small_red_triangle").get<std::string>();
-        _x.small_red_triangle_down = _j.at("small_red_triangle_down").get<std::string>();
-        _x.smile = _j.at("smile").get<std::string>();
-        _x.smile_cat = _j.at("smile_cat").get<std::string>();
-        _x.smiley = _j.at("smiley").get<std::string>();
-        _x.smiley_cat = _j.at("smiley_cat").get<std::string>();
-        _x.smiling_imp = _j.at("smiling_imp").get<std::string>();
-        _x.smirk = _j.at("smirk").get<std::string>();
-        _x.smirk_cat = _j.at("smirk_cat").get<std::string>();
-        _x.smoking = _j.at("smoking").get<std::string>();
-        _x.snail = _j.at("snail").get<std::string>();
-        _x.snake = _j.at("snake").get<std::string>();
-        _x.sneezing_face = _j.at("sneezing_face").get<std::string>();
-        _x.snowboarder = _j.at("snowboarder").get<std::string>();
-        _x.snowflake = _j.at("snowflake").get<std::string>();
-        _x.snowman = _j.at("snowman").get<std::string>();
-        _x.snowman_with_snow = _j.at("snowman_with_snow").get<std::string>();
-        _x.sob = _j.at("sob").get<std::string>();
-        _x.soccer = _j.at("soccer").get<std::string>();
-        _x.solomon_islands = _j.at("solomon_islands").get<std::string>();
-        _x.somalia = _j.at("somalia").get<std::string>();
-        _x.soon = _j.at("soon").get<std::string>();
-        _x.sos = _j.at("sos").get<std::string>();
-        _x.sound = _j.at("sound").get<std::string>();
-        _x.south_africa = _j.at("south_africa").get<std::string>();
-        _x.south_georgia_south_sandwich_islands = _j.at("south_georgia_south_sandwich_islands").get<std::string>();
-        _x.south_sudan = _j.at("south_sudan").get<std::string>();
-        _x.space_invader = _j.at("space_invader").get<std::string>();
-        _x.spades = _j.at("spades").get<std::string>();
-        _x.spaghetti = _j.at("spaghetti").get<std::string>();
-        _x.sparkle = _j.at("sparkle").get<std::string>();
-        _x.sparkler = _j.at("sparkler").get<std::string>();
-        _x.sparkles = _j.at("sparkles").get<std::string>();
-        _x.sparkling_heart = _j.at("sparkling_heart").get<std::string>();
-        _x.speak_no_evil = _j.at("speak_no_evil").get<std::string>();
-        _x.speaker = _j.at("speaker").get<std::string>();
-        _x.speaking_head = _j.at("speaking_head").get<std::string>();
-        _x.speech_balloon = _j.at("speech_balloon").get<std::string>();
-        _x.speedboat = _j.at("speedboat").get<std::string>();
-        _x.spider = _j.at("spider").get<std::string>();
-        _x.spider_web = _j.at("spider_web").get<std::string>();
-        _x.spiral_calendar = _j.at("spiral_calendar").get<std::string>();
-        _x.spiral_notepad = _j.at("spiral_notepad").get<std::string>();
-        _x.spoon = _j.at("spoon").get<std::string>();
-        _x.squid = _j.at("squid").get<std::string>();
-        _x.squirrel = _j.at("squirrel").get<std::string>();
-        _x.sri_lanka = _j.at("sri_lanka").get<std::string>();
-        _x.st_barthelemy = _j.at("st_barthelemy").get<std::string>();
-        _x.st_helena = _j.at("st_helena").get<std::string>();
-        _x.st_kitts_nevis = _j.at("st_kitts_nevis").get<std::string>();
-        _x.st_lucia = _j.at("st_lucia").get<std::string>();
-        _x.st_pierre_miquelon = _j.at("st_pierre_miquelon").get<std::string>();
-        _x.st_vincent_grenadines = _j.at("st_vincent_grenadines").get<std::string>();
-        _x.stadium = _j.at("stadium").get<std::string>();
-        _x.star = _j.at("star").get<std::string>();
-        _x.star2 = _j.at("star2").get<std::string>();
-        _x.star_and_crescent = _j.at("star_and_crescent").get<std::string>();
-        _x.star_of_david = _j.at("star_of_david").get<std::string>();
-        _x.stars = _j.at("stars").get<std::string>();
-        _x.station = _j.at("station").get<std::string>();
-        _x.statue_of_liberty = _j.at("statue_of_liberty").get<std::string>();
-        _x.steam_locomotive = _j.at("steam_locomotive").get<std::string>();
-        _x.stew = _j.at("stew").get<std::string>();
-        _x.stop_button = _j.at("stop_button").get<std::string>();
-        _x.stop_sign = _j.at("stop_sign").get<std::string>();
-        _x.stopwatch = _j.at("stopwatch").get<std::string>();
-        _x.straight_ruler = _j.at("straight_ruler").get<std::string>();
-        _x.strawberry = _j.at("strawberry").get<std::string>();
-        _x.stuck_out_tongue = _j.at("stuck_out_tongue").get<std::string>();
-        _x.stuck_out_tongue_closed_eyes = _j.at("stuck_out_tongue_closed_eyes").get<std::string>();
-        _x.stuck_out_tongue_winking_eye = _j.at("stuck_out_tongue_winking_eye").get<std::string>();
-        _x.studio_microphone = _j.at("studio_microphone").get<std::string>();
-        _x.stuffed_flatbread = _j.at("stuffed_flatbread").get<std::string>();
-        _x.sudan = _j.at("sudan").get<std::string>();
-        _x.sun_behind_large_cloud = _j.at("sun_behind_large_cloud").get<std::string>();
-        _x.sun_behind_rain_cloud = _j.at("sun_behind_rain_cloud").get<std::string>();
-        _x.sun_behind_small_cloud = _j.at("sun_behind_small_cloud").get<std::string>();
-        _x.sun_with_face = _j.at("sun_with_face").get<std::string>();
-        _x.sunflower = _j.at("sunflower").get<std::string>();
-        _x.sunglasses = _j.at("sunglasses").get<std::string>();
-        _x.sunny = _j.at("sunny").get<std::string>();
-        _x.sunrise = _j.at("sunrise").get<std::string>();
-        _x.sunrise_over_mountains = _j.at("sunrise_over_mountains").get<std::string>();
-        _x.surfer = _j.at("surfer").get<std::string>();
-        _x.surfing_man = _j.at("surfing_man").get<std::string>();
-        _x.surfing_woman = _j.at("surfing_woman").get<std::string>();
-        _x.suriname = _j.at("suriname").get<std::string>();
-        _x.sushi = _j.at("sushi").get<std::string>();
-        _x.suspect = _j.at("suspect").get<std::string>();
-        _x.suspension_railway = _j.at("suspension_railway").get<std::string>();
-        _x.swaziland = _j.at("swaziland").get<std::string>();
-        _x.sweat = _j.at("sweat").get<std::string>();
-        _x.sweat_drops = _j.at("sweat_drops").get<std::string>();
-        _x.sweat_smile = _j.at("sweat_smile").get<std::string>();
-        _x.sweden = _j.at("sweden").get<std::string>();
-        _x.sweet_potato = _j.at("sweet_potato").get<std::string>();
-        _x.swimmer = _j.at("swimmer").get<std::string>();
-        _x.swimming_man = _j.at("swimming_man").get<std::string>();
-        _x.swimming_woman = _j.at("swimming_woman").get<std::string>();
-        _x.switzerland = _j.at("switzerland").get<std::string>();
-        _x.symbols = _j.at("symbols").get<std::string>();
-        _x.synagogue = _j.at("synagogue").get<std::string>();
-        _x.syria = _j.at("syria").get<std::string>();
-        _x.syringe = _j.at("syringe").get<std::string>();
-        _x.taco = _j.at("taco").get<std::string>();
-        _x.tada = _j.at("tada").get<std::string>();
-        _x.taiwan = _j.at("taiwan").get<std::string>();
-        _x.tajikistan = _j.at("tajikistan").get<std::string>();
-        _x.tanabata_tree = _j.at("tanabata_tree").get<std::string>();
-        _x.tangerine = _j.at("tangerine").get<std::string>();
-        _x.tanzania = _j.at("tanzania").get<std::string>();
-        _x.taurus = _j.at("taurus").get<std::string>();
-        _x.taxi = _j.at("taxi").get<std::string>();
-        _x.tea = _j.at("tea").get<std::string>();
-        _x.telephone = _j.at("telephone").get<std::string>();
-        _x.telephone_receiver = _j.at("telephone_receiver").get<std::string>();
-        _x.telescope = _j.at("telescope").get<std::string>();
-        _x.tennis = _j.at("tennis").get<std::string>();
-        _x.tent = _j.at("tent").get<std::string>();
-        _x.thailand = _j.at("thailand").get<std::string>();
-        _x.thermometer = _j.at("thermometer").get<std::string>();
-        _x.thinking = _j.at("thinking").get<std::string>();
-        _x.thought_balloon = _j.at("thought_balloon").get<std::string>();
-        _x.three = _j.at("three").get<std::string>();
-        _x.thumbsdown = _j.at("thumbsdown").get<std::string>();
-        _x.thumbsup = _j.at("thumbsup").get<std::string>();
-        _x.ticket = _j.at("ticket").get<std::string>();
-        _x.tickets = _j.at("tickets").get<std::string>();
-        _x.tiger = _j.at("tiger").get<std::string>();
-        _x.tiger2 = _j.at("tiger2").get<std::string>();
-        _x.timer_clock = _j.at("timer_clock").get<std::string>();
-        _x.timor_leste = _j.at("timor_leste").get<std::string>();
-        _x.tipping_hand_man = _j.at("tipping_hand_man").get<std::string>();
-        _x.tipping_hand_woman = _j.at("tipping_hand_woman").get<std::string>();
-        _x.tired_face = _j.at("tired_face").get<std::string>();
-        _x.tm = _j.at("tm").get<std::string>();
-        _x.togo = _j.at("togo").get<std::string>();
-        _x.toilet = _j.at("toilet").get<std::string>();
-        _x.tokelau = _j.at("tokelau").get<std::string>();
-        _x.tokyo_tower = _j.at("tokyo_tower").get<std::string>();
-        _x.tomato = _j.at("tomato").get<std::string>();
-        _x.tonga = _j.at("tonga").get<std::string>();
-        _x.tongue = _j.at("tongue").get<std::string>();
-        _x.top = _j.at("top").get<std::string>();
-        _x.tophat = _j.at("tophat").get<std::string>();
-        _x.tornado = _j.at("tornado").get<std::string>();
-        _x.tr = _j.at("tr").get<std::string>();
-        _x.trackball = _j.at("trackball").get<std::string>();
-        _x.tractor = _j.at("tractor").get<std::string>();
-        _x.traffic_light = _j.at("traffic_light").get<std::string>();
-        _x.train = _j.at("train").get<std::string>();
-        _x.train2 = _j.at("train2").get<std::string>();
-        _x.tram = _j.at("tram").get<std::string>();
-        _x.triangular_flag_on_post = _j.at("triangular_flag_on_post").get<std::string>();
-        _x.triangular_ruler = _j.at("triangular_ruler").get<std::string>();
-        _x.trident = _j.at("trident").get<std::string>();
-        _x.trinidad_tobago = _j.at("trinidad_tobago").get<std::string>();
-        _x.triumph = _j.at("triumph").get<std::string>();
-        _x.trolleybus = _j.at("trolleybus").get<std::string>();
-        _x.trollface = _j.at("trollface").get<std::string>();
-        _x.trophy = _j.at("trophy").get<std::string>();
-        _x.tropical_drink = _j.at("tropical_drink").get<std::string>();
-        _x.tropical_fish = _j.at("tropical_fish").get<std::string>();
-        _x.truck = _j.at("truck").get<std::string>();
-        _x.trumpet = _j.at("trumpet").get<std::string>();
-        _x.tshirt = _j.at("tshirt").get<std::string>();
-        _x.tulip = _j.at("tulip").get<std::string>();
-        _x.tumbler_glass = _j.at("tumbler_glass").get<std::string>();
-        _x.tunisia = _j.at("tunisia").get<std::string>();
-        _x.turkey = _j.at("turkey").get<std::string>();
-        _x.turkmenistan = _j.at("turkmenistan").get<std::string>();
-        _x.turks_caicos_islands = _j.at("turks_caicos_islands").get<std::string>();
-        _x.turtle = _j.at("turtle").get<std::string>();
-        _x.tuvalu = _j.at("tuvalu").get<std::string>();
-        _x.tv = _j.at("tv").get<std::string>();
-        _x.twisted_rightwards_arrows = _j.at("twisted_rightwards_arrows").get<std::string>();
-        _x.two = _j.at("two").get<std::string>();
-        _x.two_hearts = _j.at("two_hearts").get<std::string>();
-        _x.two_men_holding_hands = _j.at("two_men_holding_hands").get<std::string>();
-        _x.two_women_holding_hands = _j.at("two_women_holding_hands").get<std::string>();
-        _x.u5272 = _j.at("u5272").get<std::string>();
-        _x.u5408 = _j.at("u5408").get<std::string>();
-        _x.u55_b6 = _j.at("u55b6").get<std::string>();
-        _x.u6307 = _j.at("u6307").get<std::string>();
-        _x.u6708 = _j.at("u6708").get<std::string>();
-        _x.u6709 = _j.at("u6709").get<std::string>();
-        _x.u6_e80 = _j.at("u6e80").get<std::string>();
-        _x.u7121 = _j.at("u7121").get<std::string>();
-        _x.u7533 = _j.at("u7533").get<std::string>();
-        _x.u7981 = _j.at("u7981").get<std::string>();
-        _x.u7_a7_a = _j.at("u7a7a").get<std::string>();
-        _x.uganda = _j.at("uganda").get<std::string>();
-        _x.uk = _j.at("uk").get<std::string>();
-        _x.ukraine = _j.at("ukraine").get<std::string>();
-        _x.umbrella = _j.at("umbrella").get<std::string>();
-        _x.unamused = _j.at("unamused").get<std::string>();
-        _x.underage = _j.at("underage").get<std::string>();
-        _x.unicorn = _j.at("unicorn").get<std::string>();
-        _x.united_arab_emirates = _j.at("united_arab_emirates").get<std::string>();
-        _x.unlock = _j.at("unlock").get<std::string>();
-        _x.up = _j.at("up").get<std::string>();
-        _x.upside_down_face = _j.at("upside_down_face").get<std::string>();
-        _x.uruguay = _j.at("uruguay").get<std::string>();
-        _x.us = _j.at("us").get<std::string>();
-        _x.us_virgin_islands = _j.at("us_virgin_islands").get<std::string>();
-        _x.uzbekistan = _j.at("uzbekistan").get<std::string>();
-        _x.v = _j.at("v").get<std::string>();
-        _x.vanuatu = _j.at("vanuatu").get<std::string>();
-        _x.vatican_city = _j.at("vatican_city").get<std::string>();
-        _x.venezuela = _j.at("venezuela").get<std::string>();
-        _x.vertical_traffic_light = _j.at("vertical_traffic_light").get<std::string>();
-        _x.vhs = _j.at("vhs").get<std::string>();
-        _x.vibration_mode = _j.at("vibration_mode").get<std::string>();
-        _x.video_camera = _j.at("video_camera").get<std::string>();
-        _x.video_game = _j.at("video_game").get<std::string>();
-        _x.vietnam = _j.at("vietnam").get<std::string>();
-        _x.violin = _j.at("violin").get<std::string>();
-        _x.virgo = _j.at("virgo").get<std::string>();
-        _x.volcano = _j.at("volcano").get<std::string>();
-        _x.volleyball = _j.at("volleyball").get<std::string>();
-        _x.vs = _j.at("vs").get<std::string>();
-        _x.vulcan_salute = _j.at("vulcan_salute").get<std::string>();
-        _x.walking = _j.at("walking").get<std::string>();
-        _x.walking_man = _j.at("walking_man").get<std::string>();
-        _x.walking_woman = _j.at("walking_woman").get<std::string>();
-        _x.wallis_futuna = _j.at("wallis_futuna").get<std::string>();
-        _x.waning_crescent_moon = _j.at("waning_crescent_moon").get<std::string>();
-        _x.waning_gibbous_moon = _j.at("waning_gibbous_moon").get<std::string>();
-        _x.warning = _j.at("warning").get<std::string>();
-        _x.wastebasket = _j.at("wastebasket").get<std::string>();
-        _x.watch = _j.at("watch").get<std::string>();
-        _x.water_buffalo = _j.at("water_buffalo").get<std::string>();
-        _x.watermelon = _j.at("watermelon").get<std::string>();
-        _x.wave = _j.at("wave").get<std::string>();
-        _x.wavy_dash = _j.at("wavy_dash").get<std::string>();
-        _x.waxing_crescent_moon = _j.at("waxing_crescent_moon").get<std::string>();
-        _x.waxing_gibbous_moon = _j.at("waxing_gibbous_moon").get<std::string>();
-        _x.wc = _j.at("wc").get<std::string>();
-        _x.weary = _j.at("weary").get<std::string>();
-        _x.wedding = _j.at("wedding").get<std::string>();
-        _x.weight_lifting_man = _j.at("weight_lifting_man").get<std::string>();
-        _x.weight_lifting_woman = _j.at("weight_lifting_woman").get<std::string>();
-        _x.western_sahara = _j.at("western_sahara").get<std::string>();
-        _x.whale = _j.at("whale").get<std::string>();
-        _x.whale2 = _j.at("whale2").get<std::string>();
-        _x.wheel_of_dharma = _j.at("wheel_of_dharma").get<std::string>();
-        _x.wheelchair = _j.at("wheelchair").get<std::string>();
-        _x.white_check_mark = _j.at("white_check_mark").get<std::string>();
-        _x.white_circle = _j.at("white_circle").get<std::string>();
-        _x.white_flag = _j.at("white_flag").get<std::string>();
-        _x.white_flower = _j.at("white_flower").get<std::string>();
-        _x.white_large_square = _j.at("white_large_square").get<std::string>();
-        _x.white_medium_small_square = _j.at("white_medium_small_square").get<std::string>();
-        _x.white_medium_square = _j.at("white_medium_square").get<std::string>();
-        _x.white_small_square = _j.at("white_small_square").get<std::string>();
-        _x.white_square_button = _j.at("white_square_button").get<std::string>();
-        _x.wilted_flower = _j.at("wilted_flower").get<std::string>();
-        _x.wind_chime = _j.at("wind_chime").get<std::string>();
-        _x.wind_face = _j.at("wind_face").get<std::string>();
-        _x.wine_glass = _j.at("wine_glass").get<std::string>();
-        _x.wink = _j.at("wink").get<std::string>();
-        _x.wolf = _j.at("wolf").get<std::string>();
-        _x.woman = _j.at("woman").get<std::string>();
-        _x.woman_artist = _j.at("woman_artist").get<std::string>();
-        _x.woman_astronaut = _j.at("woman_astronaut").get<std::string>();
-        _x.woman_cartwheeling = _j.at("woman_cartwheeling").get<std::string>();
-        _x.woman_cook = _j.at("woman_cook").get<std::string>();
-        _x.woman_facepalming = _j.at("woman_facepalming").get<std::string>();
-        _x.woman_factory_worker = _j.at("woman_factory_worker").get<std::string>();
-        _x.woman_farmer = _j.at("woman_farmer").get<std::string>();
-        _x.woman_firefighter = _j.at("woman_firefighter").get<std::string>();
-        _x.woman_health_worker = _j.at("woman_health_worker").get<std::string>();
-        _x.woman_judge = _j.at("woman_judge").get<std::string>();
-        _x.woman_juggling = _j.at("woman_juggling").get<std::string>();
-        _x.woman_mechanic = _j.at("woman_mechanic").get<std::string>();
-        _x.woman_office_worker = _j.at("woman_office_worker").get<std::string>();
-        _x.woman_pilot = _j.at("woman_pilot").get<std::string>();
-        _x.woman_playing_handball = _j.at("woman_playing_handball").get<std::string>();
-        _x.woman_playing_water_polo = _j.at("woman_playing_water_polo").get<std::string>();
-        _x.woman_scientist = _j.at("woman_scientist").get<std::string>();
-        _x.woman_shrugging = _j.at("woman_shrugging").get<std::string>();
-        _x.woman_singer = _j.at("woman_singer").get<std::string>();
-        _x.woman_student = _j.at("woman_student").get<std::string>();
-        _x.woman_teacher = _j.at("woman_teacher").get<std::string>();
-        _x.woman_technologist = _j.at("woman_technologist").get<std::string>();
-        _x.woman_with_turban = _j.at("woman_with_turban").get<std::string>();
-        _x.womans_clothes = _j.at("womans_clothes").get<std::string>();
-        _x.womans_hat = _j.at("womans_hat").get<std::string>();
-        _x.women_wrestling = _j.at("women_wrestling").get<std::string>();
-        _x.womens = _j.at("womens").get<std::string>();
-        _x.world_map = _j.at("world_map").get<std::string>();
-        _x.worried = _j.at("worried").get<std::string>();
-        _x.wrench = _j.at("wrench").get<std::string>();
-        _x.writing_hand = _j.at("writing_hand").get<std::string>();
-        _x.x = _j.at("x").get<std::string>();
-        _x.yellow_heart = _j.at("yellow_heart").get<std::string>();
-        _x.yemen = _j.at("yemen").get<std::string>();
-        _x.yen = _j.at("yen").get<std::string>();
-        _x.yin_yang = _j.at("yin_yang").get<std::string>();
-        _x.yum = _j.at("yum").get<std::string>();
-        _x.zambia = _j.at("zambia").get<std::string>();
-        _x.zap = _j.at("zap").get<std::string>();
-        _x.zero = _j.at("zero").get<std::string>();
-        _x.zimbabwe = _j.at("zimbabwe").get<std::string>();
-        _x.zipper_mouth_face = _j.at("zipper_mouth_face").get<std::string>();
-        _x.zzz = _j.at("zzz").get<std::string>();
+    inline void from_json(const json& _j, quicktype::Html& _x) {
+        _x.set_href( _j.at("href").get<std::string>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Emojis& _x) {
+    inline void to_json(json& _j, const quicktype::Html& _x) {
         _j = json::object();
-        _j["+1"] = _x.the_1;
-        _j["-1"] = _x.emojis_1;
-        _j["100"] = _x.the_100;
-        _j["1234"] = _x.the_1234;
-        _j["1st_place_medal"] = _x.the_1_st_place_medal;
-        _j["2nd_place_medal"] = _x.the_2_nd_place_medal;
-        _j["3rd_place_medal"] = _x.the_3_rd_place_medal;
-        _j["8ball"] = _x.the_8_ball;
-        _j["a"] = _x.a;
-        _j["ab"] = _x.ab;
-        _j["abc"] = _x.abc;
-        _j["abcd"] = _x.abcd;
-        _j["accept"] = _x.accept;
-        _j["aerial_tramway"] = _x.aerial_tramway;
-        _j["afghanistan"] = _x.afghanistan;
-        _j["airplane"] = _x.airplane;
-        _j["aland_islands"] = _x.aland_islands;
-        _j["alarm_clock"] = _x.alarm_clock;
-        _j["albania"] = _x.albania;
-        _j["alembic"] = _x.alembic;
-        _j["algeria"] = _x.algeria;
-        _j["alien"] = _x.alien;
-        _j["ambulance"] = _x.ambulance;
-        _j["american_samoa"] = _x.american_samoa;
-        _j["amphora"] = _x.amphora;
-        _j["anchor"] = _x.anchor;
-        _j["andorra"] = _x.andorra;
-        _j["angel"] = _x.angel;
-        _j["anger"] = _x.anger;
-        _j["angola"] = _x.angola;
-        _j["angry"] = _x.angry;
-        _j["anguilla"] = _x.anguilla;
-        _j["anguished"] = _x.anguished;
-        _j["ant"] = _x.ant;
-        _j["antarctica"] = _x.antarctica;
-        _j["antigua_barbuda"] = _x.antigua_barbuda;
-        _j["apple"] = _x.apple;
-        _j["aquarius"] = _x.aquarius;
-        _j["argentina"] = _x.argentina;
-        _j["aries"] = _x.aries;
-        _j["armenia"] = _x.armenia;
-        _j["arrow_backward"] = _x.arrow_backward;
-        _j["arrow_double_down"] = _x.arrow_double_down;
-        _j["arrow_double_up"] = _x.arrow_double_up;
-        _j["arrow_down"] = _x.arrow_down;
-        _j["arrow_down_small"] = _x.arrow_down_small;
-        _j["arrow_forward"] = _x.arrow_forward;
-        _j["arrow_heading_down"] = _x.arrow_heading_down;
-        _j["arrow_heading_up"] = _x.arrow_heading_up;
-        _j["arrow_left"] = _x.arrow_left;
-        _j["arrow_lower_left"] = _x.arrow_lower_left;
-        _j["arrow_lower_right"] = _x.arrow_lower_right;
-        _j["arrow_right"] = _x.arrow_right;
-        _j["arrow_right_hook"] = _x.arrow_right_hook;
-        _j["arrow_up"] = _x.arrow_up;
-        _j["arrow_up_down"] = _x.arrow_up_down;
-        _j["arrow_up_small"] = _x.arrow_up_small;
-        _j["arrow_upper_left"] = _x.arrow_upper_left;
-        _j["arrow_upper_right"] = _x.arrow_upper_right;
-        _j["arrows_clockwise"] = _x.arrows_clockwise;
-        _j["arrows_counterclockwise"] = _x.arrows_counterclockwise;
-        _j["art"] = _x.art;
-        _j["articulated_lorry"] = _x.articulated_lorry;
-        _j["artificial_satellite"] = _x.artificial_satellite;
-        _j["aruba"] = _x.aruba;
-        _j["asterisk"] = _x.asterisk;
-        _j["astonished"] = _x.astonished;
-        _j["athletic_shoe"] = _x.athletic_shoe;
-        _j["atm"] = _x.atm;
-        _j["atom"] = _x.atom;
-        _j["atom_symbol"] = _x.atom_symbol;
-        _j["australia"] = _x.australia;
-        _j["austria"] = _x.austria;
-        _j["avocado"] = _x.avocado;
-        _j["azerbaijan"] = _x.azerbaijan;
-        _j["b"] = _x.b;
-        _j["baby"] = _x.baby;
-        _j["baby_bottle"] = _x.baby_bottle;
-        _j["baby_chick"] = _x.baby_chick;
-        _j["baby_symbol"] = _x.baby_symbol;
-        _j["back"] = _x.back;
-        _j["bacon"] = _x.bacon;
-        _j["badminton"] = _x.badminton;
-        _j["baggage_claim"] = _x.baggage_claim;
-        _j["baguette_bread"] = _x.baguette_bread;
-        _j["bahamas"] = _x.bahamas;
-        _j["bahrain"] = _x.bahrain;
-        _j["balance_scale"] = _x.balance_scale;
-        _j["balloon"] = _x.balloon;
-        _j["ballot_box"] = _x.ballot_box;
-        _j["ballot_box_with_check"] = _x.ballot_box_with_check;
-        _j["bamboo"] = _x.bamboo;
-        _j["banana"] = _x.banana;
-        _j["bangbang"] = _x.bangbang;
-        _j["bangladesh"] = _x.bangladesh;
-        _j["bank"] = _x.bank;
-        _j["bar_chart"] = _x.bar_chart;
-        _j["barbados"] = _x.barbados;
-        _j["barber"] = _x.barber;
-        _j["baseball"] = _x.baseball;
-        _j["basecamp"] = _x.basecamp;
-        _j["basecampy"] = _x.basecampy;
-        _j["basketball"] = _x.basketball;
-        _j["basketball_man"] = _x.basketball_man;
-        _j["basketball_woman"] = _x.basketball_woman;
-        _j["bat"] = _x.bat;
-        _j["bath"] = _x.bath;
-        _j["bathtub"] = _x.bathtub;
-        _j["battery"] = _x.battery;
-        _j["beach_umbrella"] = _x.beach_umbrella;
-        _j["bear"] = _x.bear;
-        _j["bed"] = _x.bed;
-        _j["bee"] = _x.bee;
-        _j["beer"] = _x.beer;
-        _j["beers"] = _x.beers;
-        _j["beetle"] = _x.beetle;
-        _j["beginner"] = _x.beginner;
-        _j["belarus"] = _x.belarus;
-        _j["belgium"] = _x.belgium;
-        _j["belize"] = _x.belize;
-        _j["bell"] = _x.bell;
-        _j["bellhop_bell"] = _x.bellhop_bell;
-        _j["benin"] = _x.benin;
-        _j["bento"] = _x.bento;
-        _j["bermuda"] = _x.bermuda;
-        _j["bhutan"] = _x.bhutan;
-        _j["bicyclist"] = _x.bicyclist;
-        _j["bike"] = _x.bike;
-        _j["biking_man"] = _x.biking_man;
-        _j["biking_woman"] = _x.biking_woman;
-        _j["bikini"] = _x.bikini;
-        _j["biohazard"] = _x.biohazard;
-        _j["bird"] = _x.bird;
-        _j["birthday"] = _x.birthday;
-        _j["black_circle"] = _x.black_circle;
-        _j["black_flag"] = _x.black_flag;
-        _j["black_heart"] = _x.black_heart;
-        _j["black_joker"] = _x.black_joker;
-        _j["black_large_square"] = _x.black_large_square;
-        _j["black_medium_small_square"] = _x.black_medium_small_square;
-        _j["black_medium_square"] = _x.black_medium_square;
-        _j["black_nib"] = _x.black_nib;
-        _j["black_small_square"] = _x.black_small_square;
-        _j["black_square_button"] = _x.black_square_button;
-        _j["blonde_man"] = _x.blonde_man;
-        _j["blonde_woman"] = _x.blonde_woman;
-        _j["blossom"] = _x.blossom;
-        _j["blowfish"] = _x.blowfish;
-        _j["blue_book"] = _x.blue_book;
-        _j["blue_car"] = _x.blue_car;
-        _j["blue_heart"] = _x.blue_heart;
-        _j["blush"] = _x.blush;
-        _j["boar"] = _x.boar;
-        _j["boat"] = _x.boat;
-        _j["bolivia"] = _x.bolivia;
-        _j["bomb"] = _x.bomb;
-        _j["book"] = _x.book;
-        _j["bookmark"] = _x.bookmark;
-        _j["bookmark_tabs"] = _x.bookmark_tabs;
-        _j["books"] = _x.books;
-        _j["boom"] = _x.boom;
-        _j["boot"] = _x.boot;
-        _j["bosnia_herzegovina"] = _x.bosnia_herzegovina;
-        _j["botswana"] = _x.botswana;
-        _j["bouquet"] = _x.bouquet;
-        _j["bow"] = _x.bow;
-        _j["bow_and_arrow"] = _x.bow_and_arrow;
-        _j["bowing_man"] = _x.bowing_man;
-        _j["bowing_woman"] = _x.bowing_woman;
-        _j["bowling"] = _x.bowling;
-        _j["bowtie"] = _x.bowtie;
-        _j["boxing_glove"] = _x.boxing_glove;
-        _j["boy"] = _x.boy;
-        _j["brazil"] = _x.brazil;
-        _j["bread"] = _x.bread;
-        _j["bride_with_veil"] = _x.bride_with_veil;
-        _j["bridge_at_night"] = _x.bridge_at_night;
-        _j["briefcase"] = _x.briefcase;
-        _j["british_indian_ocean_territory"] = _x.british_indian_ocean_territory;
-        _j["british_virgin_islands"] = _x.british_virgin_islands;
-        _j["broken_heart"] = _x.broken_heart;
-        _j["brunei"] = _x.brunei;
-        _j["bug"] = _x.bug;
-        _j["building_construction"] = _x.building_construction;
-        _j["bulb"] = _x.bulb;
-        _j["bulgaria"] = _x.bulgaria;
-        _j["bullettrain_front"] = _x.bullettrain_front;
-        _j["bullettrain_side"] = _x.bullettrain_side;
-        _j["burkina_faso"] = _x.burkina_faso;
-        _j["burrito"] = _x.burrito;
-        _j["burundi"] = _x.burundi;
-        _j["bus"] = _x.bus;
-        _j["business_suit_levitating"] = _x.business_suit_levitating;
-        _j["busstop"] = _x.busstop;
-        _j["bust_in_silhouette"] = _x.bust_in_silhouette;
-        _j["busts_in_silhouette"] = _x.busts_in_silhouette;
-        _j["butterfly"] = _x.butterfly;
-        _j["cactus"] = _x.cactus;
-        _j["cake"] = _x.cake;
-        _j["calendar"] = _x.calendar;
-        _j["call_me_hand"] = _x.call_me_hand;
-        _j["calling"] = _x.calling;
-        _j["cambodia"] = _x.cambodia;
-        _j["camel"] = _x.camel;
-        _j["camera"] = _x.camera;
-        _j["camera_flash"] = _x.camera_flash;
-        _j["cameroon"] = _x.cameroon;
-        _j["camping"] = _x.camping;
-        _j["canada"] = _x.canada;
-        _j["canary_islands"] = _x.canary_islands;
-        _j["cancer"] = _x.cancer;
-        _j["candle"] = _x.candle;
-        _j["candy"] = _x.candy;
-        _j["canoe"] = _x.canoe;
-        _j["cape_verde"] = _x.cape_verde;
-        _j["capital_abcd"] = _x.capital_abcd;
-        _j["capricorn"] = _x.capricorn;
-        _j["car"] = _x.car;
-        _j["card_file_box"] = _x.card_file_box;
-        _j["card_index"] = _x.card_index;
-        _j["card_index_dividers"] = _x.card_index_dividers;
-        _j["caribbean_netherlands"] = _x.caribbean_netherlands;
-        _j["carousel_horse"] = _x.carousel_horse;
-        _j["carrot"] = _x.carrot;
-        _j["cat"] = _x.cat;
-        _j["cat2"] = _x.cat2;
-        _j["cayman_islands"] = _x.cayman_islands;
-        _j["cd"] = _x.cd;
-        _j["central_african_republic"] = _x.central_african_republic;
-        _j["chad"] = _x.chad;
-        _j["chains"] = _x.chains;
-        _j["champagne"] = _x.champagne;
-        _j["chart"] = _x.chart;
-        _j["chart_with_downwards_trend"] = _x.chart_with_downwards_trend;
-        _j["chart_with_upwards_trend"] = _x.chart_with_upwards_trend;
-        _j["checkered_flag"] = _x.checkered_flag;
-        _j["cheese"] = _x.cheese;
-        _j["cherries"] = _x.cherries;
-        _j["cherry_blossom"] = _x.cherry_blossom;
-        _j["chestnut"] = _x.chestnut;
-        _j["chicken"] = _x.chicken;
-        _j["children_crossing"] = _x.children_crossing;
-        _j["chile"] = _x.chile;
-        _j["chipmunk"] = _x.chipmunk;
-        _j["chocolate_bar"] = _x.chocolate_bar;
-        _j["christmas_island"] = _x.christmas_island;
-        _j["christmas_tree"] = _x.christmas_tree;
-        _j["church"] = _x.church;
-        _j["cinema"] = _x.cinema;
-        _j["circus_tent"] = _x.circus_tent;
-        _j["city_sunrise"] = _x.city_sunrise;
-        _j["city_sunset"] = _x.city_sunset;
-        _j["cityscape"] = _x.cityscape;
-        _j["cl"] = _x.cl;
-        _j["clamp"] = _x.clamp;
-        _j["clap"] = _x.clap;
-        _j["clapper"] = _x.clapper;
-        _j["classical_building"] = _x.classical_building;
-        _j["clinking_glasses"] = _x.clinking_glasses;
-        _j["clipboard"] = _x.clipboard;
-        _j["clock1"] = _x.clock1;
-        _j["clock10"] = _x.clock10;
-        _j["clock1030"] = _x.clock1030;
-        _j["clock11"] = _x.clock11;
-        _j["clock1130"] = _x.clock1130;
-        _j["clock12"] = _x.clock12;
-        _j["clock1230"] = _x.clock1230;
-        _j["clock130"] = _x.clock130;
-        _j["clock2"] = _x.clock2;
-        _j["clock230"] = _x.clock230;
-        _j["clock3"] = _x.clock3;
-        _j["clock330"] = _x.clock330;
-        _j["clock4"] = _x.clock4;
-        _j["clock430"] = _x.clock430;
-        _j["clock5"] = _x.clock5;
-        _j["clock530"] = _x.clock530;
-        _j["clock6"] = _x.clock6;
-        _j["clock630"] = _x.clock630;
-        _j["clock7"] = _x.clock7;
-        _j["clock730"] = _x.clock730;
-        _j["clock8"] = _x.clock8;
-        _j["clock830"] = _x.clock830;
-        _j["clock9"] = _x.clock9;
-        _j["clock930"] = _x.clock930;
-        _j["closed_book"] = _x.closed_book;
-        _j["closed_lock_with_key"] = _x.closed_lock_with_key;
-        _j["closed_umbrella"] = _x.closed_umbrella;
-        _j["cloud"] = _x.cloud;
-        _j["cloud_with_lightning"] = _x.cloud_with_lightning;
-        _j["cloud_with_lightning_and_rain"] = _x.cloud_with_lightning_and_rain;
-        _j["cloud_with_rain"] = _x.cloud_with_rain;
-        _j["cloud_with_snow"] = _x.cloud_with_snow;
-        _j["clown_face"] = _x.clown_face;
-        _j["clubs"] = _x.clubs;
-        _j["cn"] = _x.cn;
-        _j["cocktail"] = _x.cocktail;
-        _j["cocos_islands"] = _x.cocos_islands;
-        _j["coffee"] = _x.coffee;
-        _j["coffin"] = _x.coffin;
-        _j["cold_sweat"] = _x.cold_sweat;
-        _j["collision"] = _x.collision;
-        _j["colombia"] = _x.colombia;
-        _j["comet"] = _x.comet;
-        _j["comoros"] = _x.comoros;
-        _j["computer"] = _x.computer;
-        _j["computer_mouse"] = _x.computer_mouse;
-        _j["confetti_ball"] = _x.confetti_ball;
-        _j["confounded"] = _x.confounded;
-        _j["confused"] = _x.confused;
-        _j["congo_brazzaville"] = _x.congo_brazzaville;
-        _j["congo_kinshasa"] = _x.congo_kinshasa;
-        _j["congratulations"] = _x.congratulations;
-        _j["construction"] = _x.construction;
-        _j["construction_worker"] = _x.construction_worker;
-        _j["construction_worker_man"] = _x.construction_worker_man;
-        _j["construction_worker_woman"] = _x.construction_worker_woman;
-        _j["control_knobs"] = _x.control_knobs;
-        _j["convenience_store"] = _x.convenience_store;
-        _j["cook_islands"] = _x.cook_islands;
-        _j["cookie"] = _x.cookie;
-        _j["cool"] = _x.cool;
-        _j["cop"] = _x.cop;
-        _j["copyright"] = _x.copyright;
-        _j["corn"] = _x.corn;
-        _j["costa_rica"] = _x.costa_rica;
-        _j["cote_divoire"] = _x.cote_divoire;
-        _j["couch_and_lamp"] = _x.couch_and_lamp;
-        _j["couple"] = _x.couple;
-        _j["couple_with_heart"] = _x.couple_with_heart;
-        _j["couple_with_heart_man_man"] = _x.couple_with_heart_man_man;
-        _j["couple_with_heart_woman_man"] = _x.couple_with_heart_woman_man;
-        _j["couple_with_heart_woman_woman"] = _x.couple_with_heart_woman_woman;
-        _j["couplekiss_man_man"] = _x.couplekiss_man_man;
-        _j["couplekiss_man_woman"] = _x.couplekiss_man_woman;
-        _j["couplekiss_woman_woman"] = _x.couplekiss_woman_woman;
-        _j["cow"] = _x.cow;
-        _j["cow2"] = _x.cow2;
-        _j["cowboy_hat_face"] = _x.cowboy_hat_face;
-        _j["crab"] = _x.crab;
-        _j["crayon"] = _x.crayon;
-        _j["credit_card"] = _x.credit_card;
-        _j["crescent_moon"] = _x.crescent_moon;
-        _j["cricket"] = _x.cricket;
-        _j["croatia"] = _x.croatia;
-        _j["crocodile"] = _x.crocodile;
-        _j["croissant"] = _x.croissant;
-        _j["crossed_fingers"] = _x.crossed_fingers;
-        _j["crossed_flags"] = _x.crossed_flags;
-        _j["crossed_swords"] = _x.crossed_swords;
-        _j["crown"] = _x.crown;
-        _j["cry"] = _x.cry;
-        _j["crying_cat_face"] = _x.crying_cat_face;
-        _j["crystal_ball"] = _x.crystal_ball;
-        _j["cuba"] = _x.cuba;
-        _j["cucumber"] = _x.cucumber;
-        _j["cupid"] = _x.cupid;
-        _j["curacao"] = _x.curacao;
-        _j["curly_loop"] = _x.curly_loop;
-        _j["currency_exchange"] = _x.currency_exchange;
-        _j["curry"] = _x.curry;
-        _j["custard"] = _x.custard;
-        _j["customs"] = _x.customs;
-        _j["cyclone"] = _x.cyclone;
-        _j["cyprus"] = _x.cyprus;
-        _j["czech_republic"] = _x.czech_republic;
-        _j["dagger"] = _x.dagger;
-        _j["dancer"] = _x.dancer;
-        _j["dancers"] = _x.dancers;
-        _j["dancing_men"] = _x.dancing_men;
-        _j["dancing_women"] = _x.dancing_women;
-        _j["dango"] = _x.dango;
-        _j["dark_sunglasses"] = _x.dark_sunglasses;
-        _j["dart"] = _x.dart;
-        _j["dash"] = _x.dash;
-        _j["date"] = _x.date;
-        _j["de"] = _x.de;
-        _j["deciduous_tree"] = _x.deciduous_tree;
-        _j["deer"] = _x.deer;
-        _j["denmark"] = _x.denmark;
-        _j["department_store"] = _x.department_store;
-        _j["derelict_house"] = _x.derelict_house;
-        _j["desert"] = _x.desert;
-        _j["desert_island"] = _x.desert_island;
-        _j["desktop_computer"] = _x.desktop_computer;
-        _j["detective"] = _x.detective;
-        _j["diamond_shape_with_a_dot_inside"] = _x.diamond_shape_with_a_dot_inside;
-        _j["diamonds"] = _x.diamonds;
-        _j["disappointed"] = _x.disappointed;
-        _j["disappointed_relieved"] = _x.disappointed_relieved;
-        _j["dizzy"] = _x.dizzy;
-        _j["dizzy_face"] = _x.dizzy_face;
-        _j["djibouti"] = _x.djibouti;
-        _j["do_not_litter"] = _x.do_not_litter;
-        _j["dog"] = _x.dog;
-        _j["dog2"] = _x.dog2;
-        _j["dollar"] = _x.dollar;
-        _j["dolls"] = _x.dolls;
-        _j["dolphin"] = _x.dolphin;
-        _j["dominica"] = _x.dominica;
-        _j["dominican_republic"] = _x.dominican_republic;
-        _j["door"] = _x.door;
-        _j["doughnut"] = _x.doughnut;
-        _j["dove"] = _x.dove;
-        _j["dragon"] = _x.dragon;
-        _j["dragon_face"] = _x.dragon_face;
-        _j["dress"] = _x.dress;
-        _j["dromedary_camel"] = _x.dromedary_camel;
-        _j["drooling_face"] = _x.drooling_face;
-        _j["droplet"] = _x.droplet;
-        _j["drum"] = _x.drum;
-        _j["duck"] = _x.duck;
-        _j["dvd"] = _x.dvd;
-        _j["e-mail"] = _x.e_mail;
-        _j["eagle"] = _x.eagle;
-        _j["ear"] = _x.ear;
-        _j["ear_of_rice"] = _x.ear_of_rice;
-        _j["earth_africa"] = _x.earth_africa;
-        _j["earth_americas"] = _x.earth_americas;
-        _j["earth_asia"] = _x.earth_asia;
-        _j["ecuador"] = _x.ecuador;
-        _j["egg"] = _x.egg;
-        _j["eggplant"] = _x.eggplant;
-        _j["egypt"] = _x.egypt;
-        _j["eight"] = _x.eight;
-        _j["eight_pointed_black_star"] = _x.eight_pointed_black_star;
-        _j["eight_spoked_asterisk"] = _x.eight_spoked_asterisk;
-        _j["el_salvador"] = _x.el_salvador;
-        _j["electric_plug"] = _x.electric_plug;
-        _j["electron"] = _x.electron;
-        _j["elephant"] = _x.elephant;
-        _j["email"] = _x.email;
-        _j["end"] = _x.end;
-        _j["envelope"] = _x.envelope;
-        _j["envelope_with_arrow"] = _x.envelope_with_arrow;
-        _j["equatorial_guinea"] = _x.equatorial_guinea;
-        _j["eritrea"] = _x.eritrea;
-        _j["es"] = _x.es;
-        _j["estonia"] = _x.estonia;
-        _j["ethiopia"] = _x.ethiopia;
-        _j["eu"] = _x.eu;
-        _j["euro"] = _x.euro;
-        _j["european_castle"] = _x.european_castle;
-        _j["european_post_office"] = _x.european_post_office;
-        _j["european_union"] = _x.european_union;
-        _j["evergreen_tree"] = _x.evergreen_tree;
-        _j["exclamation"] = _x.exclamation;
-        _j["expressionless"] = _x.expressionless;
-        _j["eye"] = _x.eye;
-        _j["eye_speech_bubble"] = _x.eye_speech_bubble;
-        _j["eyeglasses"] = _x.eyeglasses;
-        _j["eyes"] = _x.eyes;
-        _j["face_with_head_bandage"] = _x.face_with_head_bandage;
-        _j["face_with_thermometer"] = _x.face_with_thermometer;
-        _j["facepunch"] = _x.facepunch;
-        _j["factory"] = _x.factory;
-        _j["falkland_islands"] = _x.falkland_islands;
-        _j["fallen_leaf"] = _x.fallen_leaf;
-        _j["family"] = _x.family;
-        _j["family_man_boy"] = _x.family_man_boy;
-        _j["family_man_boy_boy"] = _x.family_man_boy_boy;
-        _j["family_man_girl"] = _x.family_man_girl;
-        _j["family_man_girl_boy"] = _x.family_man_girl_boy;
-        _j["family_man_girl_girl"] = _x.family_man_girl_girl;
-        _j["family_man_man_boy"] = _x.family_man_man_boy;
-        _j["family_man_man_boy_boy"] = _x.family_man_man_boy_boy;
-        _j["family_man_man_girl"] = _x.family_man_man_girl;
-        _j["family_man_man_girl_boy"] = _x.family_man_man_girl_boy;
-        _j["family_man_man_girl_girl"] = _x.family_man_man_girl_girl;
-        _j["family_man_woman_boy"] = _x.family_man_woman_boy;
-        _j["family_man_woman_boy_boy"] = _x.family_man_woman_boy_boy;
-        _j["family_man_woman_girl"] = _x.family_man_woman_girl;
-        _j["family_man_woman_girl_boy"] = _x.family_man_woman_girl_boy;
-        _j["family_man_woman_girl_girl"] = _x.family_man_woman_girl_girl;
-        _j["family_woman_boy"] = _x.family_woman_boy;
-        _j["family_woman_boy_boy"] = _x.family_woman_boy_boy;
-        _j["family_woman_girl"] = _x.family_woman_girl;
-        _j["family_woman_girl_boy"] = _x.family_woman_girl_boy;
-        _j["family_woman_girl_girl"] = _x.family_woman_girl_girl;
-        _j["family_woman_woman_boy"] = _x.family_woman_woman_boy;
-        _j["family_woman_woman_boy_boy"] = _x.family_woman_woman_boy_boy;
-        _j["family_woman_woman_girl"] = _x.family_woman_woman_girl;
-        _j["family_woman_woman_girl_boy"] = _x.family_woman_woman_girl_boy;
-        _j["family_woman_woman_girl_girl"] = _x.family_woman_woman_girl_girl;
-        _j["faroe_islands"] = _x.faroe_islands;
-        _j["fast_forward"] = _x.fast_forward;
-        _j["fax"] = _x.fax;
-        _j["fearful"] = _x.fearful;
-        _j["feelsgood"] = _x.feelsgood;
-        _j["feet"] = _x.feet;
-        _j["female_detective"] = _x.female_detective;
-        _j["ferris_wheel"] = _x.ferris_wheel;
-        _j["ferry"] = _x.ferry;
-        _j["field_hockey"] = _x.field_hockey;
-        _j["fiji"] = _x.fiji;
-        _j["file_cabinet"] = _x.file_cabinet;
-        _j["file_folder"] = _x.file_folder;
-        _j["film_projector"] = _x.film_projector;
-        _j["film_strip"] = _x.film_strip;
-        _j["finland"] = _x.finland;
-        _j["finnadie"] = _x.finnadie;
-        _j["fire"] = _x.fire;
-        _j["fire_engine"] = _x.fire_engine;
-        _j["fireworks"] = _x.fireworks;
-        _j["first_quarter_moon"] = _x.first_quarter_moon;
-        _j["first_quarter_moon_with_face"] = _x.first_quarter_moon_with_face;
-        _j["fish"] = _x.fish;
-        _j["fish_cake"] = _x.fish_cake;
-        _j["fishing_pole_and_fish"] = _x.fishing_pole_and_fish;
-        _j["fist"] = _x.fist;
-        _j["fist_left"] = _x.fist_left;
-        _j["fist_oncoming"] = _x.fist_oncoming;
-        _j["fist_raised"] = _x.fist_raised;
-        _j["fist_right"] = _x.fist_right;
-        _j["five"] = _x.five;
-        _j["flags"] = _x.flags;
-        _j["flashlight"] = _x.flashlight;
-        _j["fleur_de_lis"] = _x.fleur_de_lis;
-        _j["flight_arrival"] = _x.flight_arrival;
-        _j["flight_departure"] = _x.flight_departure;
-        _j["flipper"] = _x.flipper;
-        _j["floppy_disk"] = _x.floppy_disk;
-        _j["flower_playing_cards"] = _x.flower_playing_cards;
-        _j["flushed"] = _x.flushed;
-        _j["fog"] = _x.fog;
-        _j["foggy"] = _x.foggy;
-        _j["football"] = _x.football;
-        _j["footprints"] = _x.footprints;
-        _j["fork_and_knife"] = _x.fork_and_knife;
-        _j["fountain"] = _x.fountain;
-        _j["fountain_pen"] = _x.fountain_pen;
-        _j["four"] = _x.four;
-        _j["four_leaf_clover"] = _x.four_leaf_clover;
-        _j["fox_face"] = _x.fox_face;
-        _j["fr"] = _x.fr;
-        _j["framed_picture"] = _x.framed_picture;
-        _j["free"] = _x.free;
-        _j["french_guiana"] = _x.french_guiana;
-        _j["french_polynesia"] = _x.french_polynesia;
-        _j["french_southern_territories"] = _x.french_southern_territories;
-        _j["fried_egg"] = _x.fried_egg;
-        _j["fried_shrimp"] = _x.fried_shrimp;
-        _j["fries"] = _x.fries;
-        _j["frog"] = _x.frog;
-        _j["frowning"] = _x.frowning;
-        _j["frowning_face"] = _x.frowning_face;
-        _j["frowning_man"] = _x.frowning_man;
-        _j["frowning_woman"] = _x.frowning_woman;
-        _j["fu"] = _x.fu;
-        _j["fuelpump"] = _x.fuelpump;
-        _j["full_moon"] = _x.full_moon;
-        _j["full_moon_with_face"] = _x.full_moon_with_face;
-        _j["funeral_urn"] = _x.funeral_urn;
-        _j["gabon"] = _x.gabon;
-        _j["gambia"] = _x.gambia;
-        _j["game_die"] = _x.game_die;
-        _j["gb"] = _x.gb;
-        _j["gear"] = _x.gear;
-        _j["gem"] = _x.gem;
-        _j["gemini"] = _x.gemini;
-        _j["georgia"] = _x.georgia;
-        _j["ghana"] = _x.ghana;
-        _j["ghost"] = _x.ghost;
-        _j["gibraltar"] = _x.gibraltar;
-        _j["gift"] = _x.gift;
-        _j["gift_heart"] = _x.gift_heart;
-        _j["girl"] = _x.girl;
-        _j["globe_with_meridians"] = _x.globe_with_meridians;
-        _j["goal_net"] = _x.goal_net;
-        _j["goat"] = _x.goat;
-        _j["goberserk"] = _x.goberserk;
-        _j["godmode"] = _x.godmode;
-        _j["golf"] = _x.golf;
-        _j["golfing_man"] = _x.golfing_man;
-        _j["golfing_woman"] = _x.golfing_woman;
-        _j["gorilla"] = _x.gorilla;
-        _j["grapes"] = _x.grapes;
-        _j["greece"] = _x.greece;
-        _j["green_apple"] = _x.green_apple;
-        _j["green_book"] = _x.green_book;
-        _j["green_heart"] = _x.green_heart;
-        _j["green_salad"] = _x.green_salad;
-        _j["greenland"] = _x.greenland;
-        _j["grenada"] = _x.grenada;
-        _j["grey_exclamation"] = _x.grey_exclamation;
-        _j["grey_question"] = _x.grey_question;
-        _j["grimacing"] = _x.grimacing;
-        _j["grin"] = _x.grin;
-        _j["grinning"] = _x.grinning;
-        _j["guadeloupe"] = _x.guadeloupe;
-        _j["guam"] = _x.guam;
-        _j["guardsman"] = _x.guardsman;
-        _j["guardswoman"] = _x.guardswoman;
-        _j["guatemala"] = _x.guatemala;
-        _j["guernsey"] = _x.guernsey;
-        _j["guinea"] = _x.guinea;
-        _j["guinea_bissau"] = _x.guinea_bissau;
-        _j["guitar"] = _x.guitar;
-        _j["gun"] = _x.gun;
-        _j["guyana"] = _x.guyana;
-        _j["haircut"] = _x.haircut;
-        _j["haircut_man"] = _x.haircut_man;
-        _j["haircut_woman"] = _x.haircut_woman;
-        _j["haiti"] = _x.haiti;
-        _j["hamburger"] = _x.hamburger;
-        _j["hammer"] = _x.hammer;
-        _j["hammer_and_pick"] = _x.hammer_and_pick;
-        _j["hammer_and_wrench"] = _x.hammer_and_wrench;
-        _j["hamster"] = _x.hamster;
-        _j["hand"] = _x.hand;
-        _j["handbag"] = _x.handbag;
-        _j["handshake"] = _x.handshake;
-        _j["hankey"] = _x.hankey;
-        _j["hash"] = _x.hash;
-        _j["hatched_chick"] = _x.hatched_chick;
-        _j["hatching_chick"] = _x.hatching_chick;
-        _j["headphones"] = _x.headphones;
-        _j["hear_no_evil"] = _x.hear_no_evil;
-        _j["heart"] = _x.heart;
-        _j["heart_decoration"] = _x.heart_decoration;
-        _j["heart_eyes"] = _x.heart_eyes;
-        _j["heart_eyes_cat"] = _x.heart_eyes_cat;
-        _j["heartbeat"] = _x.heartbeat;
-        _j["heartpulse"] = _x.heartpulse;
-        _j["hearts"] = _x.hearts;
-        _j["heavy_check_mark"] = _x.heavy_check_mark;
-        _j["heavy_division_sign"] = _x.heavy_division_sign;
-        _j["heavy_dollar_sign"] = _x.heavy_dollar_sign;
-        _j["heavy_exclamation_mark"] = _x.heavy_exclamation_mark;
-        _j["heavy_heart_exclamation"] = _x.heavy_heart_exclamation;
-        _j["heavy_minus_sign"] = _x.heavy_minus_sign;
-        _j["heavy_multiplication_x"] = _x.heavy_multiplication_x;
-        _j["heavy_plus_sign"] = _x.heavy_plus_sign;
-        _j["helicopter"] = _x.helicopter;
-        _j["herb"] = _x.herb;
-        _j["hibiscus"] = _x.hibiscus;
-        _j["high_brightness"] = _x.high_brightness;
-        _j["high_heel"] = _x.high_heel;
-        _j["hocho"] = _x.hocho;
-        _j["hole"] = _x.hole;
-        _j["honduras"] = _x.honduras;
-        _j["honey_pot"] = _x.honey_pot;
-        _j["honeybee"] = _x.honeybee;
-        _j["hong_kong"] = _x.hong_kong;
-        _j["horse"] = _x.horse;
-        _j["horse_racing"] = _x.horse_racing;
-        _j["hospital"] = _x.hospital;
-        _j["hot_pepper"] = _x.hot_pepper;
-        _j["hotdog"] = _x.hotdog;
-        _j["hotel"] = _x.hotel;
-        _j["hotsprings"] = _x.hotsprings;
-        _j["hourglass"] = _x.hourglass;
-        _j["hourglass_flowing_sand"] = _x.hourglass_flowing_sand;
-        _j["house"] = _x.house;
-        _j["house_with_garden"] = _x.house_with_garden;
-        _j["houses"] = _x.houses;
-        _j["hugs"] = _x.hugs;
-        _j["hungary"] = _x.hungary;
-        _j["hurtrealbad"] = _x.hurtrealbad;
-        _j["hushed"] = _x.hushed;
-        _j["ice_cream"] = _x.ice_cream;
-        _j["ice_hockey"] = _x.ice_hockey;
-        _j["ice_skate"] = _x.ice_skate;
-        _j["icecream"] = _x.icecream;
-        _j["iceland"] = _x.iceland;
-        _j["id"] = _x.id;
-        _j["ideograph_advantage"] = _x.ideograph_advantage;
-        _j["imp"] = _x.imp;
-        _j["inbox_tray"] = _x.inbox_tray;
-        _j["incoming_envelope"] = _x.incoming_envelope;
-        _j["india"] = _x.india;
-        _j["indonesia"] = _x.indonesia;
-        _j["information_desk_person"] = _x.information_desk_person;
-        _j["information_source"] = _x.information_source;
-        _j["innocent"] = _x.innocent;
-        _j["interrobang"] = _x.interrobang;
-        _j["iphone"] = _x.iphone;
-        _j["iran"] = _x.iran;
-        _j["iraq"] = _x.iraq;
-        _j["ireland"] = _x.ireland;
-        _j["isle_of_man"] = _x.isle_of_man;
-        _j["israel"] = _x.israel;
-        _j["it"] = _x.it;
-        _j["izakaya_lantern"] = _x.izakaya_lantern;
-        _j["jack_o_lantern"] = _x.jack_o_lantern;
-        _j["jamaica"] = _x.jamaica;
-        _j["japan"] = _x.japan;
-        _j["japanese_castle"] = _x.japanese_castle;
-        _j["japanese_goblin"] = _x.japanese_goblin;
-        _j["japanese_ogre"] = _x.japanese_ogre;
-        _j["jeans"] = _x.jeans;
-        _j["jersey"] = _x.jersey;
-        _j["jordan"] = _x.jordan;
-        _j["joy"] = _x.joy;
-        _j["joy_cat"] = _x.joy_cat;
-        _j["joystick"] = _x.joystick;
-        _j["jp"] = _x.jp;
-        _j["kaaba"] = _x.kaaba;
-        _j["kazakhstan"] = _x.kazakhstan;
-        _j["kenya"] = _x.kenya;
-        _j["key"] = _x.key;
-        _j["keyboard"] = _x.keyboard;
-        _j["keycap_ten"] = _x.keycap_ten;
-        _j["kick_scooter"] = _x.kick_scooter;
-        _j["kimono"] = _x.kimono;
-        _j["kiribati"] = _x.kiribati;
-        _j["kiss"] = _x.kiss;
-        _j["kissing"] = _x.kissing;
-        _j["kissing_cat"] = _x.kissing_cat;
-        _j["kissing_closed_eyes"] = _x.kissing_closed_eyes;
-        _j["kissing_heart"] = _x.kissing_heart;
-        _j["kissing_smiling_eyes"] = _x.kissing_smiling_eyes;
-        _j["kiwi_fruit"] = _x.kiwi_fruit;
-        _j["knife"] = _x.knife;
-        _j["koala"] = _x.koala;
-        _j["koko"] = _x.koko;
-        _j["kosovo"] = _x.kosovo;
-        _j["kr"] = _x.kr;
-        _j["kuwait"] = _x.kuwait;
-        _j["kyrgyzstan"] = _x.kyrgyzstan;
-        _j["label"] = _x.label;
-        _j["lantern"] = _x.lantern;
-        _j["laos"] = _x.laos;
-        _j["large_blue_circle"] = _x.large_blue_circle;
-        _j["large_blue_diamond"] = _x.large_blue_diamond;
-        _j["large_orange_diamond"] = _x.large_orange_diamond;
-        _j["last_quarter_moon"] = _x.last_quarter_moon;
-        _j["last_quarter_moon_with_face"] = _x.last_quarter_moon_with_face;
-        _j["latin_cross"] = _x.latin_cross;
-        _j["latvia"] = _x.latvia;
-        _j["laughing"] = _x.laughing;
-        _j["leaves"] = _x.leaves;
-        _j["lebanon"] = _x.lebanon;
-        _j["ledger"] = _x.ledger;
-        _j["left_luggage"] = _x.left_luggage;
-        _j["left_right_arrow"] = _x.left_right_arrow;
-        _j["leftwards_arrow_with_hook"] = _x.leftwards_arrow_with_hook;
-        _j["lemon"] = _x.lemon;
-        _j["leo"] = _x.leo;
-        _j["leopard"] = _x.leopard;
-        _j["lesotho"] = _x.lesotho;
-        _j["level_slider"] = _x.level_slider;
-        _j["liberia"] = _x.liberia;
-        _j["libra"] = _x.libra;
-        _j["libya"] = _x.libya;
-        _j["liechtenstein"] = _x.liechtenstein;
-        _j["light_rail"] = _x.light_rail;
-        _j["link"] = _x.link;
-        _j["lion"] = _x.lion;
-        _j["lips"] = _x.lips;
-        _j["lipstick"] = _x.lipstick;
-        _j["lithuania"] = _x.lithuania;
-        _j["lizard"] = _x.lizard;
-        _j["lock"] = _x.lock;
-        _j["lock_with_ink_pen"] = _x.lock_with_ink_pen;
-        _j["lollipop"] = _x.lollipop;
-        _j["loop"] = _x.loop;
-        _j["loud_sound"] = _x.loud_sound;
-        _j["loudspeaker"] = _x.loudspeaker;
-        _j["love_hotel"] = _x.love_hotel;
-        _j["love_letter"] = _x.love_letter;
-        _j["low_brightness"] = _x.low_brightness;
-        _j["luxembourg"] = _x.luxembourg;
-        _j["lying_face"] = _x.lying_face;
-        _j["m"] = _x.m;
-        _j["macau"] = _x.macau;
-        _j["macedonia"] = _x.macedonia;
-        _j["madagascar"] = _x.madagascar;
-        _j["mag"] = _x.mag;
-        _j["mag_right"] = _x.mag_right;
-        _j["mahjong"] = _x.mahjong;
-        _j["mailbox"] = _x.mailbox;
-        _j["mailbox_closed"] = _x.mailbox_closed;
-        _j["mailbox_with_mail"] = _x.mailbox_with_mail;
-        _j["mailbox_with_no_mail"] = _x.mailbox_with_no_mail;
-        _j["malawi"] = _x.malawi;
-        _j["malaysia"] = _x.malaysia;
-        _j["maldives"] = _x.maldives;
-        _j["male_detective"] = _x.male_detective;
-        _j["mali"] = _x.mali;
-        _j["malta"] = _x.malta;
-        _j["man"] = _x.man;
-        _j["man_artist"] = _x.man_artist;
-        _j["man_astronaut"] = _x.man_astronaut;
-        _j["man_cartwheeling"] = _x.man_cartwheeling;
-        _j["man_cook"] = _x.man_cook;
-        _j["man_dancing"] = _x.man_dancing;
-        _j["man_facepalming"] = _x.man_facepalming;
-        _j["man_factory_worker"] = _x.man_factory_worker;
-        _j["man_farmer"] = _x.man_farmer;
-        _j["man_firefighter"] = _x.man_firefighter;
-        _j["man_health_worker"] = _x.man_health_worker;
-        _j["man_in_tuxedo"] = _x.man_in_tuxedo;
-        _j["man_judge"] = _x.man_judge;
-        _j["man_juggling"] = _x.man_juggling;
-        _j["man_mechanic"] = _x.man_mechanic;
-        _j["man_office_worker"] = _x.man_office_worker;
-        _j["man_pilot"] = _x.man_pilot;
-        _j["man_playing_handball"] = _x.man_playing_handball;
-        _j["man_playing_water_polo"] = _x.man_playing_water_polo;
-        _j["man_scientist"] = _x.man_scientist;
-        _j["man_shrugging"] = _x.man_shrugging;
-        _j["man_singer"] = _x.man_singer;
-        _j["man_student"] = _x.man_student;
-        _j["man_teacher"] = _x.man_teacher;
-        _j["man_technologist"] = _x.man_technologist;
-        _j["man_with_gua_pi_mao"] = _x.man_with_gua_pi_mao;
-        _j["man_with_turban"] = _x.man_with_turban;
-        _j["mandarin"] = _x.mandarin;
-        _j["mans_shoe"] = _x.mans_shoe;
-        _j["mantelpiece_clock"] = _x.mantelpiece_clock;
-        _j["maple_leaf"] = _x.maple_leaf;
-        _j["marshall_islands"] = _x.marshall_islands;
-        _j["martial_arts_uniform"] = _x.martial_arts_uniform;
-        _j["martinique"] = _x.martinique;
-        _j["mask"] = _x.mask;
-        _j["massage"] = _x.massage;
-        _j["massage_man"] = _x.massage_man;
-        _j["massage_woman"] = _x.massage_woman;
-        _j["mauritania"] = _x.mauritania;
-        _j["mauritius"] = _x.mauritius;
-        _j["mayotte"] = _x.mayotte;
-        _j["meat_on_bone"] = _x.meat_on_bone;
-        _j["medal_military"] = _x.medal_military;
-        _j["medal_sports"] = _x.medal_sports;
-        _j["mega"] = _x.mega;
-        _j["melon"] = _x.melon;
-        _j["memo"] = _x.memo;
-        _j["men_wrestling"] = _x.men_wrestling;
-        _j["menorah"] = _x.menorah;
-        _j["mens"] = _x.mens;
-        _j["metal"] = _x.metal;
-        _j["metro"] = _x.metro;
-        _j["mexico"] = _x.mexico;
-        _j["micronesia"] = _x.micronesia;
-        _j["microphone"] = _x.microphone;
-        _j["microscope"] = _x.microscope;
-        _j["middle_finger"] = _x.middle_finger;
-        _j["milk_glass"] = _x.milk_glass;
-        _j["milky_way"] = _x.milky_way;
-        _j["minibus"] = _x.minibus;
-        _j["minidisc"] = _x.minidisc;
-        _j["mobile_phone_off"] = _x.mobile_phone_off;
-        _j["moldova"] = _x.moldova;
-        _j["monaco"] = _x.monaco;
-        _j["money_mouth_face"] = _x.money_mouth_face;
-        _j["money_with_wings"] = _x.money_with_wings;
-        _j["moneybag"] = _x.moneybag;
-        _j["mongolia"] = _x.mongolia;
-        _j["monkey"] = _x.monkey;
-        _j["monkey_face"] = _x.monkey_face;
-        _j["monorail"] = _x.monorail;
-        _j["montenegro"] = _x.montenegro;
-        _j["montserrat"] = _x.montserrat;
-        _j["moon"] = _x.moon;
-        _j["morocco"] = _x.morocco;
-        _j["mortar_board"] = _x.mortar_board;
-        _j["mosque"] = _x.mosque;
-        _j["motor_boat"] = _x.motor_boat;
-        _j["motor_scooter"] = _x.motor_scooter;
-        _j["motorcycle"] = _x.motorcycle;
-        _j["motorway"] = _x.motorway;
-        _j["mount_fuji"] = _x.mount_fuji;
-        _j["mountain"] = _x.mountain;
-        _j["mountain_bicyclist"] = _x.mountain_bicyclist;
-        _j["mountain_biking_man"] = _x.mountain_biking_man;
-        _j["mountain_biking_woman"] = _x.mountain_biking_woman;
-        _j["mountain_cableway"] = _x.mountain_cableway;
-        _j["mountain_railway"] = _x.mountain_railway;
-        _j["mountain_snow"] = _x.mountain_snow;
-        _j["mouse"] = _x.mouse;
-        _j["mouse2"] = _x.mouse2;
-        _j["movie_camera"] = _x.movie_camera;
-        _j["moyai"] = _x.moyai;
-        _j["mozambique"] = _x.mozambique;
-        _j["mrs_claus"] = _x.mrs_claus;
-        _j["muscle"] = _x.muscle;
-        _j["mushroom"] = _x.mushroom;
-        _j["musical_keyboard"] = _x.musical_keyboard;
-        _j["musical_note"] = _x.musical_note;
-        _j["musical_score"] = _x.musical_score;
-        _j["mute"] = _x.mute;
-        _j["myanmar"] = _x.myanmar;
-        _j["nail_care"] = _x.nail_care;
-        _j["name_badge"] = _x.name_badge;
-        _j["namibia"] = _x.namibia;
-        _j["national_park"] = _x.national_park;
-        _j["nauru"] = _x.nauru;
-        _j["nauseated_face"] = _x.nauseated_face;
-        _j["neckbeard"] = _x.neckbeard;
-        _j["necktie"] = _x.necktie;
-        _j["negative_squared_cross_mark"] = _x.negative_squared_cross_mark;
-        _j["nepal"] = _x.nepal;
-        _j["nerd_face"] = _x.nerd_face;
-        _j["netherlands"] = _x.netherlands;
-        _j["neutral_face"] = _x.neutral_face;
-        _j["new"] = _x.emojis_new;
-        _j["new_caledonia"] = _x.new_caledonia;
-        _j["new_moon"] = _x.new_moon;
-        _j["new_moon_with_face"] = _x.new_moon_with_face;
-        _j["new_zealand"] = _x.new_zealand;
-        _j["newspaper"] = _x.newspaper;
-        _j["newspaper_roll"] = _x.newspaper_roll;
-        _j["next_track_button"] = _x.next_track_button;
-        _j["ng"] = _x.ng;
-        _j["ng_man"] = _x.ng_man;
-        _j["ng_woman"] = _x.ng_woman;
-        _j["nicaragua"] = _x.nicaragua;
-        _j["niger"] = _x.niger;
-        _j["nigeria"] = _x.nigeria;
-        _j["night_with_stars"] = _x.night_with_stars;
-        _j["nine"] = _x.nine;
-        _j["niue"] = _x.niue;
-        _j["no_bell"] = _x.no_bell;
-        _j["no_bicycles"] = _x.no_bicycles;
-        _j["no_entry"] = _x.no_entry;
-        _j["no_entry_sign"] = _x.no_entry_sign;
-        _j["no_good"] = _x.no_good;
-        _j["no_good_man"] = _x.no_good_man;
-        _j["no_good_woman"] = _x.no_good_woman;
-        _j["no_mobile_phones"] = _x.no_mobile_phones;
-        _j["no_mouth"] = _x.no_mouth;
-        _j["no_pedestrians"] = _x.no_pedestrians;
-        _j["no_smoking"] = _x.no_smoking;
-        _j["non-potable_water"] = _x.non_potable_water;
-        _j["norfolk_island"] = _x.norfolk_island;
-        _j["north_korea"] = _x.north_korea;
-        _j["northern_mariana_islands"] = _x.northern_mariana_islands;
-        _j["norway"] = _x.norway;
-        _j["nose"] = _x.nose;
-        _j["notebook"] = _x.notebook;
-        _j["notebook_with_decorative_cover"] = _x.notebook_with_decorative_cover;
-        _j["notes"] = _x.notes;
-        _j["nut_and_bolt"] = _x.nut_and_bolt;
-        _j["o"] = _x.o;
-        _j["o2"] = _x.o2;
-        _j["ocean"] = _x.ocean;
-        _j["octocat"] = _x.octocat;
-        _j["octopus"] = _x.octopus;
-        _j["oden"] = _x.oden;
-        _j["office"] = _x.office;
-        _j["oil_drum"] = _x.oil_drum;
-        _j["ok"] = _x.ok;
-        _j["ok_hand"] = _x.ok_hand;
-        _j["ok_man"] = _x.ok_man;
-        _j["ok_woman"] = _x.ok_woman;
-        _j["old_key"] = _x.old_key;
-        _j["older_man"] = _x.older_man;
-        _j["older_woman"] = _x.older_woman;
-        _j["om"] = _x.om;
-        _j["oman"] = _x.oman;
-        _j["on"] = _x.on;
-        _j["oncoming_automobile"] = _x.oncoming_automobile;
-        _j["oncoming_bus"] = _x.oncoming_bus;
-        _j["oncoming_police_car"] = _x.oncoming_police_car;
-        _j["oncoming_taxi"] = _x.oncoming_taxi;
-        _j["one"] = _x.one;
-        _j["open_book"] = _x.open_book;
-        _j["open_file_folder"] = _x.open_file_folder;
-        _j["open_hands"] = _x.open_hands;
-        _j["open_mouth"] = _x.open_mouth;
-        _j["open_umbrella"] = _x.open_umbrella;
-        _j["ophiuchus"] = _x.ophiuchus;
-        _j["orange"] = _x.orange;
-        _j["orange_book"] = _x.orange_book;
-        _j["orthodox_cross"] = _x.orthodox_cross;
-        _j["outbox_tray"] = _x.outbox_tray;
-        _j["owl"] = _x.owl;
-        _j["ox"] = _x.ox;
-        _j["package"] = _x.package;
-        _j["page_facing_up"] = _x.page_facing_up;
-        _j["page_with_curl"] = _x.page_with_curl;
-        _j["pager"] = _x.pager;
-        _j["paintbrush"] = _x.paintbrush;
-        _j["pakistan"] = _x.pakistan;
-        _j["palau"] = _x.palau;
-        _j["palestinian_territories"] = _x.palestinian_territories;
-        _j["palm_tree"] = _x.palm_tree;
-        _j["panama"] = _x.panama;
-        _j["pancakes"] = _x.pancakes;
-        _j["panda_face"] = _x.panda_face;
-        _j["paperclip"] = _x.paperclip;
-        _j["paperclips"] = _x.paperclips;
-        _j["papua_new_guinea"] = _x.papua_new_guinea;
-        _j["paraguay"] = _x.paraguay;
-        _j["parasol_on_ground"] = _x.parasol_on_ground;
-        _j["parking"] = _x.parking;
-        _j["part_alternation_mark"] = _x.part_alternation_mark;
-        _j["partly_sunny"] = _x.partly_sunny;
-        _j["passenger_ship"] = _x.passenger_ship;
-        _j["passport_control"] = _x.passport_control;
-        _j["pause_button"] = _x.pause_button;
-        _j["paw_prints"] = _x.paw_prints;
-        _j["peace_symbol"] = _x.peace_symbol;
-        _j["peach"] = _x.peach;
-        _j["peanuts"] = _x.peanuts;
-        _j["pear"] = _x.pear;
-        _j["pen"] = _x.pen;
-        _j["pencil"] = _x.pencil;
-        _j["pencil2"] = _x.pencil2;
-        _j["penguin"] = _x.penguin;
-        _j["pensive"] = _x.pensive;
-        _j["performing_arts"] = _x.performing_arts;
-        _j["persevere"] = _x.persevere;
-        _j["person_fencing"] = _x.person_fencing;
-        _j["person_frowning"] = _x.person_frowning;
-        _j["person_with_blond_hair"] = _x.person_with_blond_hair;
-        _j["person_with_pouting_face"] = _x.person_with_pouting_face;
-        _j["peru"] = _x.peru;
-        _j["philippines"] = _x.philippines;
-        _j["phone"] = _x.phone;
-        _j["pick"] = _x.pick;
-        _j["pig"] = _x.pig;
-        _j["pig2"] = _x.pig2;
-        _j["pig_nose"] = _x.pig_nose;
-        _j["pill"] = _x.pill;
-        _j["pineapple"] = _x.pineapple;
-        _j["ping_pong"] = _x.ping_pong;
-        _j["pisces"] = _x.pisces;
-        _j["pitcairn_islands"] = _x.pitcairn_islands;
-        _j["pizza"] = _x.pizza;
-        _j["place_of_worship"] = _x.place_of_worship;
-        _j["plate_with_cutlery"] = _x.plate_with_cutlery;
-        _j["play_or_pause_button"] = _x.play_or_pause_button;
-        _j["point_down"] = _x.point_down;
-        _j["point_left"] = _x.point_left;
-        _j["point_right"] = _x.point_right;
-        _j["point_up"] = _x.point_up;
-        _j["point_up_2"] = _x.point_up_2;
-        _j["poland"] = _x.poland;
-        _j["police_car"] = _x.police_car;
-        _j["policeman"] = _x.policeman;
-        _j["policewoman"] = _x.policewoman;
-        _j["poodle"] = _x.poodle;
-        _j["poop"] = _x.poop;
-        _j["popcorn"] = _x.popcorn;
-        _j["portugal"] = _x.portugal;
-        _j["post_office"] = _x.post_office;
-        _j["postal_horn"] = _x.postal_horn;
-        _j["postbox"] = _x.postbox;
-        _j["potable_water"] = _x.potable_water;
-        _j["potato"] = _x.potato;
-        _j["pouch"] = _x.pouch;
-        _j["poultry_leg"] = _x.poultry_leg;
-        _j["pound"] = _x.pound;
-        _j["pout"] = _x.pout;
-        _j["pouting_cat"] = _x.pouting_cat;
-        _j["pouting_man"] = _x.pouting_man;
-        _j["pouting_woman"] = _x.pouting_woman;
-        _j["pray"] = _x.pray;
-        _j["prayer_beads"] = _x.prayer_beads;
-        _j["pregnant_woman"] = _x.pregnant_woman;
-        _j["previous_track_button"] = _x.previous_track_button;
-        _j["prince"] = _x.prince;
-        _j["princess"] = _x.princess;
-        _j["printer"] = _x.printer;
-        _j["puerto_rico"] = _x.puerto_rico;
-        _j["punch"] = _x.punch;
-        _j["purple_heart"] = _x.purple_heart;
-        _j["purse"] = _x.purse;
-        _j["pushpin"] = _x.pushpin;
-        _j["put_litter_in_its_place"] = _x.put_litter_in_its_place;
-        _j["qatar"] = _x.qatar;
-        _j["question"] = _x.question;
-        _j["rabbit"] = _x.rabbit;
-        _j["rabbit2"] = _x.rabbit2;
-        _j["racehorse"] = _x.racehorse;
-        _j["racing_car"] = _x.racing_car;
-        _j["radio"] = _x.radio;
-        _j["radio_button"] = _x.radio_button;
-        _j["radioactive"] = _x.radioactive;
-        _j["rage"] = _x.rage;
-        _j["rage1"] = _x.rage1;
-        _j["rage2"] = _x.rage2;
-        _j["rage3"] = _x.rage3;
-        _j["rage4"] = _x.rage4;
-        _j["railway_car"] = _x.railway_car;
-        _j["railway_track"] = _x.railway_track;
-        _j["rainbow"] = _x.rainbow;
-        _j["rainbow_flag"] = _x.rainbow_flag;
-        _j["raised_back_of_hand"] = _x.raised_back_of_hand;
-        _j["raised_hand"] = _x.raised_hand;
-        _j["raised_hand_with_fingers_splayed"] = _x.raised_hand_with_fingers_splayed;
-        _j["raised_hands"] = _x.raised_hands;
-        _j["raising_hand"] = _x.raising_hand;
-        _j["raising_hand_man"] = _x.raising_hand_man;
-        _j["raising_hand_woman"] = _x.raising_hand_woman;
-        _j["ram"] = _x.ram;
-        _j["ramen"] = _x.ramen;
-        _j["rat"] = _x.rat;
-        _j["record_button"] = _x.record_button;
-        _j["recycle"] = _x.recycle;
-        _j["red_car"] = _x.red_car;
-        _j["red_circle"] = _x.red_circle;
-        _j["registered"] = _x.registered;
-        _j["relaxed"] = _x.relaxed;
-        _j["relieved"] = _x.relieved;
-        _j["reminder_ribbon"] = _x.reminder_ribbon;
-        _j["repeat"] = _x.repeat;
-        _j["repeat_one"] = _x.repeat_one;
-        _j["rescue_worker_helmet"] = _x.rescue_worker_helmet;
-        _j["restroom"] = _x.restroom;
-        _j["reunion"] = _x.reunion;
-        _j["revolving_hearts"] = _x.revolving_hearts;
-        _j["rewind"] = _x.rewind;
-        _j["rhinoceros"] = _x.rhinoceros;
-        _j["ribbon"] = _x.ribbon;
-        _j["rice"] = _x.rice;
-        _j["rice_ball"] = _x.rice_ball;
-        _j["rice_cracker"] = _x.rice_cracker;
-        _j["rice_scene"] = _x.rice_scene;
-        _j["right_anger_bubble"] = _x.right_anger_bubble;
-        _j["ring"] = _x.ring;
-        _j["robot"] = _x.robot;
-        _j["rocket"] = _x.rocket;
-        _j["rofl"] = _x.rofl;
-        _j["roll_eyes"] = _x.roll_eyes;
-        _j["roller_coaster"] = _x.roller_coaster;
-        _j["romania"] = _x.romania;
-        _j["rooster"] = _x.rooster;
-        _j["rose"] = _x.rose;
-        _j["rosette"] = _x.rosette;
-        _j["rotating_light"] = _x.rotating_light;
-        _j["round_pushpin"] = _x.round_pushpin;
-        _j["rowboat"] = _x.rowboat;
-        _j["rowing_man"] = _x.rowing_man;
-        _j["rowing_woman"] = _x.rowing_woman;
-        _j["ru"] = _x.ru;
-        _j["rugby_football"] = _x.rugby_football;
-        _j["runner"] = _x.runner;
-        _j["running"] = _x.running;
-        _j["running_man"] = _x.running_man;
-        _j["running_shirt_with_sash"] = _x.running_shirt_with_sash;
-        _j["running_woman"] = _x.running_woman;
-        _j["rwanda"] = _x.rwanda;
-        _j["sa"] = _x.sa;
-        _j["sagittarius"] = _x.sagittarius;
-        _j["sailboat"] = _x.sailboat;
-        _j["sake"] = _x.sake;
-        _j["samoa"] = _x.samoa;
-        _j["san_marino"] = _x.san_marino;
-        _j["sandal"] = _x.sandal;
-        _j["santa"] = _x.santa;
-        _j["sao_tome_principe"] = _x.sao_tome_principe;
-        _j["satellite"] = _x.satellite;
-        _j["satisfied"] = _x.satisfied;
-        _j["saudi_arabia"] = _x.saudi_arabia;
-        _j["saxophone"] = _x.saxophone;
-        _j["school"] = _x.school;
-        _j["school_satchel"] = _x.school_satchel;
-        _j["scissors"] = _x.scissors;
-        _j["scorpion"] = _x.scorpion;
-        _j["scorpius"] = _x.scorpius;
-        _j["scream"] = _x.scream;
-        _j["scream_cat"] = _x.scream_cat;
-        _j["scroll"] = _x.scroll;
-        _j["seat"] = _x.seat;
-        _j["secret"] = _x.secret;
-        _j["see_no_evil"] = _x.see_no_evil;
-        _j["seedling"] = _x.seedling;
-        _j["selfie"] = _x.selfie;
-        _j["senegal"] = _x.senegal;
-        _j["serbia"] = _x.serbia;
-        _j["seven"] = _x.seven;
-        _j["seychelles"] = _x.seychelles;
-        _j["shallow_pan_of_food"] = _x.shallow_pan_of_food;
-        _j["shamrock"] = _x.shamrock;
-        _j["shark"] = _x.shark;
-        _j["shaved_ice"] = _x.shaved_ice;
-        _j["sheep"] = _x.sheep;
-        _j["shell"] = _x.shell;
-        _j["shield"] = _x.shield;
-        _j["shinto_shrine"] = _x.shinto_shrine;
-        _j["ship"] = _x.ship;
-        _j["shipit"] = _x.shipit;
-        _j["shirt"] = _x.shirt;
-        _j["shit"] = _x.shit;
-        _j["shoe"] = _x.shoe;
-        _j["shopping"] = _x.shopping;
-        _j["shopping_cart"] = _x.shopping_cart;
-        _j["shower"] = _x.shower;
-        _j["shrimp"] = _x.shrimp;
-        _j["sierra_leone"] = _x.sierra_leone;
-        _j["signal_strength"] = _x.signal_strength;
-        _j["singapore"] = _x.singapore;
-        _j["sint_maarten"] = _x.sint_maarten;
-        _j["six"] = _x.six;
-        _j["six_pointed_star"] = _x.six_pointed_star;
-        _j["ski"] = _x.ski;
-        _j["skier"] = _x.skier;
-        _j["skull"] = _x.skull;
-        _j["skull_and_crossbones"] = _x.skull_and_crossbones;
-        _j["sleeping"] = _x.sleeping;
-        _j["sleeping_bed"] = _x.sleeping_bed;
-        _j["sleepy"] = _x.sleepy;
-        _j["slightly_frowning_face"] = _x.slightly_frowning_face;
-        _j["slightly_smiling_face"] = _x.slightly_smiling_face;
-        _j["slot_machine"] = _x.slot_machine;
-        _j["slovakia"] = _x.slovakia;
-        _j["slovenia"] = _x.slovenia;
-        _j["small_airplane"] = _x.small_airplane;
-        _j["small_blue_diamond"] = _x.small_blue_diamond;
-        _j["small_orange_diamond"] = _x.small_orange_diamond;
-        _j["small_red_triangle"] = _x.small_red_triangle;
-        _j["small_red_triangle_down"] = _x.small_red_triangle_down;
-        _j["smile"] = _x.smile;
-        _j["smile_cat"] = _x.smile_cat;
-        _j["smiley"] = _x.smiley;
-        _j["smiley_cat"] = _x.smiley_cat;
-        _j["smiling_imp"] = _x.smiling_imp;
-        _j["smirk"] = _x.smirk;
-        _j["smirk_cat"] = _x.smirk_cat;
-        _j["smoking"] = _x.smoking;
-        _j["snail"] = _x.snail;
-        _j["snake"] = _x.snake;
-        _j["sneezing_face"] = _x.sneezing_face;
-        _j["snowboarder"] = _x.snowboarder;
-        _j["snowflake"] = _x.snowflake;
-        _j["snowman"] = _x.snowman;
-        _j["snowman_with_snow"] = _x.snowman_with_snow;
-        _j["sob"] = _x.sob;
-        _j["soccer"] = _x.soccer;
-        _j["solomon_islands"] = _x.solomon_islands;
-        _j["somalia"] = _x.somalia;
-        _j["soon"] = _x.soon;
-        _j["sos"] = _x.sos;
-        _j["sound"] = _x.sound;
-        _j["south_africa"] = _x.south_africa;
-        _j["south_georgia_south_sandwich_islands"] = _x.south_georgia_south_sandwich_islands;
-        _j["south_sudan"] = _x.south_sudan;
-        _j["space_invader"] = _x.space_invader;
-        _j["spades"] = _x.spades;
-        _j["spaghetti"] = _x.spaghetti;
-        _j["sparkle"] = _x.sparkle;
-        _j["sparkler"] = _x.sparkler;
-        _j["sparkles"] = _x.sparkles;
-        _j["sparkling_heart"] = _x.sparkling_heart;
-        _j["speak_no_evil"] = _x.speak_no_evil;
-        _j["speaker"] = _x.speaker;
-        _j["speaking_head"] = _x.speaking_head;
-        _j["speech_balloon"] = _x.speech_balloon;
-        _j["speedboat"] = _x.speedboat;
-        _j["spider"] = _x.spider;
-        _j["spider_web"] = _x.spider_web;
-        _j["spiral_calendar"] = _x.spiral_calendar;
-        _j["spiral_notepad"] = _x.spiral_notepad;
-        _j["spoon"] = _x.spoon;
-        _j["squid"] = _x.squid;
-        _j["squirrel"] = _x.squirrel;
-        _j["sri_lanka"] = _x.sri_lanka;
-        _j["st_barthelemy"] = _x.st_barthelemy;
-        _j["st_helena"] = _x.st_helena;
-        _j["st_kitts_nevis"] = _x.st_kitts_nevis;
-        _j["st_lucia"] = _x.st_lucia;
-        _j["st_pierre_miquelon"] = _x.st_pierre_miquelon;
-        _j["st_vincent_grenadines"] = _x.st_vincent_grenadines;
-        _j["stadium"] = _x.stadium;
-        _j["star"] = _x.star;
-        _j["star2"] = _x.star2;
-        _j["star_and_crescent"] = _x.star_and_crescent;
-        _j["star_of_david"] = _x.star_of_david;
-        _j["stars"] = _x.stars;
-        _j["station"] = _x.station;
-        _j["statue_of_liberty"] = _x.statue_of_liberty;
-        _j["steam_locomotive"] = _x.steam_locomotive;
-        _j["stew"] = _x.stew;
-        _j["stop_button"] = _x.stop_button;
-        _j["stop_sign"] = _x.stop_sign;
-        _j["stopwatch"] = _x.stopwatch;
-        _j["straight_ruler"] = _x.straight_ruler;
-        _j["strawberry"] = _x.strawberry;
-        _j["stuck_out_tongue"] = _x.stuck_out_tongue;
-        _j["stuck_out_tongue_closed_eyes"] = _x.stuck_out_tongue_closed_eyes;
-        _j["stuck_out_tongue_winking_eye"] = _x.stuck_out_tongue_winking_eye;
-        _j["studio_microphone"] = _x.studio_microphone;
-        _j["stuffed_flatbread"] = _x.stuffed_flatbread;
-        _j["sudan"] = _x.sudan;
-        _j["sun_behind_large_cloud"] = _x.sun_behind_large_cloud;
-        _j["sun_behind_rain_cloud"] = _x.sun_behind_rain_cloud;
-        _j["sun_behind_small_cloud"] = _x.sun_behind_small_cloud;
-        _j["sun_with_face"] = _x.sun_with_face;
-        _j["sunflower"] = _x.sunflower;
-        _j["sunglasses"] = _x.sunglasses;
-        _j["sunny"] = _x.sunny;
-        _j["sunrise"] = _x.sunrise;
-        _j["sunrise_over_mountains"] = _x.sunrise_over_mountains;
-        _j["surfer"] = _x.surfer;
-        _j["surfing_man"] = _x.surfing_man;
-        _j["surfing_woman"] = _x.surfing_woman;
-        _j["suriname"] = _x.suriname;
-        _j["sushi"] = _x.sushi;
-        _j["suspect"] = _x.suspect;
-        _j["suspension_railway"] = _x.suspension_railway;
-        _j["swaziland"] = _x.swaziland;
-        _j["sweat"] = _x.sweat;
-        _j["sweat_drops"] = _x.sweat_drops;
-        _j["sweat_smile"] = _x.sweat_smile;
-        _j["sweden"] = _x.sweden;
-        _j["sweet_potato"] = _x.sweet_potato;
-        _j["swimmer"] = _x.swimmer;
-        _j["swimming_man"] = _x.swimming_man;
-        _j["swimming_woman"] = _x.swimming_woman;
-        _j["switzerland"] = _x.switzerland;
-        _j["symbols"] = _x.symbols;
-        _j["synagogue"] = _x.synagogue;
-        _j["syria"] = _x.syria;
-        _j["syringe"] = _x.syringe;
-        _j["taco"] = _x.taco;
-        _j["tada"] = _x.tada;
-        _j["taiwan"] = _x.taiwan;
-        _j["tajikistan"] = _x.tajikistan;
-        _j["tanabata_tree"] = _x.tanabata_tree;
-        _j["tangerine"] = _x.tangerine;
-        _j["tanzania"] = _x.tanzania;
-        _j["taurus"] = _x.taurus;
-        _j["taxi"] = _x.taxi;
-        _j["tea"] = _x.tea;
-        _j["telephone"] = _x.telephone;
-        _j["telephone_receiver"] = _x.telephone_receiver;
-        _j["telescope"] = _x.telescope;
-        _j["tennis"] = _x.tennis;
-        _j["tent"] = _x.tent;
-        _j["thailand"] = _x.thailand;
-        _j["thermometer"] = _x.thermometer;
-        _j["thinking"] = _x.thinking;
-        _j["thought_balloon"] = _x.thought_balloon;
-        _j["three"] = _x.three;
-        _j["thumbsdown"] = _x.thumbsdown;
-        _j["thumbsup"] = _x.thumbsup;
-        _j["ticket"] = _x.ticket;
-        _j["tickets"] = _x.tickets;
-        _j["tiger"] = _x.tiger;
-        _j["tiger2"] = _x.tiger2;
-        _j["timer_clock"] = _x.timer_clock;
-        _j["timor_leste"] = _x.timor_leste;
-        _j["tipping_hand_man"] = _x.tipping_hand_man;
-        _j["tipping_hand_woman"] = _x.tipping_hand_woman;
-        _j["tired_face"] = _x.tired_face;
-        _j["tm"] = _x.tm;
-        _j["togo"] = _x.togo;
-        _j["toilet"] = _x.toilet;
-        _j["tokelau"] = _x.tokelau;
-        _j["tokyo_tower"] = _x.tokyo_tower;
-        _j["tomato"] = _x.tomato;
-        _j["tonga"] = _x.tonga;
-        _j["tongue"] = _x.tongue;
-        _j["top"] = _x.top;
-        _j["tophat"] = _x.tophat;
-        _j["tornado"] = _x.tornado;
-        _j["tr"] = _x.tr;
-        _j["trackball"] = _x.trackball;
-        _j["tractor"] = _x.tractor;
-        _j["traffic_light"] = _x.traffic_light;
-        _j["train"] = _x.train;
-        _j["train2"] = _x.train2;
-        _j["tram"] = _x.tram;
-        _j["triangular_flag_on_post"] = _x.triangular_flag_on_post;
-        _j["triangular_ruler"] = _x.triangular_ruler;
-        _j["trident"] = _x.trident;
-        _j["trinidad_tobago"] = _x.trinidad_tobago;
-        _j["triumph"] = _x.triumph;
-        _j["trolleybus"] = _x.trolleybus;
-        _j["trollface"] = _x.trollface;
-        _j["trophy"] = _x.trophy;
-        _j["tropical_drink"] = _x.tropical_drink;
-        _j["tropical_fish"] = _x.tropical_fish;
-        _j["truck"] = _x.truck;
-        _j["trumpet"] = _x.trumpet;
-        _j["tshirt"] = _x.tshirt;
-        _j["tulip"] = _x.tulip;
-        _j["tumbler_glass"] = _x.tumbler_glass;
-        _j["tunisia"] = _x.tunisia;
-        _j["turkey"] = _x.turkey;
-        _j["turkmenistan"] = _x.turkmenistan;
-        _j["turks_caicos_islands"] = _x.turks_caicos_islands;
-        _j["turtle"] = _x.turtle;
-        _j["tuvalu"] = _x.tuvalu;
-        _j["tv"] = _x.tv;
-        _j["twisted_rightwards_arrows"] = _x.twisted_rightwards_arrows;
-        _j["two"] = _x.two;
-        _j["two_hearts"] = _x.two_hearts;
-        _j["two_men_holding_hands"] = _x.two_men_holding_hands;
-        _j["two_women_holding_hands"] = _x.two_women_holding_hands;
-        _j["u5272"] = _x.u5272;
-        _j["u5408"] = _x.u5408;
-        _j["u55b6"] = _x.u55_b6;
-        _j["u6307"] = _x.u6307;
-        _j["u6708"] = _x.u6708;
-        _j["u6709"] = _x.u6709;
-        _j["u6e80"] = _x.u6_e80;
-        _j["u7121"] = _x.u7121;
-        _j["u7533"] = _x.u7533;
-        _j["u7981"] = _x.u7981;
-        _j["u7a7a"] = _x.u7_a7_a;
-        _j["uganda"] = _x.uganda;
-        _j["uk"] = _x.uk;
-        _j["ukraine"] = _x.ukraine;
-        _j["umbrella"] = _x.umbrella;
-        _j["unamused"] = _x.unamused;
-        _j["underage"] = _x.underage;
-        _j["unicorn"] = _x.unicorn;
-        _j["united_arab_emirates"] = _x.united_arab_emirates;
-        _j["unlock"] = _x.unlock;
-        _j["up"] = _x.up;
-        _j["upside_down_face"] = _x.upside_down_face;
-        _j["uruguay"] = _x.uruguay;
-        _j["us"] = _x.us;
-        _j["us_virgin_islands"] = _x.us_virgin_islands;
-        _j["uzbekistan"] = _x.uzbekistan;
-        _j["v"] = _x.v;
-        _j["vanuatu"] = _x.vanuatu;
-        _j["vatican_city"] = _x.vatican_city;
-        _j["venezuela"] = _x.venezuela;
-        _j["vertical_traffic_light"] = _x.vertical_traffic_light;
-        _j["vhs"] = _x.vhs;
-        _j["vibration_mode"] = _x.vibration_mode;
-        _j["video_camera"] = _x.video_camera;
-        _j["video_game"] = _x.video_game;
-        _j["vietnam"] = _x.vietnam;
-        _j["violin"] = _x.violin;
-        _j["virgo"] = _x.virgo;
-        _j["volcano"] = _x.volcano;
-        _j["volleyball"] = _x.volleyball;
-        _j["vs"] = _x.vs;
-        _j["vulcan_salute"] = _x.vulcan_salute;
-        _j["walking"] = _x.walking;
-        _j["walking_man"] = _x.walking_man;
-        _j["walking_woman"] = _x.walking_woman;
-        _j["wallis_futuna"] = _x.wallis_futuna;
-        _j["waning_crescent_moon"] = _x.waning_crescent_moon;
-        _j["waning_gibbous_moon"] = _x.waning_gibbous_moon;
-        _j["warning"] = _x.warning;
-        _j["wastebasket"] = _x.wastebasket;
-        _j["watch"] = _x.watch;
-        _j["water_buffalo"] = _x.water_buffalo;
-        _j["watermelon"] = _x.watermelon;
-        _j["wave"] = _x.wave;
-        _j["wavy_dash"] = _x.wavy_dash;
-        _j["waxing_crescent_moon"] = _x.waxing_crescent_moon;
-        _j["waxing_gibbous_moon"] = _x.waxing_gibbous_moon;
-        _j["wc"] = _x.wc;
-        _j["weary"] = _x.weary;
-        _j["wedding"] = _x.wedding;
-        _j["weight_lifting_man"] = _x.weight_lifting_man;
-        _j["weight_lifting_woman"] = _x.weight_lifting_woman;
-        _j["western_sahara"] = _x.western_sahara;
-        _j["whale"] = _x.whale;
-        _j["whale2"] = _x.whale2;
-        _j["wheel_of_dharma"] = _x.wheel_of_dharma;
-        _j["wheelchair"] = _x.wheelchair;
-        _j["white_check_mark"] = _x.white_check_mark;
-        _j["white_circle"] = _x.white_circle;
-        _j["white_flag"] = _x.white_flag;
-        _j["white_flower"] = _x.white_flower;
-        _j["white_large_square"] = _x.white_large_square;
-        _j["white_medium_small_square"] = _x.white_medium_small_square;
-        _j["white_medium_square"] = _x.white_medium_square;
-        _j["white_small_square"] = _x.white_small_square;
-        _j["white_square_button"] = _x.white_square_button;
-        _j["wilted_flower"] = _x.wilted_flower;
-        _j["wind_chime"] = _x.wind_chime;
-        _j["wind_face"] = _x.wind_face;
-        _j["wine_glass"] = _x.wine_glass;
-        _j["wink"] = _x.wink;
-        _j["wolf"] = _x.wolf;
-        _j["woman"] = _x.woman;
-        _j["woman_artist"] = _x.woman_artist;
-        _j["woman_astronaut"] = _x.woman_astronaut;
-        _j["woman_cartwheeling"] = _x.woman_cartwheeling;
-        _j["woman_cook"] = _x.woman_cook;
-        _j["woman_facepalming"] = _x.woman_facepalming;
-        _j["woman_factory_worker"] = _x.woman_factory_worker;
-        _j["woman_farmer"] = _x.woman_farmer;
-        _j["woman_firefighter"] = _x.woman_firefighter;
-        _j["woman_health_worker"] = _x.woman_health_worker;
-        _j["woman_judge"] = _x.woman_judge;
-        _j["woman_juggling"] = _x.woman_juggling;
-        _j["woman_mechanic"] = _x.woman_mechanic;
-        _j["woman_office_worker"] = _x.woman_office_worker;
-        _j["woman_pilot"] = _x.woman_pilot;
-        _j["woman_playing_handball"] = _x.woman_playing_handball;
-        _j["woman_playing_water_polo"] = _x.woman_playing_water_polo;
-        _j["woman_scientist"] = _x.woman_scientist;
-        _j["woman_shrugging"] = _x.woman_shrugging;
-        _j["woman_singer"] = _x.woman_singer;
-        _j["woman_student"] = _x.woman_student;
-        _j["woman_teacher"] = _x.woman_teacher;
-        _j["woman_technologist"] = _x.woman_technologist;
-        _j["woman_with_turban"] = _x.woman_with_turban;
-        _j["womans_clothes"] = _x.womans_clothes;
-        _j["womans_hat"] = _x.womans_hat;
-        _j["women_wrestling"] = _x.women_wrestling;
-        _j["womens"] = _x.womens;
-        _j["world_map"] = _x.world_map;
-        _j["worried"] = _x.worried;
-        _j["wrench"] = _x.wrench;
-        _j["writing_hand"] = _x.writing_hand;
-        _j["x"] = _x.x;
-        _j["yellow_heart"] = _x.yellow_heart;
-        _j["yemen"] = _x.yemen;
-        _j["yen"] = _x.yen;
-        _j["yin_yang"] = _x.yin_yang;
-        _j["yum"] = _x.yum;
-        _j["zambia"] = _x.zambia;
-        _j["zap"] = _x.zap;
-        _j["zero"] = _x.zero;
-        _j["zimbabwe"] = _x.zimbabwe;
-        _j["zipper_mouth_face"] = _x.zipper_mouth_face;
-        _j["zzz"] = _x.zzz;
+        _j["href"] = _x.get_href();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Actor& _x) {
-        _x.id = _j.at("id").get<int64_t>();
-        _x.login = _j.at("login").get<std::string>();
-        _x.display_login = quicktype::get_optional<std::string>(_j, "display_login");
-        _x.gravatar_id = _j.at("gravatar_id").get<quicktype::GravatarID>();
-        _x.url = _j.at("url").get<std::string>();
-        _x.avatar_url = _j.at("avatar_url").get<std::string>();
+    inline void from_json(const json& _j, quicktype::CommentLinks& _x) {
+        _x.set_self( _j.at("self").get<quicktype::Html>() );
+        _x.set_html( _j.at("html").get<quicktype::Html>() );
+        _x.set_pull_request( _j.at("pull_request").get<quicktype::Html>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Actor& _x) {
+    inline void to_json(json& _j, const quicktype::CommentLinks& _x) {
         _j = json::object();
-        _j["id"] = _x.id;
-        _j["login"] = _x.login;
-        _j["display_login"] = _x.display_login;
-        _j["gravatar_id"] = _x.gravatar_id;
-        _j["url"] = _x.url;
-        _j["avatar_url"] = _x.avatar_url;
+        _j["self"] = _x.get_self();
+        _j["html"] = _x.get_html();
+        _j["pull_request"] = _x.get_pull_request();
     }
 
-    inline void from_json(const json& _j, struct quicktype::User& _x) {
-        _x.login = _j.at("login").get<std::string>();
-        _x.id = _j.at("id").get<int64_t>();
-        _x.avatar_url = _j.at("avatar_url").get<std::string>();
-        _x.gravatar_id = _j.at("gravatar_id").get<quicktype::GravatarID>();
-        _x.url = _j.at("url").get<std::string>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-        _x.followers_url = _j.at("followers_url").get<std::string>();
-        _x.following_url = _j.at("following_url").get<std::string>();
-        _x.gists_url = _j.at("gists_url").get<std::string>();
-        _x.starred_url = _j.at("starred_url").get<std::string>();
-        _x.subscriptions_url = _j.at("subscriptions_url").get<std::string>();
-        _x.organizations_url = _j.at("organizations_url").get<std::string>();
-        _x.repos_url = _j.at("repos_url").get<std::string>();
-        _x.events_url = _j.at("events_url").get<std::string>();
-        _x.received_events_url = _j.at("received_events_url").get<std::string>();
-        _x.type = _j.at("type").get<quicktype::UserType>();
-        _x.site_admin = _j.at("site_admin").get<bool>();
+    inline void from_json(const json& _j, quicktype::Owner& _x) {
+        _x.set_login( _j.at("login").get<std::string>() );
+        _x.set_id( _j.at("id").get<int64_t>() );
+        _x.set_node_id( _j.at("node_id").get<std::string>() );
+        _x.set_avatar_url( _j.at("avatar_url").get<std::string>() );
+        _x.set_gravatar_id( _j.at("gravatar_id").get<std::string>() );
+        _x.set_url( _j.at("url").get<std::string>() );
+        _x.set_html_url( _j.at("html_url").get<std::string>() );
+        _x.set_followers_url( _j.at("followers_url").get<std::string>() );
+        _x.set_following_url( _j.at("following_url").get<std::string>() );
+        _x.set_gists_url( _j.at("gists_url").get<std::string>() );
+        _x.set_starred_url( _j.at("starred_url").get<std::string>() );
+        _x.set_subscriptions_url( _j.at("subscriptions_url").get<std::string>() );
+        _x.set_organizations_url( _j.at("organizations_url").get<std::string>() );
+        _x.set_repos_url( _j.at("repos_url").get<std::string>() );
+        _x.set_events_url( _j.at("events_url").get<std::string>() );
+        _x.set_received_events_url( _j.at("received_events_url").get<std::string>() );
+        _x.set_type( _j.at("type").get<quicktype::Type>() );
+        _x.set_site_admin( _j.at("site_admin").get<bool>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::User& _x) {
+    inline void to_json(json& _j, const quicktype::Owner& _x) {
         _j = json::object();
-        _j["login"] = _x.login;
-        _j["id"] = _x.id;
-        _j["avatar_url"] = _x.avatar_url;
-        _j["gravatar_id"] = _x.gravatar_id;
-        _j["url"] = _x.url;
-        _j["html_url"] = _x.html_url;
-        _j["followers_url"] = _x.followers_url;
-        _j["following_url"] = _x.following_url;
-        _j["gists_url"] = _x.gists_url;
-        _j["starred_url"] = _x.starred_url;
-        _j["subscriptions_url"] = _x.subscriptions_url;
-        _j["organizations_url"] = _x.organizations_url;
-        _j["repos_url"] = _x.repos_url;
-        _j["events_url"] = _x.events_url;
-        _j["received_events_url"] = _x.received_events_url;
-        _j["type"] = _x.type;
-        _j["site_admin"] = _x.site_admin;
+        _j["login"] = _x.get_login();
+        _j["id"] = _x.get_id();
+        _j["node_id"] = _x.get_node_id();
+        _j["avatar_url"] = _x.get_avatar_url();
+        _j["gravatar_id"] = _x.get_gravatar_id();
+        _j["url"] = _x.get_url();
+        _j["html_url"] = _x.get_html_url();
+        _j["followers_url"] = _x.get_followers_url();
+        _j["following_url"] = _x.get_following_url();
+        _j["gists_url"] = _x.get_gists_url();
+        _j["starred_url"] = _x.get_starred_url();
+        _j["subscriptions_url"] = _x.get_subscriptions_url();
+        _j["organizations_url"] = _x.get_organizations_url();
+        _j["repos_url"] = _x.get_repos_url();
+        _j["events_url"] = _x.get_events_url();
+        _j["received_events_url"] = _x.get_received_events_url();
+        _j["type"] = _x.get_type();
+        _j["site_admin"] = _x.get_site_admin();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Comment& _x) {
-        _x.url = _j.at("url").get<std::string>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-        _x.issue_url = _j.at("issue_url").get<std::string>();
-        _x.id = _j.at("id").get<int64_t>();
-        _x.user = _j.at("user").get<struct quicktype::User>();
-        _x.created_at = _j.at("created_at").get<std::string>();
-        _x.updated_at = _j.at("updated_at").get<std::string>();
-        _x.author_association = _j.at("author_association").get<std::string>();
-        _x.body = _j.at("body").get<std::string>();
+    inline void from_json(const json& _j, quicktype::Comment& _x) {
+        _x.set_url( _j.at("url").get<std::string>() );
+        _x.set_pull_request_review_id( _j.at("pull_request_review_id").get<int64_t>() );
+        _x.set_id( _j.at("id").get<int64_t>() );
+        _x.set_node_id( _j.at("node_id").get<std::string>() );
+        _x.set_diff_hunk( _j.at("diff_hunk").get<std::string>() );
+        _x.set_path( _j.at("path").get<std::string>() );
+        _x.set_position( _j.at("position").get<int64_t>() );
+        _x.set_original_position( _j.at("original_position").get<int64_t>() );
+        _x.set_commit_id( _j.at("commit_id").get<std::string>() );
+        _x.set_original_commit_id( _j.at("original_commit_id").get<std::string>() );
+        _x.set_user( _j.at("user").get<quicktype::Owner>() );
+        _x.set_body( _j.at("body").get<std::string>() );
+        _x.set_created_at( _j.at("created_at").get<std::string>() );
+        _x.set_updated_at( _j.at("updated_at").get<std::string>() );
+        _x.set_html_url( _j.at("html_url").get<std::string>() );
+        _x.set_pull_request_url( _j.at("pull_request_url").get<std::string>() );
+        _x.set_author_association( _j.at("author_association").get<std::string>() );
+        _x.set_links( _j.at("_links").get<quicktype::CommentLinks>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Comment& _x) {
+    inline void to_json(json& _j, const quicktype::Comment& _x) {
         _j = json::object();
-        _j["url"] = _x.url;
-        _j["html_url"] = _x.html_url;
-        _j["issue_url"] = _x.issue_url;
-        _j["id"] = _x.id;
-        _j["user"] = _x.user;
-        _j["created_at"] = _x.created_at;
-        _j["updated_at"] = _x.updated_at;
-        _j["author_association"] = _x.author_association;
-        _j["body"] = _x.body;
+        _j["url"] = _x.get_url();
+        _j["pull_request_review_id"] = _x.get_pull_request_review_id();
+        _j["id"] = _x.get_id();
+        _j["node_id"] = _x.get_node_id();
+        _j["diff_hunk"] = _x.get_diff_hunk();
+        _j["path"] = _x.get_path();
+        _j["position"] = _x.get_position();
+        _j["original_position"] = _x.get_original_position();
+        _j["commit_id"] = _x.get_commit_id();
+        _j["original_commit_id"] = _x.get_original_commit_id();
+        _j["user"] = _x.get_user();
+        _j["body"] = _x.get_body();
+        _j["created_at"] = _x.get_created_at();
+        _j["updated_at"] = _x.get_updated_at();
+        _j["html_url"] = _x.get_html_url();
+        _j["pull_request_url"] = _x.get_pull_request_url();
+        _j["author_association"] = _x.get_author_association();
+        _j["_links"] = _x.get_links();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Author& _x) {
-        _x.email = _j.at("email").get<std::string>();
-        _x.name = _j.at("name").get<std::string>();
+    inline void from_json(const json& _j, quicktype::Author& _x) {
+        _x.set_email( _j.at("email").get<std::string>() );
+        _x.set_name( _j.at("name").get<std::string>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Author& _x) {
+    inline void to_json(json& _j, const quicktype::Author& _x) {
         _j = json::object();
-        _j["email"] = _x.email;
-        _j["name"] = _x.name;
+        _j["email"] = _x.get_email();
+        _j["name"] = _x.get_name();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Commit& _x) {
-        _x.sha = _j.at("sha").get<std::string>();
-        _x.author = _j.at("author").get<struct quicktype::Author>();
-        _x.message = _j.at("message").get<std::string>();
-        _x.distinct = _j.at("distinct").get<bool>();
-        _x.url = _j.at("url").get<std::string>();
+    inline void from_json(const json& _j, quicktype::Commit& _x) {
+        _x.set_sha( _j.at("sha").get<std::string>() );
+        _x.set_author( _j.at("author").get<quicktype::Author>() );
+        _x.set_message( _j.at("message").get<std::string>() );
+        _x.set_distinct( _j.at("distinct").get<bool>() );
+        _x.set_url( _j.at("url").get<std::string>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Commit& _x) {
+    inline void to_json(json& _j, const quicktype::Commit& _x) {
         _j = json::object();
-        _j["sha"] = _x.sha;
-        _j["author"] = _x.author;
-        _j["message"] = _x.message;
-        _j["distinct"] = _x.distinct;
-        _j["url"] = _x.url;
+        _j["sha"] = _x.get_sha();
+        _j["author"] = _x.get_author();
+        _j["message"] = _x.get_message();
+        _j["distinct"] = _x.get_distinct();
+        _j["url"] = _x.get_url();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Forkee& _x) {
-        _x.id = _j.at("id").get<int64_t>();
-        _x.name = _j.at("name").get<std::string>();
-        _x.full_name = _j.at("full_name").get<std::string>();
-        _x.owner = _j.at("owner").get<struct quicktype::User>();
-        _x.forkee_private = _j.at("private").get<bool>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-        _x.description = quicktype::get_optional<std::string>(_j, "description");
-        _x.fork = _j.at("fork").get<bool>();
-        _x.url = _j.at("url").get<std::string>();
-        _x.forks_url = _j.at("forks_url").get<std::string>();
-        _x.keys_url = _j.at("keys_url").get<std::string>();
-        _x.collaborators_url = _j.at("collaborators_url").get<std::string>();
-        _x.teams_url = _j.at("teams_url").get<std::string>();
-        _x.hooks_url = _j.at("hooks_url").get<std::string>();
-        _x.issue_events_url = _j.at("issue_events_url").get<std::string>();
-        _x.events_url = _j.at("events_url").get<std::string>();
-        _x.assignees_url = _j.at("assignees_url").get<std::string>();
-        _x.branches_url = _j.at("branches_url").get<std::string>();
-        _x.tags_url = _j.at("tags_url").get<std::string>();
-        _x.blobs_url = _j.at("blobs_url").get<std::string>();
-        _x.git_tags_url = _j.at("git_tags_url").get<std::string>();
-        _x.git_refs_url = _j.at("git_refs_url").get<std::string>();
-        _x.trees_url = _j.at("trees_url").get<std::string>();
-        _x.statuses_url = _j.at("statuses_url").get<std::string>();
-        _x.languages_url = _j.at("languages_url").get<std::string>();
-        _x.stargazers_url = _j.at("stargazers_url").get<std::string>();
-        _x.contributors_url = _j.at("contributors_url").get<std::string>();
-        _x.subscribers_url = _j.at("subscribers_url").get<std::string>();
-        _x.subscription_url = _j.at("subscription_url").get<std::string>();
-        _x.commits_url = _j.at("commits_url").get<std::string>();
-        _x.git_commits_url = _j.at("git_commits_url").get<std::string>();
-        _x.comments_url = _j.at("comments_url").get<std::string>();
-        _x.issue_comment_url = _j.at("issue_comment_url").get<std::string>();
-        _x.contents_url = _j.at("contents_url").get<std::string>();
-        _x.compare_url = _j.at("compare_url").get<std::string>();
-        _x.merges_url = _j.at("merges_url").get<std::string>();
-        _x.archive_url = _j.at("archive_url").get<std::string>();
-        _x.downloads_url = _j.at("downloads_url").get<std::string>();
-        _x.issues_url = _j.at("issues_url").get<std::string>();
-        _x.pulls_url = _j.at("pulls_url").get<std::string>();
-        _x.milestones_url = _j.at("milestones_url").get<std::string>();
-        _x.notifications_url = _j.at("notifications_url").get<std::string>();
-        _x.labels_url = _j.at("labels_url").get<std::string>();
-        _x.releases_url = _j.at("releases_url").get<std::string>();
-        _x.deployments_url = _j.at("deployments_url").get<std::string>();
-        _x.created_at = _j.at("created_at").get<std::string>();
-        _x.updated_at = _j.at("updated_at").get<std::string>();
-        _x.pushed_at = _j.at("pushed_at").get<std::string>();
-        _x.git_url = _j.at("git_url").get<std::string>();
-        _x.ssh_url = _j.at("ssh_url").get<std::string>();
-        _x.clone_url = _j.at("clone_url").get<std::string>();
-        _x.svn_url = _j.at("svn_url").get<std::string>();
-        _x.homepage = quicktype::get_optional<std::string>(_j, "homepage");
-        _x.size = _j.at("size").get<int64_t>();
-        _x.stargazers_count = _j.at("stargazers_count").get<int64_t>();
-        _x.watchers_count = _j.at("watchers_count").get<int64_t>();
-        _x.language = quicktype::get_optional<std::string>(_j, "language");
-        _x.has_issues = _j.at("has_issues").get<bool>();
-        _x.has_projects = _j.at("has_projects").get<bool>();
-        _x.has_downloads = _j.at("has_downloads").get<bool>();
-        _x.has_wiki = _j.at("has_wiki").get<bool>();
-        _x.has_pages = _j.at("has_pages").get<bool>();
-        _x.forks_count = _j.at("forks_count").get<int64_t>();
-        _x.mirror_url = quicktype::get_untyped(_j, "mirror_url");
-        _x.archived = _j.at("archived").get<bool>();
-        _x.open_issues_count = _j.at("open_issues_count").get<int64_t>();
-        _x.license = quicktype::get_untyped(_j, "license");
-        _x.forks = _j.at("forks").get<int64_t>();
-        _x.open_issues = _j.at("open_issues").get<int64_t>();
-        _x.watchers = _j.at("watchers").get<int64_t>();
-        _x.default_branch = _j.at("default_branch").get<std::string>();
-        _x.forkee_public = quicktype::get_optional<bool>(_j, "public");
+    inline void from_json(const json& _j, quicktype::License& _x) {
+        _x.set_key( _j.at("key").get<std::string>() );
+        _x.set_name( _j.at("name").get<std::string>() );
+        _x.set_spdx_id( quicktype::get_optional<std::string>(_j, "spdx_id") );
+        _x.set_url( quicktype::get_optional<std::string>(_j, "url") );
+        _x.set_node_id( _j.at("node_id").get<std::string>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Forkee& _x) {
+    inline void to_json(json& _j, const quicktype::License& _x) {
         _j = json::object();
-        _j["id"] = _x.id;
-        _j["name"] = _x.name;
-        _j["full_name"] = _x.full_name;
-        _j["owner"] = _x.owner;
-        _j["private"] = _x.forkee_private;
-        _j["html_url"] = _x.html_url;
-        _j["description"] = _x.description;
-        _j["fork"] = _x.fork;
-        _j["url"] = _x.url;
-        _j["forks_url"] = _x.forks_url;
-        _j["keys_url"] = _x.keys_url;
-        _j["collaborators_url"] = _x.collaborators_url;
-        _j["teams_url"] = _x.teams_url;
-        _j["hooks_url"] = _x.hooks_url;
-        _j["issue_events_url"] = _x.issue_events_url;
-        _j["events_url"] = _x.events_url;
-        _j["assignees_url"] = _x.assignees_url;
-        _j["branches_url"] = _x.branches_url;
-        _j["tags_url"] = _x.tags_url;
-        _j["blobs_url"] = _x.blobs_url;
-        _j["git_tags_url"] = _x.git_tags_url;
-        _j["git_refs_url"] = _x.git_refs_url;
-        _j["trees_url"] = _x.trees_url;
-        _j["statuses_url"] = _x.statuses_url;
-        _j["languages_url"] = _x.languages_url;
-        _j["stargazers_url"] = _x.stargazers_url;
-        _j["contributors_url"] = _x.contributors_url;
-        _j["subscribers_url"] = _x.subscribers_url;
-        _j["subscription_url"] = _x.subscription_url;
-        _j["commits_url"] = _x.commits_url;
-        _j["git_commits_url"] = _x.git_commits_url;
-        _j["comments_url"] = _x.comments_url;
-        _j["issue_comment_url"] = _x.issue_comment_url;
-        _j["contents_url"] = _x.contents_url;
-        _j["compare_url"] = _x.compare_url;
-        _j["merges_url"] = _x.merges_url;
-        _j["archive_url"] = _x.archive_url;
-        _j["downloads_url"] = _x.downloads_url;
-        _j["issues_url"] = _x.issues_url;
-        _j["pulls_url"] = _x.pulls_url;
-        _j["milestones_url"] = _x.milestones_url;
-        _j["notifications_url"] = _x.notifications_url;
-        _j["labels_url"] = _x.labels_url;
-        _j["releases_url"] = _x.releases_url;
-        _j["deployments_url"] = _x.deployments_url;
-        _j["created_at"] = _x.created_at;
-        _j["updated_at"] = _x.updated_at;
-        _j["pushed_at"] = _x.pushed_at;
-        _j["git_url"] = _x.git_url;
-        _j["ssh_url"] = _x.ssh_url;
-        _j["clone_url"] = _x.clone_url;
-        _j["svn_url"] = _x.svn_url;
-        _j["homepage"] = _x.homepage;
-        _j["size"] = _x.size;
-        _j["stargazers_count"] = _x.stargazers_count;
-        _j["watchers_count"] = _x.watchers_count;
-        _j["language"] = _x.language;
-        _j["has_issues"] = _x.has_issues;
-        _j["has_projects"] = _x.has_projects;
-        _j["has_downloads"] = _x.has_downloads;
-        _j["has_wiki"] = _x.has_wiki;
-        _j["has_pages"] = _x.has_pages;
-        _j["forks_count"] = _x.forks_count;
-        _j["mirror_url"] = _x.mirror_url;
-        _j["archived"] = _x.archived;
-        _j["open_issues_count"] = _x.open_issues_count;
-        _j["license"] = _x.license;
-        _j["forks"] = _x.forks;
-        _j["open_issues"] = _x.open_issues;
-        _j["watchers"] = _x.watchers;
-        _j["default_branch"] = _x.default_branch;
-        _j["public"] = _x.forkee_public;
+        _j["key"] = _x.get_key();
+        _j["name"] = _x.get_name();
+        _j["spdx_id"] = _x.get_spdx_id();
+        _j["url"] = _x.get_url();
+        _j["node_id"] = _x.get_node_id();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Label& _x) {
-        _x.id = _j.at("id").get<int64_t>();
-        _x.url = _j.at("url").get<std::string>();
-        _x.name = _j.at("name").get<std::string>();
-        _x.color = _j.at("color").get<std::string>();
-        _x.label_default = _j.at("default").get<bool>();
+    inline void from_json(const json& _j, quicktype::BaseRepo& _x) {
+        _x.set_id( _j.at("id").get<int64_t>() );
+        _x.set_node_id( _j.at("node_id").get<std::string>() );
+        _x.set_name( _j.at("name").get<std::string>() );
+        _x.set_full_name( _j.at("full_name").get<std::string>() );
+        _x.set_owner( _j.at("owner").get<quicktype::Owner>() );
+        _x.set_repo_private( _j.at("private").get<bool>() );
+        _x.set_html_url( _j.at("html_url").get<std::string>() );
+        _x.set_description( quicktype::get_optional<std::string>(_j, "description") );
+        _x.set_fork( _j.at("fork").get<bool>() );
+        _x.set_url( _j.at("url").get<std::string>() );
+        _x.set_forks_url( _j.at("forks_url").get<std::string>() );
+        _x.set_keys_url( _j.at("keys_url").get<std::string>() );
+        _x.set_collaborators_url( _j.at("collaborators_url").get<std::string>() );
+        _x.set_teams_url( _j.at("teams_url").get<std::string>() );
+        _x.set_hooks_url( _j.at("hooks_url").get<std::string>() );
+        _x.set_issue_events_url( _j.at("issue_events_url").get<std::string>() );
+        _x.set_events_url( _j.at("events_url").get<std::string>() );
+        _x.set_assignees_url( _j.at("assignees_url").get<std::string>() );
+        _x.set_branches_url( _j.at("branches_url").get<std::string>() );
+        _x.set_tags_url( _j.at("tags_url").get<std::string>() );
+        _x.set_blobs_url( _j.at("blobs_url").get<std::string>() );
+        _x.set_git_tags_url( _j.at("git_tags_url").get<std::string>() );
+        _x.set_git_refs_url( _j.at("git_refs_url").get<std::string>() );
+        _x.set_trees_url( _j.at("trees_url").get<std::string>() );
+        _x.set_statuses_url( _j.at("statuses_url").get<std::string>() );
+        _x.set_languages_url( _j.at("languages_url").get<std::string>() );
+        _x.set_stargazers_url( _j.at("stargazers_url").get<std::string>() );
+        _x.set_contributors_url( _j.at("contributors_url").get<std::string>() );
+        _x.set_subscribers_url( _j.at("subscribers_url").get<std::string>() );
+        _x.set_subscription_url( _j.at("subscription_url").get<std::string>() );
+        _x.set_commits_url( _j.at("commits_url").get<std::string>() );
+        _x.set_git_commits_url( _j.at("git_commits_url").get<std::string>() );
+        _x.set_comments_url( _j.at("comments_url").get<std::string>() );
+        _x.set_issue_comment_url( _j.at("issue_comment_url").get<std::string>() );
+        _x.set_contents_url( _j.at("contents_url").get<std::string>() );
+        _x.set_compare_url( _j.at("compare_url").get<std::string>() );
+        _x.set_merges_url( _j.at("merges_url").get<std::string>() );
+        _x.set_archive_url( _j.at("archive_url").get<std::string>() );
+        _x.set_downloads_url( _j.at("downloads_url").get<std::string>() );
+        _x.set_issues_url( _j.at("issues_url").get<std::string>() );
+        _x.set_pulls_url( _j.at("pulls_url").get<std::string>() );
+        _x.set_milestones_url( _j.at("milestones_url").get<std::string>() );
+        _x.set_notifications_url( _j.at("notifications_url").get<std::string>() );
+        _x.set_labels_url( _j.at("labels_url").get<std::string>() );
+        _x.set_releases_url( _j.at("releases_url").get<std::string>() );
+        _x.set_deployments_url( _j.at("deployments_url").get<std::string>() );
+        _x.set_created_at( _j.at("created_at").get<std::string>() );
+        _x.set_updated_at( _j.at("updated_at").get<std::string>() );
+        _x.set_pushed_at( _j.at("pushed_at").get<std::string>() );
+        _x.set_git_url( _j.at("git_url").get<std::string>() );
+        _x.set_ssh_url( _j.at("ssh_url").get<std::string>() );
+        _x.set_clone_url( _j.at("clone_url").get<std::string>() );
+        _x.set_svn_url( _j.at("svn_url").get<std::string>() );
+        _x.set_homepage( quicktype::get_optional<std::string>(_j, "homepage") );
+        _x.set_size( _j.at("size").get<int64_t>() );
+        _x.set_stargazers_count( _j.at("stargazers_count").get<int64_t>() );
+        _x.set_watchers_count( _j.at("watchers_count").get<int64_t>() );
+        _x.set_language( _j.at("language").get<std::string>() );
+        _x.set_has_issues( _j.at("has_issues").get<bool>() );
+        _x.set_has_projects( _j.at("has_projects").get<bool>() );
+        _x.set_has_downloads( _j.at("has_downloads").get<bool>() );
+        _x.set_has_wiki( _j.at("has_wiki").get<bool>() );
+        _x.set_has_pages( _j.at("has_pages").get<bool>() );
+        _x.set_forks_count( _j.at("forks_count").get<int64_t>() );
+        _x.set_mirror_url( quicktype::get_untyped(_j, "mirror_url") );
+        _x.set_archived( _j.at("archived").get<bool>() );
+        _x.set_open_issues_count( _j.at("open_issues_count").get<int64_t>() );
+        _x.set_license( quicktype::get_optional<quicktype::License>(_j, "license") );
+        _x.set_forks( _j.at("forks").get<int64_t>() );
+        _x.set_open_issues( _j.at("open_issues").get<int64_t>() );
+        _x.set_watchers( _j.at("watchers").get<int64_t>() );
+        _x.set_default_branch( _j.at("default_branch").get<std::string>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Label& _x) {
+    inline void to_json(json& _j, const quicktype::BaseRepo& _x) {
         _j = json::object();
-        _j["id"] = _x.id;
-        _j["url"] = _x.url;
-        _j["name"] = _x.name;
-        _j["color"] = _x.color;
-        _j["default"] = _x.label_default;
+        _j["id"] = _x.get_id();
+        _j["node_id"] = _x.get_node_id();
+        _j["name"] = _x.get_name();
+        _j["full_name"] = _x.get_full_name();
+        _j["owner"] = _x.get_owner();
+        _j["private"] = _x.get_repo_private();
+        _j["html_url"] = _x.get_html_url();
+        _j["description"] = _x.get_description();
+        _j["fork"] = _x.get_fork();
+        _j["url"] = _x.get_url();
+        _j["forks_url"] = _x.get_forks_url();
+        _j["keys_url"] = _x.get_keys_url();
+        _j["collaborators_url"] = _x.get_collaborators_url();
+        _j["teams_url"] = _x.get_teams_url();
+        _j["hooks_url"] = _x.get_hooks_url();
+        _j["issue_events_url"] = _x.get_issue_events_url();
+        _j["events_url"] = _x.get_events_url();
+        _j["assignees_url"] = _x.get_assignees_url();
+        _j["branches_url"] = _x.get_branches_url();
+        _j["tags_url"] = _x.get_tags_url();
+        _j["blobs_url"] = _x.get_blobs_url();
+        _j["git_tags_url"] = _x.get_git_tags_url();
+        _j["git_refs_url"] = _x.get_git_refs_url();
+        _j["trees_url"] = _x.get_trees_url();
+        _j["statuses_url"] = _x.get_statuses_url();
+        _j["languages_url"] = _x.get_languages_url();
+        _j["stargazers_url"] = _x.get_stargazers_url();
+        _j["contributors_url"] = _x.get_contributors_url();
+        _j["subscribers_url"] = _x.get_subscribers_url();
+        _j["subscription_url"] = _x.get_subscription_url();
+        _j["commits_url"] = _x.get_commits_url();
+        _j["git_commits_url"] = _x.get_git_commits_url();
+        _j["comments_url"] = _x.get_comments_url();
+        _j["issue_comment_url"] = _x.get_issue_comment_url();
+        _j["contents_url"] = _x.get_contents_url();
+        _j["compare_url"] = _x.get_compare_url();
+        _j["merges_url"] = _x.get_merges_url();
+        _j["archive_url"] = _x.get_archive_url();
+        _j["downloads_url"] = _x.get_downloads_url();
+        _j["issues_url"] = _x.get_issues_url();
+        _j["pulls_url"] = _x.get_pulls_url();
+        _j["milestones_url"] = _x.get_milestones_url();
+        _j["notifications_url"] = _x.get_notifications_url();
+        _j["labels_url"] = _x.get_labels_url();
+        _j["releases_url"] = _x.get_releases_url();
+        _j["deployments_url"] = _x.get_deployments_url();
+        _j["created_at"] = _x.get_created_at();
+        _j["updated_at"] = _x.get_updated_at();
+        _j["pushed_at"] = _x.get_pushed_at();
+        _j["git_url"] = _x.get_git_url();
+        _j["ssh_url"] = _x.get_ssh_url();
+        _j["clone_url"] = _x.get_clone_url();
+        _j["svn_url"] = _x.get_svn_url();
+        _j["homepage"] = _x.get_homepage();
+        _j["size"] = _x.get_size();
+        _j["stargazers_count"] = _x.get_stargazers_count();
+        _j["watchers_count"] = _x.get_watchers_count();
+        _j["language"] = _x.get_language();
+        _j["has_issues"] = _x.get_has_issues();
+        _j["has_projects"] = _x.get_has_projects();
+        _j["has_downloads"] = _x.get_has_downloads();
+        _j["has_wiki"] = _x.get_has_wiki();
+        _j["has_pages"] = _x.get_has_pages();
+        _j["forks_count"] = _x.get_forks_count();
+        _j["mirror_url"] = _x.get_mirror_url();
+        _j["archived"] = _x.get_archived();
+        _j["open_issues_count"] = _x.get_open_issues_count();
+        _j["license"] = _x.get_license();
+        _j["forks"] = _x.get_forks();
+        _j["open_issues"] = _x.get_open_issues();
+        _j["watchers"] = _x.get_watchers();
+        _j["default_branch"] = _x.get_default_branch();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Issue& _x) {
-        _x.url = _j.at("url").get<std::string>();
-        _x.repository_url = _j.at("repository_url").get<std::string>();
-        _x.labels_url = _j.at("labels_url").get<std::string>();
-        _x.comments_url = _j.at("comments_url").get<std::string>();
-        _x.events_url = _j.at("events_url").get<std::string>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-        _x.id = _j.at("id").get<int64_t>();
-        _x.number = _j.at("number").get<int64_t>();
-        _x.title = _j.at("title").get<std::string>();
-        _x.user = _j.at("user").get<struct quicktype::User>();
-        _x.labels = _j.at("labels").get<std::vector<struct quicktype::Label>>();
-        _x.state = _j.at("state").get<std::string>();
-        _x.locked = _j.at("locked").get<bool>();
-        _x.assignee = quicktype::get_optional<struct quicktype::User>(_j, "assignee");
-        _x.assignees = _j.at("assignees").get<std::vector<struct quicktype::User>>();
-        _x.milestone = quicktype::get_untyped(_j, "milestone");
-        _x.comments = _j.at("comments").get<int64_t>();
-        _x.created_at = _j.at("created_at").get<std::string>();
-        _x.updated_at = _j.at("updated_at").get<std::string>();
-        _x.closed_at = quicktype::get_untyped(_j, "closed_at");
-        _x.author_association = _j.at("author_association").get<std::string>();
-        _x.body = _j.at("body").get<std::string>();
+    inline void from_json(const json& _j, quicktype::Base& _x) {
+        _x.set_label( _j.at("label").get<std::string>() );
+        _x.set_ref( _j.at("ref").get<std::string>() );
+        _x.set_sha( _j.at("sha").get<std::string>() );
+        _x.set_user( _j.at("user").get<quicktype::Owner>() );
+        _x.set_repo( _j.at("repo").get<quicktype::BaseRepo>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Issue& _x) {
+    inline void to_json(json& _j, const quicktype::Base& _x) {
         _j = json::object();
-        _j["url"] = _x.url;
-        _j["repository_url"] = _x.repository_url;
-        _j["labels_url"] = _x.labels_url;
-        _j["comments_url"] = _x.comments_url;
-        _j["events_url"] = _x.events_url;
-        _j["html_url"] = _x.html_url;
-        _j["id"] = _x.id;
-        _j["number"] = _x.number;
-        _j["title"] = _x.title;
-        _j["user"] = _x.user;
-        _j["labels"] = _x.labels;
-        _j["state"] = _x.state;
-        _j["locked"] = _x.locked;
-        _j["assignee"] = _x.assignee;
-        _j["assignees"] = _x.assignees;
-        _j["milestone"] = _x.milestone;
-        _j["comments"] = _x.comments;
-        _j["created_at"] = _x.created_at;
-        _j["updated_at"] = _x.updated_at;
-        _j["closed_at"] = _x.closed_at;
-        _j["author_association"] = _x.author_association;
-        _j["body"] = _x.body;
+        _j["label"] = _x.get_label();
+        _j["ref"] = _x.get_ref();
+        _j["sha"] = _x.get_sha();
+        _j["user"] = _x.get_user();
+        _j["repo"] = _x.get_repo();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Base& _x) {
-        _x.label = _j.at("label").get<std::string>();
-        _x.ref = _j.at("ref").get<std::string>();
-        _x.sha = _j.at("sha").get<std::string>();
-        _x.user = _j.at("user").get<struct quicktype::User>();
-        _x.repo = _j.at("repo").get<struct quicktype::Forkee>();
+    inline void from_json(const json& _j, quicktype::PullRequestLinks& _x) {
+        _x.set_self( _j.at("self").get<quicktype::Html>() );
+        _x.set_html( _j.at("html").get<quicktype::Html>() );
+        _x.set_issue( _j.at("issue").get<quicktype::Html>() );
+        _x.set_comments( _j.at("comments").get<quicktype::Html>() );
+        _x.set_review_comments( _j.at("review_comments").get<quicktype::Html>() );
+        _x.set_review_comment( _j.at("review_comment").get<quicktype::Html>() );
+        _x.set_commits( _j.at("commits").get<quicktype::Html>() );
+        _x.set_statuses( _j.at("statuses").get<quicktype::Html>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Base& _x) {
+    inline void to_json(json& _j, const quicktype::PullRequestLinks& _x) {
         _j = json::object();
-        _j["label"] = _x.label;
-        _j["ref"] = _x.ref;
-        _j["sha"] = _x.sha;
-        _j["user"] = _x.user;
-        _j["repo"] = _x.repo;
+        _j["self"] = _x.get_self();
+        _j["html"] = _x.get_html();
+        _j["issue"] = _x.get_issue();
+        _j["comments"] = _x.get_comments();
+        _j["review_comments"] = _x.get_review_comments();
+        _j["review_comment"] = _x.get_review_comment();
+        _j["commits"] = _x.get_commits();
+        _j["statuses"] = _x.get_statuses();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Comments& _x) {
-        _x.href = _j.at("href").get<std::string>();
+    inline void from_json(const json& _j, quicktype::PullRequest& _x) {
+        _x.set_url( _j.at("url").get<std::string>() );
+        _x.set_id( _j.at("id").get<int64_t>() );
+        _x.set_node_id( _j.at("node_id").get<std::string>() );
+        _x.set_html_url( _j.at("html_url").get<std::string>() );
+        _x.set_diff_url( _j.at("diff_url").get<std::string>() );
+        _x.set_patch_url( _j.at("patch_url").get<std::string>() );
+        _x.set_issue_url( _j.at("issue_url").get<std::string>() );
+        _x.set_number( _j.at("number").get<int64_t>() );
+        _x.set_state( _j.at("state").get<std::string>() );
+        _x.set_locked( _j.at("locked").get<bool>() );
+        _x.set_title( _j.at("title").get<std::string>() );
+        _x.set_user( _j.at("user").get<quicktype::Owner>() );
+        _x.set_body( quicktype::get_optional<std::string>(_j, "body") );
+        _x.set_created_at( _j.at("created_at").get<std::string>() );
+        _x.set_updated_at( _j.at("updated_at").get<std::string>() );
+        _x.set_closed_at( quicktype::get_untyped(_j, "closed_at") );
+        _x.set_merged_at( quicktype::get_untyped(_j, "merged_at") );
+        _x.set_merge_commit_sha( quicktype::get_optional<std::string>(_j, "merge_commit_sha") );
+        _x.set_assignee( quicktype::get_untyped(_j, "assignee") );
+        _x.set_assignees( _j.at("assignees").get<std::vector<json>>() );
+        _x.set_requested_reviewers( _j.at("requested_reviewers").get<std::vector<json>>() );
+        _x.set_requested_teams( _j.at("requested_teams").get<std::vector<json>>() );
+        _x.set_labels( _j.at("labels").get<std::vector<json>>() );
+        _x.set_milestone( quicktype::get_untyped(_j, "milestone") );
+        _x.set_commits_url( _j.at("commits_url").get<std::string>() );
+        _x.set_review_comments_url( _j.at("review_comments_url").get<std::string>() );
+        _x.set_review_comment_url( _j.at("review_comment_url").get<std::string>() );
+        _x.set_comments_url( _j.at("comments_url").get<std::string>() );
+        _x.set_statuses_url( _j.at("statuses_url").get<std::string>() );
+        _x.set_head( _j.at("head").get<quicktype::Base>() );
+        _x.set_base( _j.at("base").get<quicktype::Base>() );
+        _x.set_links( _j.at("_links").get<quicktype::PullRequestLinks>() );
+        _x.set_author_association( _j.at("author_association").get<std::string>() );
+        _x.set_merged( quicktype::get_optional<bool>(_j, "merged") );
+        _x.set_mergeable( quicktype::get_untyped(_j, "mergeable") );
+        _x.set_rebaseable( quicktype::get_untyped(_j, "rebaseable") );
+        _x.set_mergeable_state( quicktype::get_optional<std::string>(_j, "mergeable_state") );
+        _x.set_merged_by( quicktype::get_untyped(_j, "merged_by") );
+        _x.set_comments( quicktype::get_optional<int64_t>(_j, "comments") );
+        _x.set_review_comments( quicktype::get_optional<int64_t>(_j, "review_comments") );
+        _x.set_maintainer_can_modify( quicktype::get_optional<bool>(_j, "maintainer_can_modify") );
+        _x.set_commits( quicktype::get_optional<int64_t>(_j, "commits") );
+        _x.set_additions( quicktype::get_optional<int64_t>(_j, "additions") );
+        _x.set_deletions( quicktype::get_optional<int64_t>(_j, "deletions") );
+        _x.set_changed_files( quicktype::get_optional<int64_t>(_j, "changed_files") );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Comments& _x) {
+    inline void to_json(json& _j, const quicktype::PullRequest& _x) {
         _j = json::object();
-        _j["href"] = _x.href;
+        _j["url"] = _x.get_url();
+        _j["id"] = _x.get_id();
+        _j["node_id"] = _x.get_node_id();
+        _j["html_url"] = _x.get_html_url();
+        _j["diff_url"] = _x.get_diff_url();
+        _j["patch_url"] = _x.get_patch_url();
+        _j["issue_url"] = _x.get_issue_url();
+        _j["number"] = _x.get_number();
+        _j["state"] = _x.get_state();
+        _j["locked"] = _x.get_locked();
+        _j["title"] = _x.get_title();
+        _j["user"] = _x.get_user();
+        _j["body"] = _x.get_body();
+        _j["created_at"] = _x.get_created_at();
+        _j["updated_at"] = _x.get_updated_at();
+        _j["closed_at"] = _x.get_closed_at();
+        _j["merged_at"] = _x.get_merged_at();
+        _j["merge_commit_sha"] = _x.get_merge_commit_sha();
+        _j["assignee"] = _x.get_assignee();
+        _j["assignees"] = _x.get_assignees();
+        _j["requested_reviewers"] = _x.get_requested_reviewers();
+        _j["requested_teams"] = _x.get_requested_teams();
+        _j["labels"] = _x.get_labels();
+        _j["milestone"] = _x.get_milestone();
+        _j["commits_url"] = _x.get_commits_url();
+        _j["review_comments_url"] = _x.get_review_comments_url();
+        _j["review_comment_url"] = _x.get_review_comment_url();
+        _j["comments_url"] = _x.get_comments_url();
+        _j["statuses_url"] = _x.get_statuses_url();
+        _j["head"] = _x.get_head();
+        _j["base"] = _x.get_base();
+        _j["_links"] = _x.get_links();
+        _j["author_association"] = _x.get_author_association();
+        _j["merged"] = _x.get_merged();
+        _j["mergeable"] = _x.get_mergeable();
+        _j["rebaseable"] = _x.get_rebaseable();
+        _j["mergeable_state"] = _x.get_mergeable_state();
+        _j["merged_by"] = _x.get_merged_by();
+        _j["comments"] = _x.get_comments();
+        _j["review_comments"] = _x.get_review_comments();
+        _j["maintainer_can_modify"] = _x.get_maintainer_can_modify();
+        _j["commits"] = _x.get_commits();
+        _j["additions"] = _x.get_additions();
+        _j["deletions"] = _x.get_deletions();
+        _j["changed_files"] = _x.get_changed_files();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Links& _x) {
-        _x.self = _j.at("self").get<struct quicktype::Comments>();
-        _x.html = _j.at("html").get<struct quicktype::Comments>();
-        _x.issue = _j.at("issue").get<struct quicktype::Comments>();
-        _x.comments = _j.at("comments").get<struct quicktype::Comments>();
-        _x.review_comments = _j.at("review_comments").get<struct quicktype::Comments>();
-        _x.review_comment = _j.at("review_comment").get<struct quicktype::Comments>();
-        _x.commits = _j.at("commits").get<struct quicktype::Comments>();
-        _x.statuses = _j.at("statuses").get<struct quicktype::Comments>();
+    inline void from_json(const json& _j, quicktype::Payload& _x) {
+        _x.set_push_id( quicktype::get_optional<int64_t>(_j, "push_id") );
+        _x.set_size( quicktype::get_optional<int64_t>(_j, "size") );
+        _x.set_distinct_size( quicktype::get_optional<int64_t>(_j, "distinct_size") );
+        _x.set_ref( quicktype::get_optional<std::string>(_j, "ref") );
+        _x.set_head( quicktype::get_optional<std::string>(_j, "head") );
+        _x.set_before( quicktype::get_optional<std::string>(_j, "before") );
+        _x.set_commits( quicktype::get_optional<std::vector<quicktype::Commit>>(_j, "commits") );
+        _x.set_action( quicktype::get_optional<std::string>(_j, "action") );
+        _x.set_number( quicktype::get_optional<int64_t>(_j, "number") );
+        _x.set_pull_request( quicktype::get_optional<quicktype::PullRequest>(_j, "pull_request") );
+        _x.set_ref_type( quicktype::get_optional<std::string>(_j, "ref_type") );
+        _x.set_master_branch( quicktype::get_optional<std::string>(_j, "master_branch") );
+        _x.set_description( quicktype::get_optional<std::string>(_j, "description") );
+        _x.set_pusher_type( quicktype::get_optional<std::string>(_j, "pusher_type") );
+        _x.set_comment( quicktype::get_optional<quicktype::Comment>(_j, "comment") );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Links& _x) {
+    inline void to_json(json& _j, const quicktype::Payload& _x) {
         _j = json::object();
-        _j["self"] = _x.self;
-        _j["html"] = _x.html;
-        _j["issue"] = _x.issue;
-        _j["comments"] = _x.comments;
-        _j["review_comments"] = _x.review_comments;
-        _j["review_comment"] = _x.review_comment;
-        _j["commits"] = _x.commits;
-        _j["statuses"] = _x.statuses;
+        _j["push_id"] = _x.get_push_id();
+        _j["size"] = _x.get_size();
+        _j["distinct_size"] = _x.get_distinct_size();
+        _j["ref"] = _x.get_ref();
+        _j["head"] = _x.get_head();
+        _j["before"] = _x.get_before();
+        _j["commits"] = _x.get_commits();
+        _j["action"] = _x.get_action();
+        _j["number"] = _x.get_number();
+        _j["pull_request"] = _x.get_pull_request();
+        _j["ref_type"] = _x.get_ref_type();
+        _j["master_branch"] = _x.get_master_branch();
+        _j["description"] = _x.get_description();
+        _j["pusher_type"] = _x.get_pusher_type();
+        _j["comment"] = _x.get_comment();
     }
 
-    inline void from_json(const json& _j, struct quicktype::PullRequest& _x) {
-        _x.url = _j.at("url").get<std::string>();
-        _x.id = _j.at("id").get<int64_t>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-        _x.diff_url = _j.at("diff_url").get<std::string>();
-        _x.patch_url = _j.at("patch_url").get<std::string>();
-        _x.issue_url = _j.at("issue_url").get<std::string>();
-        _x.number = _j.at("number").get<int64_t>();
-        _x.state = _j.at("state").get<std::string>();
-        _x.locked = _j.at("locked").get<bool>();
-        _x.title = _j.at("title").get<std::string>();
-        _x.user = _j.at("user").get<struct quicktype::User>();
-        _x.body = _j.at("body").get<std::string>();
-        _x.created_at = _j.at("created_at").get<std::string>();
-        _x.updated_at = _j.at("updated_at").get<std::string>();
-        _x.closed_at = quicktype::get_untyped(_j, "closed_at");
-        _x.merged_at = quicktype::get_untyped(_j, "merged_at");
-        _x.merge_commit_sha = quicktype::get_untyped(_j, "merge_commit_sha");
-        _x.assignee = quicktype::get_untyped(_j, "assignee");
-        _x.assignees = _j.at("assignees").get<std::vector<json>>();
-        _x.requested_reviewers = _j.at("requested_reviewers").get<std::vector<json>>();
-        _x.requested_teams = _j.at("requested_teams").get<std::vector<json>>();
-        _x.labels = _j.at("labels").get<std::vector<json>>();
-        _x.milestone = quicktype::get_untyped(_j, "milestone");
-        _x.commits_url = _j.at("commits_url").get<std::string>();
-        _x.review_comments_url = _j.at("review_comments_url").get<std::string>();
-        _x.review_comment_url = _j.at("review_comment_url").get<std::string>();
-        _x.comments_url = _j.at("comments_url").get<std::string>();
-        _x.statuses_url = _j.at("statuses_url").get<std::string>();
-        _x.head = _j.at("head").get<struct quicktype::Base>();
-        _x.base = _j.at("base").get<struct quicktype::Base>();
-        _x.links = _j.at("_links").get<struct quicktype::Links>();
-        _x.author_association = _j.at("author_association").get<std::string>();
-        _x.merged = _j.at("merged").get<bool>();
-        _x.mergeable = quicktype::get_untyped(_j, "mergeable");
-        _x.rebaseable = quicktype::get_untyped(_j, "rebaseable");
-        _x.mergeable_state = _j.at("mergeable_state").get<std::string>();
-        _x.merged_by = quicktype::get_untyped(_j, "merged_by");
-        _x.comments = _j.at("comments").get<int64_t>();
-        _x.review_comments = _j.at("review_comments").get<int64_t>();
-        _x.maintainer_can_modify = _j.at("maintainer_can_modify").get<bool>();
-        _x.commits = _j.at("commits").get<int64_t>();
-        _x.additions = _j.at("additions").get<int64_t>();
-        _x.deletions = _j.at("deletions").get<int64_t>();
-        _x.changed_files = _j.at("changed_files").get<int64_t>();
+    inline void from_json(const json& _j, quicktype::EventRepo& _x) {
+        _x.set_id( _j.at("id").get<int64_t>() );
+        _x.set_name( _j.at("name").get<std::string>() );
+        _x.set_url( _j.at("url").get<std::string>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::PullRequest& _x) {
+    inline void to_json(json& _j, const quicktype::EventRepo& _x) {
         _j = json::object();
-        _j["url"] = _x.url;
-        _j["id"] = _x.id;
-        _j["html_url"] = _x.html_url;
-        _j["diff_url"] = _x.diff_url;
-        _j["patch_url"] = _x.patch_url;
-        _j["issue_url"] = _x.issue_url;
-        _j["number"] = _x.number;
-        _j["state"] = _x.state;
-        _j["locked"] = _x.locked;
-        _j["title"] = _x.title;
-        _j["user"] = _x.user;
-        _j["body"] = _x.body;
-        _j["created_at"] = _x.created_at;
-        _j["updated_at"] = _x.updated_at;
-        _j["closed_at"] = _x.closed_at;
-        _j["merged_at"] = _x.merged_at;
-        _j["merge_commit_sha"] = _x.merge_commit_sha;
-        _j["assignee"] = _x.assignee;
-        _j["assignees"] = _x.assignees;
-        _j["requested_reviewers"] = _x.requested_reviewers;
-        _j["requested_teams"] = _x.requested_teams;
-        _j["labels"] = _x.labels;
-        _j["milestone"] = _x.milestone;
-        _j["commits_url"] = _x.commits_url;
-        _j["review_comments_url"] = _x.review_comments_url;
-        _j["review_comment_url"] = _x.review_comment_url;
-        _j["comments_url"] = _x.comments_url;
-        _j["statuses_url"] = _x.statuses_url;
-        _j["head"] = _x.head;
-        _j["base"] = _x.base;
-        _j["_links"] = _x.links;
-        _j["author_association"] = _x.author_association;
-        _j["merged"] = _x.merged;
-        _j["mergeable"] = _x.mergeable;
-        _j["rebaseable"] = _x.rebaseable;
-        _j["mergeable_state"] = _x.mergeable_state;
-        _j["merged_by"] = _x.merged_by;
-        _j["comments"] = _x.comments;
-        _j["review_comments"] = _x.review_comments;
-        _j["maintainer_can_modify"] = _x.maintainer_can_modify;
-        _j["commits"] = _x.commits;
-        _j["additions"] = _x.additions;
-        _j["deletions"] = _x.deletions;
-        _j["changed_files"] = _x.changed_files;
+        _j["id"] = _x.get_id();
+        _j["name"] = _x.get_name();
+        _j["url"] = _x.get_url();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Payload& _x) {
-        _x.push_id = quicktype::get_optional<int64_t>(_j, "push_id");
-        _x.size = quicktype::get_optional<int64_t>(_j, "size");
-        _x.distinct_size = quicktype::get_optional<int64_t>(_j, "distinct_size");
-        _x.ref = quicktype::get_optional<std::string>(_j, "ref");
-        _x.head = quicktype::get_optional<std::string>(_j, "head");
-        _x.before = quicktype::get_optional<std::string>(_j, "before");
-        _x.commits = quicktype::get_optional<std::vector<struct quicktype::Commit>>(_j, "commits");
-        _x.forkee = quicktype::get_optional<struct quicktype::Forkee>(_j, "forkee");
-        _x.action = quicktype::get_optional<std::string>(_j, "action");
-        _x.number = quicktype::get_optional<int64_t>(_j, "number");
-        _x.pull_request = quicktype::get_optional<struct quicktype::PullRequest>(_j, "pull_request");
-        _x.ref_type = quicktype::get_optional<std::string>(_j, "ref_type");
-        _x.master_branch = quicktype::get_optional<std::string>(_j, "master_branch");
-        _x.description = quicktype::get_optional<std::string>(_j, "description");
-        _x.pusher_type = quicktype::get_optional<std::string>(_j, "pusher_type");
-        _x.issue = quicktype::get_optional<struct quicktype::Issue>(_j, "issue");
-        _x.comment = quicktype::get_optional<struct quicktype::Comment>(_j, "comment");
+    inline void from_json(const json& _j, quicktype::Event& _x) {
+        _x.set_id( _j.at("id").get<std::string>() );
+        _x.set_type( _j.at("type").get<std::string>() );
+        _x.set_actor( _j.at("actor").get<quicktype::Actor>() );
+        _x.set_repo( _j.at("repo").get<quicktype::EventRepo>() );
+        _x.set_payload( _j.at("payload").get<quicktype::Payload>() );
+        _x.set_event_public( _j.at("public").get<bool>() );
+        _x.set_created_at( _j.at("created_at").get<std::string>() );
+        _x.set_org( quicktype::get_optional<quicktype::Actor>(_j, "org") );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Payload& _x) {
+    inline void to_json(json& _j, const quicktype::Event& _x) {
         _j = json::object();
-        _j["push_id"] = _x.push_id;
-        _j["size"] = _x.size;
-        _j["distinct_size"] = _x.distinct_size;
-        _j["ref"] = _x.ref;
-        _j["head"] = _x.head;
-        _j["before"] = _x.before;
-        _j["commits"] = _x.commits;
-        _j["forkee"] = _x.forkee;
-        _j["action"] = _x.action;
-        _j["number"] = _x.number;
-        _j["pull_request"] = _x.pull_request;
-        _j["ref_type"] = _x.ref_type;
-        _j["master_branch"] = _x.master_branch;
-        _j["description"] = _x.description;
-        _j["pusher_type"] = _x.pusher_type;
-        _j["issue"] = _x.issue;
-        _j["comment"] = _x.comment;
+        _j["id"] = _x.get_id();
+        _j["type"] = _x.get_type();
+        _j["actor"] = _x.get_actor();
+        _j["repo"] = _x.get_repo();
+        _j["payload"] = _x.get_payload();
+        _j["public"] = _x.get_event_public();
+        _j["created_at"] = _x.get_created_at();
+        _j["org"] = _x.get_org();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Repo& _x) {
-        _x.id = _j.at("id").get<int64_t>();
-        _x.name = _j.at("name").get<std::string>();
-        _x.url = _j.at("url").get<std::string>();
+    inline void from_json(const json& _j, quicktype::File& _x) {
+        _x.set_filename( _j.at("filename").get<std::string>() );
+        _x.set_type( _j.at("type").get<std::string>() );
+        _x.set_language( quicktype::get_optional<std::string>(_j, "language") );
+        _x.set_raw_url( _j.at("raw_url").get<std::string>() );
+        _x.set_size( _j.at("size").get<int64_t>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Repo& _x) {
+    inline void to_json(json& _j, const quicktype::File& _x) {
         _j = json::object();
-        _j["id"] = _x.id;
-        _j["name"] = _x.name;
-        _j["url"] = _x.url;
+        _j["filename"] = _x.get_filename();
+        _j["type"] = _x.get_type();
+        _j["language"] = _x.get_language();
+        _j["raw_url"] = _x.get_raw_url();
+        _j["size"] = _x.get_size();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Event& _x) {
-        _x.id = _j.at("id").get<std::string>();
-        _x.type = _j.at("type").get<std::string>();
-        _x.actor = _j.at("actor").get<struct quicktype::Actor>();
-        _x.repo = _j.at("repo").get<struct quicktype::Repo>();
-        _x.payload = _j.at("payload").get<struct quicktype::Payload>();
-        _x.event_public = _j.at("public").get<bool>();
-        _x.created_at = _j.at("created_at").get<std::string>();
-        _x.org = quicktype::get_optional<struct quicktype::Actor>(_j, "org");
+    inline void from_json(const json& _j, quicktype::Gist& _x) {
+        _x.set_url( _j.at("url").get<std::string>() );
+        _x.set_forks_url( _j.at("forks_url").get<std::string>() );
+        _x.set_commits_url( _j.at("commits_url").get<std::string>() );
+        _x.set_id( _j.at("id").get<std::string>() );
+        _x.set_node_id( _j.at("node_id").get<std::string>() );
+        _x.set_git_pull_url( _j.at("git_pull_url").get<std::string>() );
+        _x.set_git_push_url( _j.at("git_push_url").get<std::string>() );
+        _x.set_html_url( _j.at("html_url").get<std::string>() );
+        _x.set_files( _j.at("files").get<std::map<std::string, quicktype::File>>() );
+        _x.set_gist_public( _j.at("public").get<bool>() );
+        _x.set_created_at( _j.at("created_at").get<std::string>() );
+        _x.set_updated_at( _j.at("updated_at").get<std::string>() );
+        _x.set_description( quicktype::get_optional<std::string>(_j, "description") );
+        _x.set_comments( _j.at("comments").get<int64_t>() );
+        _x.set_user( quicktype::get_untyped(_j, "user") );
+        _x.set_comments_url( _j.at("comments_url").get<std::string>() );
+        _x.set_owner( _j.at("owner").get<quicktype::Owner>() );
+        _x.set_truncated( _j.at("truncated").get<bool>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::Event& _x) {
+    inline void to_json(json& _j, const quicktype::Gist& _x) {
         _j = json::object();
-        _j["id"] = _x.id;
-        _j["type"] = _x.type;
-        _j["actor"] = _x.actor;
-        _j["repo"] = _x.repo;
-        _j["payload"] = _x.payload;
-        _j["public"] = _x.event_public;
-        _j["created_at"] = _x.created_at;
-        _j["org"] = _x.org;
+        _j["url"] = _x.get_url();
+        _j["forks_url"] = _x.get_forks_url();
+        _j["commits_url"] = _x.get_commits_url();
+        _j["id"] = _x.get_id();
+        _j["node_id"] = _x.get_node_id();
+        _j["git_pull_url"] = _x.get_git_pull_url();
+        _j["git_push_url"] = _x.get_git_push_url();
+        _j["html_url"] = _x.get_html_url();
+        _j["files"] = _x.get_files();
+        _j["public"] = _x.get_gist_public();
+        _j["created_at"] = _x.get_created_at();
+        _j["updated_at"] = _x.get_updated_at();
+        _j["description"] = _x.get_description();
+        _j["comments"] = _x.get_comments();
+        _j["user"] = _x.get_user();
+        _j["comments_url"] = _x.get_comments_url();
+        _j["owner"] = _x.get_owner();
+        _j["truncated"] = _x.get_truncated();
     }
 
-    inline void from_json(const json& _j, struct quicktype::File& _x) {
-        _x.filename = _j.at("filename").get<std::string>();
-        _x.type = _j.at("type").get<quicktype::FileType>();
-        _x.language = quicktype::get_optional<std::string>(_j, "language");
-        _x.raw_url = _j.at("raw_url").get<std::string>();
-        _x.size = _j.at("size").get<int64_t>();
+    inline void from_json(const json& _j, quicktype::Meta& _x) {
+        _x.set_verifiable_password_authentication( _j.at("verifiable_password_authentication").get<bool>() );
+        _x.set_github_services_sha( _j.at("github_services_sha").get<std::string>() );
+        _x.set_hooks( _j.at("hooks").get<std::vector<std::string>>() );
+        _x.set_git( _j.at("git").get<std::vector<std::string>>() );
+        _x.set_pages( _j.at("pages").get<std::vector<std::string>>() );
+        _x.set_importer( _j.at("importer").get<std::vector<std::string>>() );
     }
 
-    inline void to_json(json& _j, const struct quicktype::File& _x) {
+    inline void to_json(json& _j, const quicktype::Meta& _x) {
         _j = json::object();
-        _j["filename"] = _x.filename;
-        _j["type"] = _x.type;
-        _j["language"] = _x.language;
-        _j["raw_url"] = _x.raw_url;
-        _j["size"] = _x.size;
+        _j["verifiable_password_authentication"] = _x.get_verifiable_password_authentication();
+        _j["github_services_sha"] = _x.get_github_services_sha();
+        _j["hooks"] = _x.get_hooks();
+        _j["git"] = _x.get_git();
+        _j["pages"] = _x.get_pages();
+        _j["importer"] = _x.get_importer();
     }
 
-    inline void from_json(const json& _j, struct quicktype::Gist& _x) {
-        _x.url = _j.at("url").get<std::string>();
-        _x.forks_url = _j.at("forks_url").get<std::string>();
-        _x.commits_url = _j.at("commits_url").get<std::string>();
-        _x.id = _j.at("id").get<std::string>();
-        _x.git_pull_url = _j.at("git_pull_url").get<std::string>();
-        _x.git_push_url = _j.at("git_push_url").get<std::string>();
-        _x.html_url = _j.at("html_url").get<std::string>();
-        _x.files = _j.at("files").get<std::map<std::string, struct quicktype::File>>();
-        _x.gist_public = _j.at("public").get<bool>();
-        _x.created_at = _j.at("created_at").get<std::string>();
-        _x.updated_at = _j.at("updated_at").get<std::string>();
-        _x.description = quicktype::get_optional<std::string>(_j, "description");
-        _x.comments = _j.at("comments").get<int64_t>();
-        _x.user = quicktype::get_untyped(_j, "user");
-        _x.comments_url = _j.at("comments_url").get<std::string>();
-        _x.truncated = _j.at("truncated").get<bool>();
-        _x.owner = quicktype::get_optional<struct quicktype::User>(_j, "owner");
-    }
-
-    inline void to_json(json& _j, const struct quicktype::Gist& _x) {
-        _j = json::object();
-        _j["url"] = _x.url;
-        _j["forks_url"] = _x.forks_url;
-        _j["commits_url"] = _x.commits_url;
-        _j["id"] = _x.id;
-        _j["git_pull_url"] = _x.git_pull_url;
-        _j["git_push_url"] = _x.git_push_url;
-        _j["html_url"] = _x.html_url;
-        _j["files"] = _x.files;
-        _j["public"] = _x.gist_public;
-        _j["created_at"] = _x.created_at;
-        _j["updated_at"] = _x.updated_at;
-        _j["description"] = _x.description;
-        _j["comments"] = _x.comments;
-        _j["user"] = _x.user;
-        _j["comments_url"] = _x.comments_url;
-        _j["truncated"] = _x.truncated;
-        _j["owner"] = _x.owner;
-    }
-
-    inline void from_json(const json& _j, struct quicktype::Meta& _x) {
-        _x.verifiable_password_authentication = _j.at("verifiable_password_authentication").get<bool>();
-        _x.github_services_sha = _j.at("github_services_sha").get<std::string>();
-        _x.hooks = _j.at("hooks").get<std::vector<std::string>>();
-        _x.git = _j.at("git").get<std::vector<std::string>>();
-        _x.pages = _j.at("pages").get<std::vector<std::string>>();
-        _x.importer = _j.at("importer").get<std::vector<std::string>>();
-    }
-
-    inline void to_json(json& _j, const struct quicktype::Meta& _x) {
-        _j = json::object();
-        _j["verifiable_password_authentication"] = _x.verifiable_password_authentication;
-        _j["github_services_sha"] = _x.github_services_sha;
-        _j["hooks"] = _x.hooks;
-        _j["git"] = _x.git;
-        _j["pages"] = _x.pages;
-        _j["importer"] = _x.importer;
-    }
-
-    inline void from_json(const json& _j, quicktype::GravatarID& _x) {
-        if (_j == "") _x = quicktype::GravatarID::EMPTY;
+    inline void from_json(const json& _j, quicktype::Type& _x) {
+        if (_j == "Organization") _x = quicktype::Type::ORGANIZATION;
+        else if (_j == "User") _x = quicktype::Type::USER;
         else throw "Input JSON does not conform to schema";
     }
 
-    inline void to_json(json& _j, const quicktype::GravatarID& _x) {
+    inline void to_json(json& _j, const quicktype::Type& _x) {
         switch (_x) {
-            case quicktype::GravatarID::EMPTY: _j = ""; break;
-            default: throw "This should not happen";
-        }
-    }
-
-    inline void from_json(const json& _j, quicktype::UserType& _x) {
-        if (_j == "Organization") _x = quicktype::UserType::ORGANIZATION;
-        else if (_j == "User") _x = quicktype::UserType::USER;
-        else throw "Input JSON does not conform to schema";
-    }
-
-    inline void to_json(json& _j, const quicktype::UserType& _x) {
-        switch (_x) {
-            case quicktype::UserType::ORGANIZATION: _j = "Organization"; break;
-            case quicktype::UserType::USER: _j = "User"; break;
-            default: throw "This should not happen";
-        }
-    }
-
-    inline void from_json(const json& _j, quicktype::FileType& _x) {
-        if (_j == "application/javascript") _x = quicktype::FileType::APPLICATION_JAVASCRIPT;
-        else if (_j == "application/x-python") _x = quicktype::FileType::APPLICATION_X_PYTHON;
-        else if (_j == "text/css") _x = quicktype::FileType::TEXT_CSS;
-        else if (_j == "text/html") _x = quicktype::FileType::TEXT_HTML;
-        else if (_j == "text/plain") _x = quicktype::FileType::TEXT_PLAIN;
-        else throw "Input JSON does not conform to schema";
-    }
-
-    inline void to_json(json& _j, const quicktype::FileType& _x) {
-        switch (_x) {
-            case quicktype::FileType::APPLICATION_JAVASCRIPT: _j = "application/javascript"; break;
-            case quicktype::FileType::APPLICATION_X_PYTHON: _j = "application/x-python"; break;
-            case quicktype::FileType::TEXT_CSS: _j = "text/css"; break;
-            case quicktype::FileType::TEXT_HTML: _j = "text/html"; break;
-            case quicktype::FileType::TEXT_PLAIN: _j = "text/plain"; break;
+            case quicktype::Type::ORGANIZATION: _j = "Organization"; break;
+            case quicktype::Type::USER: _j = "User"; break;
             default: throw "This should not happen";
         }
     }

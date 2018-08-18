@@ -8,6 +8,7 @@ public class Gists {
     private String forksURL;
     private String commitsURL;
     private String id;
+    private String nodeID;
     private String gitPullURL;
     private String gitPushURL;
     private String htmlURL;
@@ -19,8 +20,8 @@ public class Gists {
     private long comments;
     private Object user;
     private String commentsURL;
+    private Owner owner;
     private boolean truncated;
-    private User owner;
 
     @JsonProperty("url")
     public String getURL() { return url; }
@@ -41,6 +42,11 @@ public class Gists {
     public String getID() { return id; }
     @JsonProperty("id")
     public void setID(String value) { this.id = value; }
+
+    @JsonProperty("node_id")
+    public String getNodeID() { return nodeID; }
+    @JsonProperty("node_id")
+    public void setNodeID(String value) { this.nodeID = value; }
 
     @JsonProperty("git_pull_url")
     public String getGitPullURL() { return gitPullURL; }
@@ -97,13 +103,13 @@ public class Gists {
     @JsonProperty("comments_url")
     public void setCommentsURL(String value) { this.commentsURL = value; }
 
+    @JsonProperty("owner")
+    public Owner getOwner() { return owner; }
+    @JsonProperty("owner")
+    public void setOwner(Owner value) { this.owner = value; }
+
     @JsonProperty("truncated")
     public boolean getTruncated() { return truncated; }
     @JsonProperty("truncated")
     public void setTruncated(boolean value) { this.truncated = value; }
-
-    @JsonProperty("owner")
-    public User getOwner() { return owner; }
-    @JsonProperty("owner")
-    public void setOwner(User value) { this.owner = value; }
 }

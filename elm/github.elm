@@ -1,9 +1,9 @@
 -- To decode the JSON data, add this file to your project, run
--- 
+--
 --     elm-package install NoRedInk/elm-decode-pipeline
--- 
+--
 -- add these imports
--- 
+--
 --     import Json.Decode exposing (decodeString)`);
 --     import QuickType exposing (apiData, emojis, events, gists, meta)
 --
@@ -35,22 +35,20 @@ module QuickType exposing
     , Actor
     , Payload
     , Comment
-    , User
+    , CommentLinks
+    , HTML
+    , Owner
     , Commit
     , Author
-    , Forkee
-    , Issue
-    , Label
     , PullRequest
     , Base
-    , Links
-    , Comments
-    , Repo
+    , BaseRepo
+    , License
+    , PullRequestLinks
+    , EventRepo
     , Gist
     , File
-    , GravatarID(..)
-    , UserType(..)
-    , FileType(..)
+    , Type(..)
     )
 
 import Json.Decode as Jdec
@@ -59,1560 +57,19 @@ import Json.Encode as Jenc
 import Dict exposing (Dict, map, toList)
 import Array exposing (Array, map)
 
+type alias APIData = Dict String String
+
+type alias Emojis = Dict String String
+
 type alias Events = Array Event
 
 type alias Gists = Array Gist
-
-type alias APIData =
-    { currentUserURL : String
-    , currentUserAuthorizationsHTMLURL : String
-    , authorizationsURL : String
-    , codeSearchURL : String
-    , commitSearchURL : String
-    , emailsURL : String
-    , emojisURL : String
-    , eventsURL : String
-    , feedsURL : String
-    , followersURL : String
-    , followingURL : String
-    , gistsURL : String
-    , hubURL : String
-    , issueSearchURL : String
-    , issuesURL : String
-    , keysURL : String
-    , notificationsURL : String
-    , organizationRepositoriesURL : String
-    , organizationURL : String
-    , publicGistsURL : String
-    , rateLimitURL : String
-    , repositoryURL : String
-    , repositorySearchURL : String
-    , currentUserRepositoriesURL : String
-    , starredURL : String
-    , starredGistsURL : String
-    , teamURL : String
-    , userURL : String
-    , userOrganizationsURL : String
-    , userRepositoriesURL : String
-    , userSearchURL : String
-    }
-
-type alias Emojis =
-    { the1 : String
-    , emojis1 : String
-    , the100 : String
-    , the1234 : String
-    , the1StPlaceMedal : String
-    , the2NdPlaceMedal : String
-    , the3RDPlaceMedal : String
-    , the8Ball : String
-    , a : String
-    , ab : String
-    , abc : String
-    , abcd : String
-    , accept : String
-    , aerialTramway : String
-    , afghanistan : String
-    , airplane : String
-    , alandIslands : String
-    , alarmClock : String
-    , albania : String
-    , alembic : String
-    , algeria : String
-    , alien : String
-    , ambulance : String
-    , americanSamoa : String
-    , amphora : String
-    , anchor : String
-    , andorra : String
-    , angel : String
-    , anger : String
-    , angola : String
-    , angry : String
-    , anguilla : String
-    , anguished : String
-    , ant : String
-    , antarctica : String
-    , antiguaBarbuda : String
-    , apple : String
-    , aquarius : String
-    , argentina : String
-    , aries : String
-    , armenia : String
-    , arrowBackward : String
-    , arrowDoubleDown : String
-    , arrowDoubleUp : String
-    , arrowDown : String
-    , arrowDownSmall : String
-    , arrowForward : String
-    , arrowHeadingDown : String
-    , arrowHeadingUp : String
-    , arrowLeft : String
-    , arrowLowerLeft : String
-    , arrowLowerRight : String
-    , arrowRight : String
-    , arrowRightHook : String
-    , arrowUp : String
-    , arrowUpDown : String
-    , arrowUpSmall : String
-    , arrowUpperLeft : String
-    , arrowUpperRight : String
-    , arrowsClockwise : String
-    , arrowsCounterclockwise : String
-    , art : String
-    , articulatedLorry : String
-    , artificialSatellite : String
-    , aruba : String
-    , asterisk : String
-    , astonished : String
-    , athleticShoe : String
-    , atm : String
-    , atom : String
-    , atomSymbol : String
-    , australia : String
-    , austria : String
-    , avocado : String
-    , azerbaijan : String
-    , b : String
-    , baby : String
-    , babyBottle : String
-    , babyChick : String
-    , babySymbol : String
-    , back : String
-    , bacon : String
-    , badminton : String
-    , baggageClaim : String
-    , baguetteBread : String
-    , bahamas : String
-    , bahrain : String
-    , balanceScale : String
-    , balloon : String
-    , ballotBox : String
-    , ballotBoxWithCheck : String
-    , bamboo : String
-    , banana : String
-    , bangbang : String
-    , bangladesh : String
-    , bank : String
-    , barChart : String
-    , barbados : String
-    , barber : String
-    , baseball : String
-    , basecamp : String
-    , basecampy : String
-    , basketball : String
-    , basketballMan : String
-    , basketballWoman : String
-    , bat : String
-    , bath : String
-    , bathtub : String
-    , battery : String
-    , beachUmbrella : String
-    , bear : String
-    , bed : String
-    , bee : String
-    , beer : String
-    , beers : String
-    , beetle : String
-    , beginner : String
-    , belarus : String
-    , belgium : String
-    , belize : String
-    , bell : String
-    , bellhopBell : String
-    , benin : String
-    , bento : String
-    , bermuda : String
-    , bhutan : String
-    , bicyclist : String
-    , bike : String
-    , bikingMan : String
-    , bikingWoman : String
-    , bikini : String
-    , biohazard : String
-    , bird : String
-    , birthday : String
-    , blackCircle : String
-    , blackFlag : String
-    , blackHeart : String
-    , blackJoker : String
-    , blackLargeSquare : String
-    , blackMediumSmallSquare : String
-    , blackMediumSquare : String
-    , blackNib : String
-    , blackSmallSquare : String
-    , blackSquareButton : String
-    , blondeMan : String
-    , blondeWoman : String
-    , blossom : String
-    , blowfish : String
-    , blueBook : String
-    , blueCar : String
-    , blueHeart : String
-    , blush : String
-    , boar : String
-    , boat : String
-    , bolivia : String
-    , bomb : String
-    , book : String
-    , bookmark : String
-    , bookmarkTabs : String
-    , books : String
-    , boom : String
-    , boot : String
-    , bosniaHerzegovina : String
-    , botswana : String
-    , bouquet : String
-    , bow : String
-    , bowAndArrow : String
-    , bowingMan : String
-    , bowingWoman : String
-    , bowling : String
-    , bowtie : String
-    , boxingGlove : String
-    , boy : String
-    , brazil : String
-    , bread : String
-    , brideWithVeil : String
-    , bridgeAtNight : String
-    , briefcase : String
-    , britishIndianOceanTerritory : String
-    , britishVirginIslands : String
-    , brokenHeart : String
-    , brunei : String
-    , bug : String
-    , buildingConstruction : String
-    , bulb : String
-    , bulgaria : String
-    , bullettrainFront : String
-    , bullettrainSide : String
-    , burkinaFaso : String
-    , burrito : String
-    , burundi : String
-    , bus : String
-    , businessSuitLevitating : String
-    , busstop : String
-    , bustInSilhouette : String
-    , bustsInSilhouette : String
-    , butterfly : String
-    , cactus : String
-    , cake : String
-    , calendar : String
-    , callMeHand : String
-    , calling : String
-    , cambodia : String
-    , camel : String
-    , camera : String
-    , cameraFlash : String
-    , cameroon : String
-    , camping : String
-    , canada : String
-    , canaryIslands : String
-    , cancer : String
-    , candle : String
-    , candy : String
-    , canoe : String
-    , capeVerde : String
-    , capitalAbcd : String
-    , capricorn : String
-    , car : String
-    , cardFileBox : String
-    , cardIndex : String
-    , cardIndexDividers : String
-    , caribbeanNetherlands : String
-    , carouselHorse : String
-    , carrot : String
-    , cat : String
-    , cat2 : String
-    , caymanIslands : String
-    , cd : String
-    , centralAfricanRepublic : String
-    , chad : String
-    , chains : String
-    , champagne : String
-    , chart : String
-    , chartWithDownwardsTrend : String
-    , chartWithUpwardsTrend : String
-    , checkeredFlag : String
-    , cheese : String
-    , cherries : String
-    , cherryBlossom : String
-    , chestnut : String
-    , chicken : String
-    , childrenCrossing : String
-    , chile : String
-    , chipmunk : String
-    , chocolateBar : String
-    , christmasIsland : String
-    , christmasTree : String
-    , church : String
-    , cinema : String
-    , circusTent : String
-    , citySunrise : String
-    , citySunset : String
-    , cityscape : String
-    , cl : String
-    , clamp : String
-    , clap : String
-    , clapper : String
-    , classicalBuilding : String
-    , clinkingGlasses : String
-    , clipboard : String
-    , clock1 : String
-    , clock10 : String
-    , clock1030 : String
-    , clock11 : String
-    , clock1130 : String
-    , clock12 : String
-    , clock1230 : String
-    , clock130 : String
-    , clock2 : String
-    , clock230 : String
-    , clock3 : String
-    , clock330 : String
-    , clock4 : String
-    , clock430 : String
-    , clock5 : String
-    , clock530 : String
-    , clock6 : String
-    , clock630 : String
-    , clock7 : String
-    , clock730 : String
-    , clock8 : String
-    , clock830 : String
-    , clock9 : String
-    , clock930 : String
-    , closedBook : String
-    , closedLockWithKey : String
-    , closedUmbrella : String
-    , cloud : String
-    , cloudWithLightning : String
-    , cloudWithLightningAndRain : String
-    , cloudWithRain : String
-    , cloudWithSnow : String
-    , clownFace : String
-    , clubs : String
-    , cn : String
-    , cocktail : String
-    , cocosIslands : String
-    , coffee : String
-    , coffin : String
-    , coldSweat : String
-    , collision : String
-    , colombia : String
-    , comet : String
-    , comoros : String
-    , computer : String
-    , computerMouse : String
-    , confettiBall : String
-    , confounded : String
-    , confused : String
-    , congoBrazzaville : String
-    , congoKinshasa : String
-    , congratulations : String
-    , construction : String
-    , constructionWorker : String
-    , constructionWorkerMan : String
-    , constructionWorkerWoman : String
-    , controlKnobs : String
-    , convenienceStore : String
-    , cookIslands : String
-    , cookie : String
-    , cool : String
-    , cop : String
-    , copyright : String
-    , corn : String
-    , costaRica : String
-    , coteDivoire : String
-    , couchAndLamp : String
-    , couple : String
-    , coupleWithHeart : String
-    , coupleWithHeartManMan : String
-    , coupleWithHeartWomanMan : String
-    , coupleWithHeartWomanWoman : String
-    , couplekissManMan : String
-    , couplekissManWoman : String
-    , couplekissWomanWoman : String
-    , cow : String
-    , cow2 : String
-    , cowboyHatFace : String
-    , crab : String
-    , crayon : String
-    , creditCard : String
-    , crescentMoon : String
-    , cricket : String
-    , croatia : String
-    , crocodile : String
-    , croissant : String
-    , crossedFingers : String
-    , crossedFlags : String
-    , crossedSwords : String
-    , crown : String
-    , cry : String
-    , cryingCatFace : String
-    , crystalBall : String
-    , cuba : String
-    , cucumber : String
-    , cupid : String
-    , curacao : String
-    , curlyLoop : String
-    , currencyExchange : String
-    , curry : String
-    , custard : String
-    , customs : String
-    , cyclone : String
-    , cyprus : String
-    , czechRepublic : String
-    , dagger : String
-    , dancer : String
-    , dancers : String
-    , dancingMen : String
-    , dancingWomen : String
-    , dango : String
-    , darkSunglasses : String
-    , dart : String
-    , dash : String
-    , date : String
-    , de : String
-    , deciduousTree : String
-    , deer : String
-    , denmark : String
-    , departmentStore : String
-    , derelictHouse : String
-    , desert : String
-    , desertIsland : String
-    , desktopComputer : String
-    , detective : String
-    , diamondShapeWithADotInside : String
-    , diamonds : String
-    , disappointed : String
-    , disappointedRelieved : String
-    , dizzy : String
-    , dizzyFace : String
-    , djibouti : String
-    , doNotLitter : String
-    , dog : String
-    , dog2 : String
-    , dollar : String
-    , dolls : String
-    , dolphin : String
-    , dominica : String
-    , dominicanRepublic : String
-    , door : String
-    , doughnut : String
-    , dove : String
-    , dragon : String
-    , dragonFace : String
-    , dress : String
-    , dromedaryCamel : String
-    , droolingFace : String
-    , droplet : String
-    , drum : String
-    , duck : String
-    , dvd : String
-    , eMail : String
-    , eagle : String
-    , ear : String
-    , earOfRice : String
-    , earthAfrica : String
-    , earthAmericas : String
-    , earthAsia : String
-    , ecuador : String
-    , egg : String
-    , eggplant : String
-    , egypt : String
-    , eight : String
-    , eightPointedBlackStar : String
-    , eightSpokedAsterisk : String
-    , elSalvador : String
-    , electricPlug : String
-    , electron : String
-    , elephant : String
-    , email : String
-    , end : String
-    , envelope : String
-    , envelopeWithArrow : String
-    , equatorialGuinea : String
-    , eritrea : String
-    , es : String
-    , estonia : String
-    , ethiopia : String
-    , eu : String
-    , euro : String
-    , europeanCastle : String
-    , europeanPostOffice : String
-    , europeanUnion : String
-    , evergreenTree : String
-    , exclamation : String
-    , expressionless : String
-    , eye : String
-    , eyeSpeechBubble : String
-    , eyeglasses : String
-    , eyes : String
-    , faceWithHeadBandage : String
-    , faceWithThermometer : String
-    , facepunch : String
-    , factory : String
-    , falklandIslands : String
-    , fallenLeaf : String
-    , family : String
-    , familyManBoy : String
-    , familyManBoyBoy : String
-    , familyManGirl : String
-    , familyManGirlBoy : String
-    , familyManGirlGirl : String
-    , familyManManBoy : String
-    , familyManManBoyBoy : String
-    , familyManManGirl : String
-    , familyManManGirlBoy : String
-    , familyManManGirlGirl : String
-    , familyManWomanBoy : String
-    , familyManWomanBoyBoy : String
-    , familyManWomanGirl : String
-    , familyManWomanGirlBoy : String
-    , familyManWomanGirlGirl : String
-    , familyWomanBoy : String
-    , familyWomanBoyBoy : String
-    , familyWomanGirl : String
-    , familyWomanGirlBoy : String
-    , familyWomanGirlGirl : String
-    , familyWomanWomanBoy : String
-    , familyWomanWomanBoyBoy : String
-    , familyWomanWomanGirl : String
-    , familyWomanWomanGirlBoy : String
-    , familyWomanWomanGirlGirl : String
-    , faroeIslands : String
-    , fastForward : String
-    , fax : String
-    , fearful : String
-    , feelsgood : String
-    , feet : String
-    , femaleDetective : String
-    , ferrisWheel : String
-    , ferry : String
-    , fieldHockey : String
-    , fiji : String
-    , fileCabinet : String
-    , fileFolder : String
-    , filmProjector : String
-    , filmStrip : String
-    , finland : String
-    , finnadie : String
-    , fire : String
-    , fireEngine : String
-    , fireworks : String
-    , firstQuarterMoon : String
-    , firstQuarterMoonWithFace : String
-    , fish : String
-    , fishCake : String
-    , fishingPoleAndFish : String
-    , fist : String
-    , fistLeft : String
-    , fistOncoming : String
-    , fistRaised : String
-    , fistRight : String
-    , five : String
-    , flags : String
-    , flashlight : String
-    , fleurDeLis : String
-    , flightArrival : String
-    , flightDeparture : String
-    , flipper : String
-    , floppyDisk : String
-    , flowerPlayingCards : String
-    , flushed : String
-    , fog : String
-    , foggy : String
-    , football : String
-    , footprints : String
-    , forkAndKnife : String
-    , fountain : String
-    , fountainPen : String
-    , four : String
-    , fourLeafClover : String
-    , foxFace : String
-    , fr : String
-    , framedPicture : String
-    , free : String
-    , frenchGuiana : String
-    , frenchPolynesia : String
-    , frenchSouthernTerritories : String
-    , friedEgg : String
-    , friedShrimp : String
-    , fries : String
-    , frog : String
-    , frowning : String
-    , frowningFace : String
-    , frowningMan : String
-    , frowningWoman : String
-    , fu : String
-    , fuelpump : String
-    , fullMoon : String
-    , fullMoonWithFace : String
-    , funeralUrn : String
-    , gabon : String
-    , gambia : String
-    , gameDie : String
-    , gb : String
-    , gear : String
-    , gem : String
-    , gemini : String
-    , georgia : String
-    , ghana : String
-    , ghost : String
-    , gibraltar : String
-    , gift : String
-    , giftHeart : String
-    , girl : String
-    , globeWithMeridians : String
-    , goalNet : String
-    , goat : String
-    , goberserk : String
-    , godmode : String
-    , golf : String
-    , golfingMan : String
-    , golfingWoman : String
-    , gorilla : String
-    , grapes : String
-    , greece : String
-    , greenApple : String
-    , greenBook : String
-    , greenHeart : String
-    , greenSalad : String
-    , greenland : String
-    , grenada : String
-    , greyExclamation : String
-    , greyQuestion : String
-    , grimacing : String
-    , grin : String
-    , grinning : String
-    , guadeloupe : String
-    , guam : String
-    , guardsman : String
-    , guardswoman : String
-    , guatemala : String
-    , guernsey : String
-    , guinea : String
-    , guineaBissau : String
-    , guitar : String
-    , gun : String
-    , guyana : String
-    , haircut : String
-    , haircutMan : String
-    , haircutWoman : String
-    , haiti : String
-    , hamburger : String
-    , hammer : String
-    , hammerAndPick : String
-    , hammerAndWrench : String
-    , hamster : String
-    , hand : String
-    , handbag : String
-    , handshake : String
-    , hankey : String
-    , hash : String
-    , hatchedChick : String
-    , hatchingChick : String
-    , headphones : String
-    , hearNoEvil : String
-    , heart : String
-    , heartDecoration : String
-    , heartEyes : String
-    , heartEyesCat : String
-    , heartbeat : String
-    , heartpulse : String
-    , hearts : String
-    , heavyCheckMark : String
-    , heavyDivisionSign : String
-    , heavyDollarSign : String
-    , heavyExclamationMark : String
-    , heavyHeartExclamation : String
-    , heavyMinusSign : String
-    , heavyMultiplicationX : String
-    , heavyPlusSign : String
-    , helicopter : String
-    , herb : String
-    , hibiscus : String
-    , highBrightness : String
-    , highHeel : String
-    , hocho : String
-    , hole : String
-    , honduras : String
-    , honeyPot : String
-    , honeybee : String
-    , hongKong : String
-    , horse : String
-    , horseRacing : String
-    , hospital : String
-    , hotPepper : String
-    , hotdog : String
-    , hotel : String
-    , hotsprings : String
-    , hourglass : String
-    , hourglassFlowingSand : String
-    , house : String
-    , houseWithGarden : String
-    , houses : String
-    , hugs : String
-    , hungary : String
-    , hurtrealbad : String
-    , hushed : String
-    , iceCream : String
-    , iceHockey : String
-    , iceSkate : String
-    , icecream : String
-    , iceland : String
-    , id : String
-    , ideographAdvantage : String
-    , imp : String
-    , inboxTray : String
-    , incomingEnvelope : String
-    , india : String
-    , indonesia : String
-    , informationDeskPerson : String
-    , informationSource : String
-    , innocent : String
-    , interrobang : String
-    , iphone : String
-    , iran : String
-    , iraq : String
-    , ireland : String
-    , isleOfMan : String
-    , israel : String
-    , it : String
-    , izakayaLantern : String
-    , jackOLantern : String
-    , jamaica : String
-    , japan : String
-    , japaneseCastle : String
-    , japaneseGoblin : String
-    , japaneseOgre : String
-    , jeans : String
-    , jersey : String
-    , jordan : String
-    , joy : String
-    , joyCat : String
-    , joystick : String
-    , jp : String
-    , kaaba : String
-    , kazakhstan : String
-    , kenya : String
-    , key : String
-    , keyboard : String
-    , keycapTen : String
-    , kickScooter : String
-    , kimono : String
-    , kiribati : String
-    , kiss : String
-    , kissing : String
-    , kissingCat : String
-    , kissingClosedEyes : String
-    , kissingHeart : String
-    , kissingSmilingEyes : String
-    , kiwiFruit : String
-    , knife : String
-    , koala : String
-    , koko : String
-    , kosovo : String
-    , kr : String
-    , kuwait : String
-    , kyrgyzstan : String
-    , label : String
-    , lantern : String
-    , laos : String
-    , largeBlueCircle : String
-    , largeBlueDiamond : String
-    , largeOrangeDiamond : String
-    , lastQuarterMoon : String
-    , lastQuarterMoonWithFace : String
-    , latinCross : String
-    , latvia : String
-    , laughing : String
-    , leaves : String
-    , lebanon : String
-    , ledger : String
-    , leftLuggage : String
-    , leftRightArrow : String
-    , leftwardsArrowWithHook : String
-    , lemon : String
-    , leo : String
-    , leopard : String
-    , lesotho : String
-    , levelSlider : String
-    , liberia : String
-    , libra : String
-    , libya : String
-    , liechtenstein : String
-    , lightRail : String
-    , link : String
-    , lion : String
-    , lips : String
-    , lipstick : String
-    , lithuania : String
-    , lizard : String
-    , lock : String
-    , lockWithInkPen : String
-    , lollipop : String
-    , loop : String
-    , loudSound : String
-    , loudspeaker : String
-    , loveHotel : String
-    , loveLetter : String
-    , lowBrightness : String
-    , luxembourg : String
-    , lyingFace : String
-    , m : String
-    , macau : String
-    , macedonia : String
-    , madagascar : String
-    , mag : String
-    , magRight : String
-    , mahjong : String
-    , mailbox : String
-    , mailboxClosed : String
-    , mailboxWithMail : String
-    , mailboxWithNoMail : String
-    , malawi : String
-    , malaysia : String
-    , maldives : String
-    , maleDetective : String
-    , mali : String
-    , malta : String
-    , man : String
-    , manArtist : String
-    , manAstronaut : String
-    , manCartwheeling : String
-    , manCook : String
-    , manDancing : String
-    , manFacepalming : String
-    , manFactoryWorker : String
-    , manFarmer : String
-    , manFirefighter : String
-    , manHealthWorker : String
-    , manInTuxedo : String
-    , manJudge : String
-    , manJuggling : String
-    , manMechanic : String
-    , manOfficeWorker : String
-    , manPilot : String
-    , manPlayingHandball : String
-    , manPlayingWaterPolo : String
-    , manScientist : String
-    , manShrugging : String
-    , manSinger : String
-    , manStudent : String
-    , manTeacher : String
-    , manTechnologist : String
-    , manWithGuaPiMao : String
-    , manWithTurban : String
-    , mandarin : String
-    , mansShoe : String
-    , mantelpieceClock : String
-    , mapleLeaf : String
-    , marshallIslands : String
-    , martialArtsUniform : String
-    , martinique : String
-    , mask : String
-    , massage : String
-    , massageMan : String
-    , massageWoman : String
-    , mauritania : String
-    , mauritius : String
-    , mayotte : String
-    , meatOnBone : String
-    , medalMilitary : String
-    , medalSports : String
-    , mega : String
-    , melon : String
-    , memo : String
-    , menWrestling : String
-    , menorah : String
-    , mens : String
-    , metal : String
-    , metro : String
-    , mexico : String
-    , micronesia : String
-    , microphone : String
-    , microscope : String
-    , middleFinger : String
-    , milkGlass : String
-    , milkyWay : String
-    , minibus : String
-    , minidisc : String
-    , mobilePhoneOff : String
-    , moldova : String
-    , monaco : String
-    , moneyMouthFace : String
-    , moneyWithWings : String
-    , moneybag : String
-    , mongolia : String
-    , monkey : String
-    , monkeyFace : String
-    , monorail : String
-    , montenegro : String
-    , montserrat : String
-    , moon : String
-    , morocco : String
-    , mortarBoard : String
-    , mosque : String
-    , motorBoat : String
-    , motorScooter : String
-    , motorcycle : String
-    , motorway : String
-    , mountFuji : String
-    , mountain : String
-    , mountainBicyclist : String
-    , mountainBikingMan : String
-    , mountainBikingWoman : String
-    , mountainCableway : String
-    , mountainRailway : String
-    , mountainSnow : String
-    , mouse : String
-    , mouse2 : String
-    , movieCamera : String
-    , moyai : String
-    , mozambique : String
-    , mrsClaus : String
-    , muscle : String
-    , mushroom : String
-    , musicalKeyboard : String
-    , musicalNote : String
-    , musicalScore : String
-    , mute : String
-    , myanmar : String
-    , nailCare : String
-    , nameBadge : String
-    , namibia : String
-    , nationalPark : String
-    , nauru : String
-    , nauseatedFace : String
-    , neckbeard : String
-    , necktie : String
-    , negativeSquaredCrossMark : String
-    , nepal : String
-    , nerdFace : String
-    , netherlands : String
-    , neutralFace : String
-    , new : String
-    , newCaledonia : String
-    , newMoon : String
-    , newMoonWithFace : String
-    , newZealand : String
-    , newspaper : String
-    , newspaperRoll : String
-    , nextTrackButton : String
-    , ng : String
-    , ngMan : String
-    , ngWoman : String
-    , nicaragua : String
-    , niger : String
-    , nigeria : String
-    , nightWithStars : String
-    , nine : String
-    , niue : String
-    , noBell : String
-    , noBicycles : String
-    , noEntry : String
-    , noEntrySign : String
-    , noGood : String
-    , noGoodMan : String
-    , noGoodWoman : String
-    , noMobilePhones : String
-    , noMouth : String
-    , noPedestrians : String
-    , noSmoking : String
-    , nonPotableWater : String
-    , norfolkIsland : String
-    , northKorea : String
-    , northernMarianaIslands : String
-    , norway : String
-    , nose : String
-    , notebook : String
-    , notebookWithDecorativeCover : String
-    , notes : String
-    , nutAndBolt : String
-    , o : String
-    , o2 : String
-    , ocean : String
-    , octocat : String
-    , octopus : String
-    , oden : String
-    , office : String
-    , oilDrum : String
-    , ok : String
-    , okHand : String
-    , okMan : String
-    , okWoman : String
-    , oldKey : String
-    , olderMan : String
-    , olderWoman : String
-    , om : String
-    , oman : String
-    , on : String
-    , oncomingAutomobile : String
-    , oncomingBus : String
-    , oncomingPoliceCar : String
-    , oncomingTaxi : String
-    , one : String
-    , openBook : String
-    , openFileFolder : String
-    , openHands : String
-    , openMouth : String
-    , openUmbrella : String
-    , ophiuchus : String
-    , orange : String
-    , orangeBook : String
-    , orthodoxCross : String
-    , outboxTray : String
-    , owl : String
-    , ox : String
-    , package : String
-    , pageFacingUp : String
-    , pageWithCurl : String
-    , pager : String
-    , paintbrush : String
-    , pakistan : String
-    , palau : String
-    , palestinianTerritories : String
-    , palmTree : String
-    , panama : String
-    , pancakes : String
-    , pandaFace : String
-    , paperclip : String
-    , paperclips : String
-    , papuaNewGuinea : String
-    , paraguay : String
-    , parasolOnGround : String
-    , parking : String
-    , partAlternationMark : String
-    , partlySunny : String
-    , passengerShip : String
-    , passportControl : String
-    , pauseButton : String
-    , pawPrints : String
-    , peaceSymbol : String
-    , peach : String
-    , peanuts : String
-    , pear : String
-    , pen : String
-    , pencil : String
-    , pencil2 : String
-    , penguin : String
-    , pensive : String
-    , performingArts : String
-    , persevere : String
-    , personFencing : String
-    , personFrowning : String
-    , personWithBlondHair : String
-    , personWithPoutingFace : String
-    , peru : String
-    , philippines : String
-    , phone : String
-    , pick : String
-    , pig : String
-    , pig2 : String
-    , pigNose : String
-    , pill : String
-    , pineapple : String
-    , pingPong : String
-    , pisces : String
-    , pitcairnIslands : String
-    , pizza : String
-    , placeOfWorship : String
-    , plateWithCutlery : String
-    , playOrPauseButton : String
-    , pointDown : String
-    , pointLeft : String
-    , pointRight : String
-    , pointUp : String
-    , pointUp2 : String
-    , poland : String
-    , policeCar : String
-    , policeman : String
-    , policewoman : String
-    , poodle : String
-    , poop : String
-    , popcorn : String
-    , portugal : String
-    , postOffice : String
-    , postalHorn : String
-    , postbox : String
-    , potableWater : String
-    , potato : String
-    , pouch : String
-    , poultryLeg : String
-    , pound : String
-    , pout : String
-    , poutingCat : String
-    , poutingMan : String
-    , poutingWoman : String
-    , pray : String
-    , prayerBeads : String
-    , pregnantWoman : String
-    , previousTrackButton : String
-    , prince : String
-    , princess : String
-    , printer : String
-    , puertoRico : String
-    , punch : String
-    , purpleHeart : String
-    , purse : String
-    , pushpin : String
-    , putLitterInItsPlace : String
-    , qatar : String
-    , question : String
-    , rabbit : String
-    , rabbit2 : String
-    , racehorse : String
-    , racingCar : String
-    , radio : String
-    , radioButton : String
-    , radioactive : String
-    , rage : String
-    , rage1 : String
-    , rage2 : String
-    , rage3 : String
-    , rage4 : String
-    , railwayCar : String
-    , railwayTrack : String
-    , rainbow : String
-    , rainbowFlag : String
-    , raisedBackOfHand : String
-    , raisedHand : String
-    , raisedHandWithFingersSplayed : String
-    , raisedHands : String
-    , raisingHand : String
-    , raisingHandMan : String
-    , raisingHandWoman : String
-    , ram : String
-    , ramen : String
-    , rat : String
-    , recordButton : String
-    , recycle : String
-    , redCar : String
-    , redCircle : String
-    , registered : String
-    , relaxed : String
-    , relieved : String
-    , reminderRibbon : String
-    , repeat : String
-    , repeatOne : String
-    , rescueWorkerHelmet : String
-    , restroom : String
-    , reunion : String
-    , revolvingHearts : String
-    , rewind : String
-    , rhinoceros : String
-    , ribbon : String
-    , rice : String
-    , riceBall : String
-    , riceCracker : String
-    , riceScene : String
-    , rightAngerBubble : String
-    , ring : String
-    , robot : String
-    , rocket : String
-    , rofl : String
-    , rollEyes : String
-    , rollerCoaster : String
-    , romania : String
-    , rooster : String
-    , rose : String
-    , rosette : String
-    , rotatingLight : String
-    , roundPushpin : String
-    , rowboat : String
-    , rowingMan : String
-    , rowingWoman : String
-    , ru : String
-    , rugbyFootball : String
-    , runner : String
-    , running : String
-    , runningMan : String
-    , runningShirtWithSash : String
-    , runningWoman : String
-    , rwanda : String
-    , sa : String
-    , sagittarius : String
-    , sailboat : String
-    , sake : String
-    , samoa : String
-    , sanMarino : String
-    , sandal : String
-    , santa : String
-    , saoTomePrincipe : String
-    , satellite : String
-    , satisfied : String
-    , saudiArabia : String
-    , saxophone : String
-    , school : String
-    , schoolSatchel : String
-    , scissors : String
-    , scorpion : String
-    , scorpius : String
-    , scream : String
-    , screamCat : String
-    , scroll : String
-    , seat : String
-    , secret : String
-    , seeNoEvil : String
-    , seedling : String
-    , selfie : String
-    , senegal : String
-    , serbia : String
-    , seven : String
-    , seychelles : String
-    , shallowPanOfFood : String
-    , shamrock : String
-    , shark : String
-    , shavedIce : String
-    , sheep : String
-    , shell : String
-    , shield : String
-    , shintoShrine : String
-    , ship : String
-    , shipit : String
-    , shirt : String
-    , shit : String
-    , shoe : String
-    , shopping : String
-    , shoppingCart : String
-    , shower : String
-    , shrimp : String
-    , sierraLeone : String
-    , signalStrength : String
-    , singapore : String
-    , sintMaarten : String
-    , six : String
-    , sixPointedStar : String
-    , ski : String
-    , skier : String
-    , skull : String
-    , skullAndCrossbones : String
-    , sleeping : String
-    , sleepingBed : String
-    , sleepy : String
-    , slightlyFrowningFace : String
-    , slightlySmilingFace : String
-    , slotMachine : String
-    , slovakia : String
-    , slovenia : String
-    , smallAirplane : String
-    , smallBlueDiamond : String
-    , smallOrangeDiamond : String
-    , smallRedTriangle : String
-    , smallRedTriangleDown : String
-    , smile : String
-    , smileCat : String
-    , smiley : String
-    , smileyCat : String
-    , smilingImp : String
-    , smirk : String
-    , smirkCat : String
-    , smoking : String
-    , snail : String
-    , snake : String
-    , sneezingFace : String
-    , snowboarder : String
-    , snowflake : String
-    , snowman : String
-    , snowmanWithSnow : String
-    , sob : String
-    , soccer : String
-    , solomonIslands : String
-    , somalia : String
-    , soon : String
-    , sos : String
-    , sound : String
-    , southAfrica : String
-    , southGeorgiaSouthSandwichIslands : String
-    , southSudan : String
-    , spaceInvader : String
-    , spades : String
-    , spaghetti : String
-    , sparkle : String
-    , sparkler : String
-    , sparkles : String
-    , sparklingHeart : String
-    , speakNoEvil : String
-    , speaker : String
-    , speakingHead : String
-    , speechBalloon : String
-    , speedboat : String
-    , spider : String
-    , spiderWeb : String
-    , spiralCalendar : String
-    , spiralNotepad : String
-    , spoon : String
-    , squid : String
-    , squirrel : String
-    , sriLanka : String
-    , stBarthelemy : String
-    , stHelena : String
-    , stKittsNevis : String
-    , stLucia : String
-    , stPierreMiquelon : String
-    , stVincentGrenadines : String
-    , stadium : String
-    , star : String
-    , star2 : String
-    , starAndCrescent : String
-    , starOfDavid : String
-    , stars : String
-    , station : String
-    , statueOfLiberty : String
-    , steamLocomotive : String
-    , stew : String
-    , stopButton : String
-    , stopSign : String
-    , stopwatch : String
-    , straightRuler : String
-    , strawberry : String
-    , stuckOutTongue : String
-    , stuckOutTongueClosedEyes : String
-    , stuckOutTongueWinkingEye : String
-    , studioMicrophone : String
-    , stuffedFlatbread : String
-    , sudan : String
-    , sunBehindLargeCloud : String
-    , sunBehindRainCloud : String
-    , sunBehindSmallCloud : String
-    , sunWithFace : String
-    , sunflower : String
-    , sunglasses : String
-    , sunny : String
-    , sunrise : String
-    , sunriseOverMountains : String
-    , surfer : String
-    , surfingMan : String
-    , surfingWoman : String
-    , suriname : String
-    , sushi : String
-    , suspect : String
-    , suspensionRailway : String
-    , swaziland : String
-    , sweat : String
-    , sweatDrops : String
-    , sweatSmile : String
-    , sweden : String
-    , sweetPotato : String
-    , swimmer : String
-    , swimmingMan : String
-    , swimmingWoman : String
-    , switzerland : String
-    , symbols : String
-    , synagogue : String
-    , syria : String
-    , syringe : String
-    , taco : String
-    , tada : String
-    , taiwan : String
-    , tajikistan : String
-    , tanabataTree : String
-    , tangerine : String
-    , tanzania : String
-    , taurus : String
-    , taxi : String
-    , tea : String
-    , telephone : String
-    , telephoneReceiver : String
-    , telescope : String
-    , tennis : String
-    , tent : String
-    , thailand : String
-    , thermometer : String
-    , thinking : String
-    , thoughtBalloon : String
-    , three : String
-    , thumbsdown : String
-    , thumbsup : String
-    , ticket : String
-    , tickets : String
-    , tiger : String
-    , tiger2 : String
-    , timerClock : String
-    , timorLeste : String
-    , tippingHandMan : String
-    , tippingHandWoman : String
-    , tiredFace : String
-    , tm : String
-    , togo : String
-    , toilet : String
-    , tokelau : String
-    , tokyoTower : String
-    , tomato : String
-    , tonga : String
-    , tongue : String
-    , top : String
-    , tophat : String
-    , tornado : String
-    , tr : String
-    , trackball : String
-    , tractor : String
-    , trafficLight : String
-    , train : String
-    , train2 : String
-    , tram : String
-    , triangularFlagOnPost : String
-    , triangularRuler : String
-    , trident : String
-    , trinidadTobago : String
-    , triumph : String
-    , trolleybus : String
-    , trollface : String
-    , trophy : String
-    , tropicalDrink : String
-    , tropicalFish : String
-    , truck : String
-    , trumpet : String
-    , tshirt : String
-    , tulip : String
-    , tumblerGlass : String
-    , tunisia : String
-    , turkey : String
-    , turkmenistan : String
-    , turksCaicosIslands : String
-    , turtle : String
-    , tuvalu : String
-    , tv : String
-    , twistedRightwardsArrows : String
-    , two : String
-    , twoHearts : String
-    , twoMenHoldingHands : String
-    , twoWomenHoldingHands : String
-    , u5272 : String
-    , u5408 : String
-    , u55B6 : String
-    , u6307 : String
-    , u6708 : String
-    , u6709 : String
-    , u6E80 : String
-    , u7121 : String
-    , u7533 : String
-    , u7981 : String
-    , u7A7A : String
-    , uganda : String
-    , uk : String
-    , ukraine : String
-    , umbrella : String
-    , unamused : String
-    , underage : String
-    , unicorn : String
-    , unitedArabEmirates : String
-    , unlock : String
-    , up : String
-    , upsideDownFace : String
-    , uruguay : String
-    , us : String
-    , usVirginIslands : String
-    , uzbekistan : String
-    , v : String
-    , vanuatu : String
-    , vaticanCity : String
-    , venezuela : String
-    , verticalTrafficLight : String
-    , vhs : String
-    , vibrationMode : String
-    , videoCamera : String
-    , videoGame : String
-    , vietnam : String
-    , violin : String
-    , virgo : String
-    , volcano : String
-    , volleyball : String
-    , vs : String
-    , vulcanSalute : String
-    , walking : String
-    , walkingMan : String
-    , walkingWoman : String
-    , wallisFutuna : String
-    , waningCrescentMoon : String
-    , waningGibbousMoon : String
-    , warning : String
-    , wastebasket : String
-    , watch : String
-    , waterBuffalo : String
-    , watermelon : String
-    , wave : String
-    , wavyDash : String
-    , waxingCrescentMoon : String
-    , waxingGibbousMoon : String
-    , wc : String
-    , weary : String
-    , wedding : String
-    , weightLiftingMan : String
-    , weightLiftingWoman : String
-    , westernSahara : String
-    , whale : String
-    , whale2 : String
-    , wheelOfDharma : String
-    , wheelchair : String
-    , whiteCheckMark : String
-    , whiteCircle : String
-    , whiteFlag : String
-    , whiteFlower : String
-    , whiteLargeSquare : String
-    , whiteMediumSmallSquare : String
-    , whiteMediumSquare : String
-    , whiteSmallSquare : String
-    , whiteSquareButton : String
-    , wiltedFlower : String
-    , windChime : String
-    , windFace : String
-    , wineGlass : String
-    , wink : String
-    , wolf : String
-    , woman : String
-    , womanArtist : String
-    , womanAstronaut : String
-    , womanCartwheeling : String
-    , womanCook : String
-    , womanFacepalming : String
-    , womanFactoryWorker : String
-    , womanFarmer : String
-    , womanFirefighter : String
-    , womanHealthWorker : String
-    , womanJudge : String
-    , womanJuggling : String
-    , womanMechanic : String
-    , womanOfficeWorker : String
-    , womanPilot : String
-    , womanPlayingHandball : String
-    , womanPlayingWaterPolo : String
-    , womanScientist : String
-    , womanShrugging : String
-    , womanSinger : String
-    , womanStudent : String
-    , womanTeacher : String
-    , womanTechnologist : String
-    , womanWithTurban : String
-    , womansClothes : String
-    , womansHat : String
-    , womenWrestling : String
-    , womens : String
-    , worldMap : String
-    , worried : String
-    , wrench : String
-    , writingHand : String
-    , x : String
-    , yellowHeart : String
-    , yemen : String
-    , yen : String
-    , yinYang : String
-    , yum : String
-    , zambia : String
-    , zap : String
-    , zero : String
-    , zimbabwe : String
-    , zipperMouthFace : String
-    , zzz : String
-    }
 
 type alias Event =
     { id : String
     , eventType : String
     , actor : Actor
-    , repo : Repo
+    , repo : EventRepo
     , payload : Payload
     , public : Bool
     , createdAt : String
@@ -1623,13 +80,10 @@ type alias Actor =
     { id : Int
     , login : String
     , displayLogin : Maybe String
-    , gravatarID : GravatarID
+    , gravatarID : String
     , url : String
     , avatarURL : String
     }
-
-type GravatarID
-    = Empty
 
 type alias Payload =
     { pushID : Maybe Int
@@ -1639,7 +93,6 @@ type alias Payload =
     , head : Maybe String
     , before : Maybe String
     , commits : Maybe (Array Commit)
-    , forkee : Maybe Forkee
     , action : Maybe String
     , number : Maybe Int
     , pullRequest : Maybe PullRequest
@@ -1647,27 +100,46 @@ type alias Payload =
     , masterBranch : Maybe String
     , description : Maybe String
     , pusherType : Maybe String
-    , issue : Maybe Issue
     , comment : Maybe Comment
     }
 
 type alias Comment =
     { url : String
-    , htmlURL : String
-    , issueURL : String
+    , pullRequestReviewID : Int
     , id : Int
-    , user : User
+    , nodeID : String
+    , diffHunk : String
+    , path : String
+    , position : Int
+    , originalPosition : Int
+    , commitID : String
+    , originalCommitID : String
+    , user : Owner
+    , body : String
     , createdAt : String
     , updatedAt : String
+    , htmlURL : String
+    , pullRequestURL : String
     , authorAssociation : String
-    , body : String
+    , links : CommentLinks
     }
 
-type alias User =
+type alias CommentLinks =
+    { self : HTML
+    , html : HTML
+    , pullRequest : HTML
+    }
+
+type alias HTML =
+    { href : String
+    }
+
+type alias Owner =
     { login : String
     , id : Int
+    , nodeID : String
     , avatarURL : String
-    , gravatarID : GravatarID
+    , gravatarID : String
     , url : String
     , htmlURL : String
     , followersURL : String
@@ -1679,13 +151,13 @@ type alias User =
     , reposURL : String
     , eventsURL : String
     , receivedEventsURL : String
-    , userType : UserType
+    , ownerType : Type
     , siteAdmin : Bool
     }
 
-type UserType
+type Type
     = Organization
-    | TypeUser
+    | User
 
 type alias Commit =
     { sha : String
@@ -1700,11 +172,68 @@ type alias Author =
     , name : String
     }
 
-type alias Forkee =
+type alias PullRequest =
+    { url : String
+    , id : Int
+    , nodeID : String
+    , htmlURL : String
+    , diffURL : String
+    , patchURL : String
+    , issueURL : String
+    , number : Int
+    , state : String
+    , locked : Bool
+    , title : String
+    , user : Owner
+    , body : Maybe String
+    , createdAt : String
+    , updatedAt : String
+    , closedAt : ()
+    , mergedAt : ()
+    , mergeCommitSHA : Maybe String
+    , assignee : ()
+    , assignees : Array Jdec.Value
+    , requestedReviewers : Array Jdec.Value
+    , requestedTeams : Array Jdec.Value
+    , labels : Array Jdec.Value
+    , milestone : ()
+    , commitsURL : String
+    , reviewCommentsURL : String
+    , reviewCommentURL : String
+    , commentsURL : String
+    , statusesURL : String
+    , head : Base
+    , base : Base
+    , links : PullRequestLinks
+    , authorAssociation : String
+    , merged : Maybe Bool
+    , mergeable : Maybe ()
+    , rebaseable : Maybe ()
+    , mergeableState : Maybe String
+    , mergedBy : Maybe ()
+    , comments : Maybe Int
+    , reviewComments : Maybe Int
+    , maintainerCanModify : Maybe Bool
+    , commits : Maybe Int
+    , additions : Maybe Int
+    , deletions : Maybe Int
+    , changedFiles : Maybe Int
+    }
+
+type alias Base =
+    { label : String
+    , ref : String
+    , sha : String
+    , user : Owner
+    , repo : BaseRepo
+    }
+
+type alias BaseRepo =
     { id : Int
+    , nodeID : String
     , name : String
     , fullName : String
-    , owner : User
+    , owner : Owner
     , private : Bool
     , htmlURL : String
     , description : Maybe String
@@ -1757,7 +286,7 @@ type alias Forkee =
     , size : Int
     , stargazersCount : Int
     , watchersCount : Int
-    , language : Maybe String
+    , language : String
     , hasIssues : Bool
     , hasProjects : Bool
     , hasDownloads : Bool
@@ -1767,118 +296,33 @@ type alias Forkee =
     , mirrorURL : ()
     , archived : Bool
     , openIssuesCount : Int
-    , license : ()
+    , license : Maybe License
     , forks : Int
     , openIssues : Int
     , watchers : Int
     , defaultBranch : String
-    , public : Maybe Bool
     }
 
-type alias Issue =
-    { url : String
-    , repositoryURL : String
-    , labelsURL : String
-    , commentsURL : String
-    , eventsURL : String
-    , htmlURL : String
-    , id : Int
-    , number : Int
-    , title : String
-    , user : User
-    , labels : Array Label
-    , state : String
-    , locked : Bool
-    , assignee : Maybe User
-    , assignees : Array User
-    , milestone : ()
-    , comments : Int
-    , createdAt : String
-    , updatedAt : String
-    , closedAt : ()
-    , authorAssociation : String
-    , body : String
-    }
-
-type alias Label =
-    { id : Int
-    , url : String
+type alias License =
+    { key : String
     , name : String
-    , color : String
-    , default : Bool
+    , spdxID : Maybe String
+    , url : Maybe String
+    , nodeID : String
     }
 
-type alias PullRequest =
-    { url : String
-    , id : Int
-    , htmlURL : String
-    , diffURL : String
-    , patchURL : String
-    , issueURL : String
-    , number : Int
-    , state : String
-    , locked : Bool
-    , title : String
-    , user : User
-    , body : String
-    , createdAt : String
-    , updatedAt : String
-    , closedAt : ()
-    , mergedAt : ()
-    , mergeCommitSHA : ()
-    , assignee : ()
-    , assignees : Array Jdec.Value
-    , requestedReviewers : Array Jdec.Value
-    , requestedTeams : Array Jdec.Value
-    , labels : Array Jdec.Value
-    , milestone : ()
-    , commitsURL : String
-    , reviewCommentsURL : String
-    , reviewCommentURL : String
-    , commentsURL : String
-    , statusesURL : String
-    , head : Base
-    , base : Base
-    , links : Links
-    , authorAssociation : String
-    , merged : Bool
-    , mergeable : ()
-    , rebaseable : ()
-    , mergeableState : String
-    , mergedBy : ()
-    , comments : Int
-    , reviewComments : Int
-    , maintainerCanModify : Bool
-    , commits : Int
-    , additions : Int
-    , deletions : Int
-    , changedFiles : Int
+type alias PullRequestLinks =
+    { self : HTML
+    , html : HTML
+    , issue : HTML
+    , comments : HTML
+    , reviewComments : HTML
+    , reviewComment : HTML
+    , commits : HTML
+    , statuses : HTML
     }
 
-type alias Base =
-    { label : String
-    , ref : String
-    , sha : String
-    , user : User
-    , repo : Forkee
-    }
-
-type alias Links =
-    { self : Comments
-    , html : Comments
-    , issue : Comments
-    , comments : Comments
-    , reviewComments : Comments
-    , reviewComment : Comments
-    , commits : Comments
-    , statuses : Comments
-    }
-
-type alias Comments =
-    { href : String
-    }
-
-type alias Repo =
+type alias EventRepo =
     { id : Int
     , name : String
     , url : String
@@ -1889,6 +333,7 @@ type alias Gist =
     , forksURL : String
     , commitsURL : String
     , id : String
+    , nodeID : String
     , gitPullURL : String
     , gitPushURL : String
     , htmlURL : String
@@ -1900,24 +345,17 @@ type alias Gist =
     , comments : Int
     , user : ()
     , commentsURL : String
+    , owner : Owner
     , truncated : Bool
-    , owner : Maybe User
     }
 
 type alias File =
     { filename : String
-    , fileType : FileType
+    , fileType : String
     , language : Maybe String
     , rawURL : String
     , size : Int
     }
-
-type FileType
-    = ApplicationJavascript
-    | ApplicationXPython
-    | TextCSS
-    | TextHTML
-    | TextPlain
 
 type alias Meta =
     { verifiablePasswordAuthentication : Bool
@@ -1930,11 +368,17 @@ type alias Meta =
 
 -- decoders and encoders
 
+apiData : Jdec.Decoder APIData
+apiData = Jdec.dict Jdec.string
+
 apiDataToString : APIData -> String
-apiDataToString r = Jenc.encode 0 (encodeAPIData r)
+apiDataToString r = Jenc.encode 0 (makeDictEncoder Jenc.string r)
+
+emojis : Jdec.Decoder Emojis
+emojis = Jdec.dict Jdec.string
 
 emojisToString : Emojis -> String
-emojisToString r = Jenc.encode 0 (encodeEmojis r)
+emojisToString r = Jenc.encode 0 (makeDictEncoder Jenc.string r)
 
 events : Jdec.Decoder Events
 events = Jdec.array event
@@ -1951,3109 +395,13 @@ gistsToString r = Jenc.encode 0 (makeArrayEncoder encodeGist r)
 metaToString : Meta -> String
 metaToString r = Jenc.encode 0 (encodeMeta r)
 
-apiData : Jdec.Decoder APIData
-apiData =
-    Jpipe.decode APIData
-        |> Jpipe.required "current_user_url" Jdec.string
-        |> Jpipe.required "current_user_authorizations_html_url" Jdec.string
-        |> Jpipe.required "authorizations_url" Jdec.string
-        |> Jpipe.required "code_search_url" Jdec.string
-        |> Jpipe.required "commit_search_url" Jdec.string
-        |> Jpipe.required "emails_url" Jdec.string
-        |> Jpipe.required "emojis_url" Jdec.string
-        |> Jpipe.required "events_url" Jdec.string
-        |> Jpipe.required "feeds_url" Jdec.string
-        |> Jpipe.required "followers_url" Jdec.string
-        |> Jpipe.required "following_url" Jdec.string
-        |> Jpipe.required "gists_url" Jdec.string
-        |> Jpipe.required "hub_url" Jdec.string
-        |> Jpipe.required "issue_search_url" Jdec.string
-        |> Jpipe.required "issues_url" Jdec.string
-        |> Jpipe.required "keys_url" Jdec.string
-        |> Jpipe.required "notifications_url" Jdec.string
-        |> Jpipe.required "organization_repositories_url" Jdec.string
-        |> Jpipe.required "organization_url" Jdec.string
-        |> Jpipe.required "public_gists_url" Jdec.string
-        |> Jpipe.required "rate_limit_url" Jdec.string
-        |> Jpipe.required "repository_url" Jdec.string
-        |> Jpipe.required "repository_search_url" Jdec.string
-        |> Jpipe.required "current_user_repositories_url" Jdec.string
-        |> Jpipe.required "starred_url" Jdec.string
-        |> Jpipe.required "starred_gists_url" Jdec.string
-        |> Jpipe.required "team_url" Jdec.string
-        |> Jpipe.required "user_url" Jdec.string
-        |> Jpipe.required "user_organizations_url" Jdec.string
-        |> Jpipe.required "user_repositories_url" Jdec.string
-        |> Jpipe.required "user_search_url" Jdec.string
-
-encodeAPIData : APIData -> Jenc.Value
-encodeAPIData x =
-    Jenc.object
-        [ ("current_user_url", Jenc.string x.currentUserURL)
-        , ("current_user_authorizations_html_url", Jenc.string x.currentUserAuthorizationsHTMLURL)
-        , ("authorizations_url", Jenc.string x.authorizationsURL)
-        , ("code_search_url", Jenc.string x.codeSearchURL)
-        , ("commit_search_url", Jenc.string x.commitSearchURL)
-        , ("emails_url", Jenc.string x.emailsURL)
-        , ("emojis_url", Jenc.string x.emojisURL)
-        , ("events_url", Jenc.string x.eventsURL)
-        , ("feeds_url", Jenc.string x.feedsURL)
-        , ("followers_url", Jenc.string x.followersURL)
-        , ("following_url", Jenc.string x.followingURL)
-        , ("gists_url", Jenc.string x.gistsURL)
-        , ("hub_url", Jenc.string x.hubURL)
-        , ("issue_search_url", Jenc.string x.issueSearchURL)
-        , ("issues_url", Jenc.string x.issuesURL)
-        , ("keys_url", Jenc.string x.keysURL)
-        , ("notifications_url", Jenc.string x.notificationsURL)
-        , ("organization_repositories_url", Jenc.string x.organizationRepositoriesURL)
-        , ("organization_url", Jenc.string x.organizationURL)
-        , ("public_gists_url", Jenc.string x.publicGistsURL)
-        , ("rate_limit_url", Jenc.string x.rateLimitURL)
-        , ("repository_url", Jenc.string x.repositoryURL)
-        , ("repository_search_url", Jenc.string x.repositorySearchURL)
-        , ("current_user_repositories_url", Jenc.string x.currentUserRepositoriesURL)
-        , ("starred_url", Jenc.string x.starredURL)
-        , ("starred_gists_url", Jenc.string x.starredGistsURL)
-        , ("team_url", Jenc.string x.teamURL)
-        , ("user_url", Jenc.string x.userURL)
-        , ("user_organizations_url", Jenc.string x.userOrganizationsURL)
-        , ("user_repositories_url", Jenc.string x.userRepositoriesURL)
-        , ("user_search_url", Jenc.string x.userSearchURL)
-        ]
-
-emojis : Jdec.Decoder Emojis
-emojis =
-    Jpipe.decode Emojis
-        |> Jpipe.required "+1" Jdec.string
-        |> Jpipe.required "-1" Jdec.string
-        |> Jpipe.required "100" Jdec.string
-        |> Jpipe.required "1234" Jdec.string
-        |> Jpipe.required "1st_place_medal" Jdec.string
-        |> Jpipe.required "2nd_place_medal" Jdec.string
-        |> Jpipe.required "3rd_place_medal" Jdec.string
-        |> Jpipe.required "8ball" Jdec.string
-        |> Jpipe.required "a" Jdec.string
-        |> Jpipe.required "ab" Jdec.string
-        |> Jpipe.required "abc" Jdec.string
-        |> Jpipe.required "abcd" Jdec.string
-        |> Jpipe.required "accept" Jdec.string
-        |> Jpipe.required "aerial_tramway" Jdec.string
-        |> Jpipe.required "afghanistan" Jdec.string
-        |> Jpipe.required "airplane" Jdec.string
-        |> Jpipe.required "aland_islands" Jdec.string
-        |> Jpipe.required "alarm_clock" Jdec.string
-        |> Jpipe.required "albania" Jdec.string
-        |> Jpipe.required "alembic" Jdec.string
-        |> Jpipe.required "algeria" Jdec.string
-        |> Jpipe.required "alien" Jdec.string
-        |> Jpipe.required "ambulance" Jdec.string
-        |> Jpipe.required "american_samoa" Jdec.string
-        |> Jpipe.required "amphora" Jdec.string
-        |> Jpipe.required "anchor" Jdec.string
-        |> Jpipe.required "andorra" Jdec.string
-        |> Jpipe.required "angel" Jdec.string
-        |> Jpipe.required "anger" Jdec.string
-        |> Jpipe.required "angola" Jdec.string
-        |> Jpipe.required "angry" Jdec.string
-        |> Jpipe.required "anguilla" Jdec.string
-        |> Jpipe.required "anguished" Jdec.string
-        |> Jpipe.required "ant" Jdec.string
-        |> Jpipe.required "antarctica" Jdec.string
-        |> Jpipe.required "antigua_barbuda" Jdec.string
-        |> Jpipe.required "apple" Jdec.string
-        |> Jpipe.required "aquarius" Jdec.string
-        |> Jpipe.required "argentina" Jdec.string
-        |> Jpipe.required "aries" Jdec.string
-        |> Jpipe.required "armenia" Jdec.string
-        |> Jpipe.required "arrow_backward" Jdec.string
-        |> Jpipe.required "arrow_double_down" Jdec.string
-        |> Jpipe.required "arrow_double_up" Jdec.string
-        |> Jpipe.required "arrow_down" Jdec.string
-        |> Jpipe.required "arrow_down_small" Jdec.string
-        |> Jpipe.required "arrow_forward" Jdec.string
-        |> Jpipe.required "arrow_heading_down" Jdec.string
-        |> Jpipe.required "arrow_heading_up" Jdec.string
-        |> Jpipe.required "arrow_left" Jdec.string
-        |> Jpipe.required "arrow_lower_left" Jdec.string
-        |> Jpipe.required "arrow_lower_right" Jdec.string
-        |> Jpipe.required "arrow_right" Jdec.string
-        |> Jpipe.required "arrow_right_hook" Jdec.string
-        |> Jpipe.required "arrow_up" Jdec.string
-        |> Jpipe.required "arrow_up_down" Jdec.string
-        |> Jpipe.required "arrow_up_small" Jdec.string
-        |> Jpipe.required "arrow_upper_left" Jdec.string
-        |> Jpipe.required "arrow_upper_right" Jdec.string
-        |> Jpipe.required "arrows_clockwise" Jdec.string
-        |> Jpipe.required "arrows_counterclockwise" Jdec.string
-        |> Jpipe.required "art" Jdec.string
-        |> Jpipe.required "articulated_lorry" Jdec.string
-        |> Jpipe.required "artificial_satellite" Jdec.string
-        |> Jpipe.required "aruba" Jdec.string
-        |> Jpipe.required "asterisk" Jdec.string
-        |> Jpipe.required "astonished" Jdec.string
-        |> Jpipe.required "athletic_shoe" Jdec.string
-        |> Jpipe.required "atm" Jdec.string
-        |> Jpipe.required "atom" Jdec.string
-        |> Jpipe.required "atom_symbol" Jdec.string
-        |> Jpipe.required "australia" Jdec.string
-        |> Jpipe.required "austria" Jdec.string
-        |> Jpipe.required "avocado" Jdec.string
-        |> Jpipe.required "azerbaijan" Jdec.string
-        |> Jpipe.required "b" Jdec.string
-        |> Jpipe.required "baby" Jdec.string
-        |> Jpipe.required "baby_bottle" Jdec.string
-        |> Jpipe.required "baby_chick" Jdec.string
-        |> Jpipe.required "baby_symbol" Jdec.string
-        |> Jpipe.required "back" Jdec.string
-        |> Jpipe.required "bacon" Jdec.string
-        |> Jpipe.required "badminton" Jdec.string
-        |> Jpipe.required "baggage_claim" Jdec.string
-        |> Jpipe.required "baguette_bread" Jdec.string
-        |> Jpipe.required "bahamas" Jdec.string
-        |> Jpipe.required "bahrain" Jdec.string
-        |> Jpipe.required "balance_scale" Jdec.string
-        |> Jpipe.required "balloon" Jdec.string
-        |> Jpipe.required "ballot_box" Jdec.string
-        |> Jpipe.required "ballot_box_with_check" Jdec.string
-        |> Jpipe.required "bamboo" Jdec.string
-        |> Jpipe.required "banana" Jdec.string
-        |> Jpipe.required "bangbang" Jdec.string
-        |> Jpipe.required "bangladesh" Jdec.string
-        |> Jpipe.required "bank" Jdec.string
-        |> Jpipe.required "bar_chart" Jdec.string
-        |> Jpipe.required "barbados" Jdec.string
-        |> Jpipe.required "barber" Jdec.string
-        |> Jpipe.required "baseball" Jdec.string
-        |> Jpipe.required "basecamp" Jdec.string
-        |> Jpipe.required "basecampy" Jdec.string
-        |> Jpipe.required "basketball" Jdec.string
-        |> Jpipe.required "basketball_man" Jdec.string
-        |> Jpipe.required "basketball_woman" Jdec.string
-        |> Jpipe.required "bat" Jdec.string
-        |> Jpipe.required "bath" Jdec.string
-        |> Jpipe.required "bathtub" Jdec.string
-        |> Jpipe.required "battery" Jdec.string
-        |> Jpipe.required "beach_umbrella" Jdec.string
-        |> Jpipe.required "bear" Jdec.string
-        |> Jpipe.required "bed" Jdec.string
-        |> Jpipe.required "bee" Jdec.string
-        |> Jpipe.required "beer" Jdec.string
-        |> Jpipe.required "beers" Jdec.string
-        |> Jpipe.required "beetle" Jdec.string
-        |> Jpipe.required "beginner" Jdec.string
-        |> Jpipe.required "belarus" Jdec.string
-        |> Jpipe.required "belgium" Jdec.string
-        |> Jpipe.required "belize" Jdec.string
-        |> Jpipe.required "bell" Jdec.string
-        |> Jpipe.required "bellhop_bell" Jdec.string
-        |> Jpipe.required "benin" Jdec.string
-        |> Jpipe.required "bento" Jdec.string
-        |> Jpipe.required "bermuda" Jdec.string
-        |> Jpipe.required "bhutan" Jdec.string
-        |> Jpipe.required "bicyclist" Jdec.string
-        |> Jpipe.required "bike" Jdec.string
-        |> Jpipe.required "biking_man" Jdec.string
-        |> Jpipe.required "biking_woman" Jdec.string
-        |> Jpipe.required "bikini" Jdec.string
-        |> Jpipe.required "biohazard" Jdec.string
-        |> Jpipe.required "bird" Jdec.string
-        |> Jpipe.required "birthday" Jdec.string
-        |> Jpipe.required "black_circle" Jdec.string
-        |> Jpipe.required "black_flag" Jdec.string
-        |> Jpipe.required "black_heart" Jdec.string
-        |> Jpipe.required "black_joker" Jdec.string
-        |> Jpipe.required "black_large_square" Jdec.string
-        |> Jpipe.required "black_medium_small_square" Jdec.string
-        |> Jpipe.required "black_medium_square" Jdec.string
-        |> Jpipe.required "black_nib" Jdec.string
-        |> Jpipe.required "black_small_square" Jdec.string
-        |> Jpipe.required "black_square_button" Jdec.string
-        |> Jpipe.required "blonde_man" Jdec.string
-        |> Jpipe.required "blonde_woman" Jdec.string
-        |> Jpipe.required "blossom" Jdec.string
-        |> Jpipe.required "blowfish" Jdec.string
-        |> Jpipe.required "blue_book" Jdec.string
-        |> Jpipe.required "blue_car" Jdec.string
-        |> Jpipe.required "blue_heart" Jdec.string
-        |> Jpipe.required "blush" Jdec.string
-        |> Jpipe.required "boar" Jdec.string
-        |> Jpipe.required "boat" Jdec.string
-        |> Jpipe.required "bolivia" Jdec.string
-        |> Jpipe.required "bomb" Jdec.string
-        |> Jpipe.required "book" Jdec.string
-        |> Jpipe.required "bookmark" Jdec.string
-        |> Jpipe.required "bookmark_tabs" Jdec.string
-        |> Jpipe.required "books" Jdec.string
-        |> Jpipe.required "boom" Jdec.string
-        |> Jpipe.required "boot" Jdec.string
-        |> Jpipe.required "bosnia_herzegovina" Jdec.string
-        |> Jpipe.required "botswana" Jdec.string
-        |> Jpipe.required "bouquet" Jdec.string
-        |> Jpipe.required "bow" Jdec.string
-        |> Jpipe.required "bow_and_arrow" Jdec.string
-        |> Jpipe.required "bowing_man" Jdec.string
-        |> Jpipe.required "bowing_woman" Jdec.string
-        |> Jpipe.required "bowling" Jdec.string
-        |> Jpipe.required "bowtie" Jdec.string
-        |> Jpipe.required "boxing_glove" Jdec.string
-        |> Jpipe.required "boy" Jdec.string
-        |> Jpipe.required "brazil" Jdec.string
-        |> Jpipe.required "bread" Jdec.string
-        |> Jpipe.required "bride_with_veil" Jdec.string
-        |> Jpipe.required "bridge_at_night" Jdec.string
-        |> Jpipe.required "briefcase" Jdec.string
-        |> Jpipe.required "british_indian_ocean_territory" Jdec.string
-        |> Jpipe.required "british_virgin_islands" Jdec.string
-        |> Jpipe.required "broken_heart" Jdec.string
-        |> Jpipe.required "brunei" Jdec.string
-        |> Jpipe.required "bug" Jdec.string
-        |> Jpipe.required "building_construction" Jdec.string
-        |> Jpipe.required "bulb" Jdec.string
-        |> Jpipe.required "bulgaria" Jdec.string
-        |> Jpipe.required "bullettrain_front" Jdec.string
-        |> Jpipe.required "bullettrain_side" Jdec.string
-        |> Jpipe.required "burkina_faso" Jdec.string
-        |> Jpipe.required "burrito" Jdec.string
-        |> Jpipe.required "burundi" Jdec.string
-        |> Jpipe.required "bus" Jdec.string
-        |> Jpipe.required "business_suit_levitating" Jdec.string
-        |> Jpipe.required "busstop" Jdec.string
-        |> Jpipe.required "bust_in_silhouette" Jdec.string
-        |> Jpipe.required "busts_in_silhouette" Jdec.string
-        |> Jpipe.required "butterfly" Jdec.string
-        |> Jpipe.required "cactus" Jdec.string
-        |> Jpipe.required "cake" Jdec.string
-        |> Jpipe.required "calendar" Jdec.string
-        |> Jpipe.required "call_me_hand" Jdec.string
-        |> Jpipe.required "calling" Jdec.string
-        |> Jpipe.required "cambodia" Jdec.string
-        |> Jpipe.required "camel" Jdec.string
-        |> Jpipe.required "camera" Jdec.string
-        |> Jpipe.required "camera_flash" Jdec.string
-        |> Jpipe.required "cameroon" Jdec.string
-        |> Jpipe.required "camping" Jdec.string
-        |> Jpipe.required "canada" Jdec.string
-        |> Jpipe.required "canary_islands" Jdec.string
-        |> Jpipe.required "cancer" Jdec.string
-        |> Jpipe.required "candle" Jdec.string
-        |> Jpipe.required "candy" Jdec.string
-        |> Jpipe.required "canoe" Jdec.string
-        |> Jpipe.required "cape_verde" Jdec.string
-        |> Jpipe.required "capital_abcd" Jdec.string
-        |> Jpipe.required "capricorn" Jdec.string
-        |> Jpipe.required "car" Jdec.string
-        |> Jpipe.required "card_file_box" Jdec.string
-        |> Jpipe.required "card_index" Jdec.string
-        |> Jpipe.required "card_index_dividers" Jdec.string
-        |> Jpipe.required "caribbean_netherlands" Jdec.string
-        |> Jpipe.required "carousel_horse" Jdec.string
-        |> Jpipe.required "carrot" Jdec.string
-        |> Jpipe.required "cat" Jdec.string
-        |> Jpipe.required "cat2" Jdec.string
-        |> Jpipe.required "cayman_islands" Jdec.string
-        |> Jpipe.required "cd" Jdec.string
-        |> Jpipe.required "central_african_republic" Jdec.string
-        |> Jpipe.required "chad" Jdec.string
-        |> Jpipe.required "chains" Jdec.string
-        |> Jpipe.required "champagne" Jdec.string
-        |> Jpipe.required "chart" Jdec.string
-        |> Jpipe.required "chart_with_downwards_trend" Jdec.string
-        |> Jpipe.required "chart_with_upwards_trend" Jdec.string
-        |> Jpipe.required "checkered_flag" Jdec.string
-        |> Jpipe.required "cheese" Jdec.string
-        |> Jpipe.required "cherries" Jdec.string
-        |> Jpipe.required "cherry_blossom" Jdec.string
-        |> Jpipe.required "chestnut" Jdec.string
-        |> Jpipe.required "chicken" Jdec.string
-        |> Jpipe.required "children_crossing" Jdec.string
-        |> Jpipe.required "chile" Jdec.string
-        |> Jpipe.required "chipmunk" Jdec.string
-        |> Jpipe.required "chocolate_bar" Jdec.string
-        |> Jpipe.required "christmas_island" Jdec.string
-        |> Jpipe.required "christmas_tree" Jdec.string
-        |> Jpipe.required "church" Jdec.string
-        |> Jpipe.required "cinema" Jdec.string
-        |> Jpipe.required "circus_tent" Jdec.string
-        |> Jpipe.required "city_sunrise" Jdec.string
-        |> Jpipe.required "city_sunset" Jdec.string
-        |> Jpipe.required "cityscape" Jdec.string
-        |> Jpipe.required "cl" Jdec.string
-        |> Jpipe.required "clamp" Jdec.string
-        |> Jpipe.required "clap" Jdec.string
-        |> Jpipe.required "clapper" Jdec.string
-        |> Jpipe.required "classical_building" Jdec.string
-        |> Jpipe.required "clinking_glasses" Jdec.string
-        |> Jpipe.required "clipboard" Jdec.string
-        |> Jpipe.required "clock1" Jdec.string
-        |> Jpipe.required "clock10" Jdec.string
-        |> Jpipe.required "clock1030" Jdec.string
-        |> Jpipe.required "clock11" Jdec.string
-        |> Jpipe.required "clock1130" Jdec.string
-        |> Jpipe.required "clock12" Jdec.string
-        |> Jpipe.required "clock1230" Jdec.string
-        |> Jpipe.required "clock130" Jdec.string
-        |> Jpipe.required "clock2" Jdec.string
-        |> Jpipe.required "clock230" Jdec.string
-        |> Jpipe.required "clock3" Jdec.string
-        |> Jpipe.required "clock330" Jdec.string
-        |> Jpipe.required "clock4" Jdec.string
-        |> Jpipe.required "clock430" Jdec.string
-        |> Jpipe.required "clock5" Jdec.string
-        |> Jpipe.required "clock530" Jdec.string
-        |> Jpipe.required "clock6" Jdec.string
-        |> Jpipe.required "clock630" Jdec.string
-        |> Jpipe.required "clock7" Jdec.string
-        |> Jpipe.required "clock730" Jdec.string
-        |> Jpipe.required "clock8" Jdec.string
-        |> Jpipe.required "clock830" Jdec.string
-        |> Jpipe.required "clock9" Jdec.string
-        |> Jpipe.required "clock930" Jdec.string
-        |> Jpipe.required "closed_book" Jdec.string
-        |> Jpipe.required "closed_lock_with_key" Jdec.string
-        |> Jpipe.required "closed_umbrella" Jdec.string
-        |> Jpipe.required "cloud" Jdec.string
-        |> Jpipe.required "cloud_with_lightning" Jdec.string
-        |> Jpipe.required "cloud_with_lightning_and_rain" Jdec.string
-        |> Jpipe.required "cloud_with_rain" Jdec.string
-        |> Jpipe.required "cloud_with_snow" Jdec.string
-        |> Jpipe.required "clown_face" Jdec.string
-        |> Jpipe.required "clubs" Jdec.string
-        |> Jpipe.required "cn" Jdec.string
-        |> Jpipe.required "cocktail" Jdec.string
-        |> Jpipe.required "cocos_islands" Jdec.string
-        |> Jpipe.required "coffee" Jdec.string
-        |> Jpipe.required "coffin" Jdec.string
-        |> Jpipe.required "cold_sweat" Jdec.string
-        |> Jpipe.required "collision" Jdec.string
-        |> Jpipe.required "colombia" Jdec.string
-        |> Jpipe.required "comet" Jdec.string
-        |> Jpipe.required "comoros" Jdec.string
-        |> Jpipe.required "computer" Jdec.string
-        |> Jpipe.required "computer_mouse" Jdec.string
-        |> Jpipe.required "confetti_ball" Jdec.string
-        |> Jpipe.required "confounded" Jdec.string
-        |> Jpipe.required "confused" Jdec.string
-        |> Jpipe.required "congo_brazzaville" Jdec.string
-        |> Jpipe.required "congo_kinshasa" Jdec.string
-        |> Jpipe.required "congratulations" Jdec.string
-        |> Jpipe.required "construction" Jdec.string
-        |> Jpipe.required "construction_worker" Jdec.string
-        |> Jpipe.required "construction_worker_man" Jdec.string
-        |> Jpipe.required "construction_worker_woman" Jdec.string
-        |> Jpipe.required "control_knobs" Jdec.string
-        |> Jpipe.required "convenience_store" Jdec.string
-        |> Jpipe.required "cook_islands" Jdec.string
-        |> Jpipe.required "cookie" Jdec.string
-        |> Jpipe.required "cool" Jdec.string
-        |> Jpipe.required "cop" Jdec.string
-        |> Jpipe.required "copyright" Jdec.string
-        |> Jpipe.required "corn" Jdec.string
-        |> Jpipe.required "costa_rica" Jdec.string
-        |> Jpipe.required "cote_divoire" Jdec.string
-        |> Jpipe.required "couch_and_lamp" Jdec.string
-        |> Jpipe.required "couple" Jdec.string
-        |> Jpipe.required "couple_with_heart" Jdec.string
-        |> Jpipe.required "couple_with_heart_man_man" Jdec.string
-        |> Jpipe.required "couple_with_heart_woman_man" Jdec.string
-        |> Jpipe.required "couple_with_heart_woman_woman" Jdec.string
-        |> Jpipe.required "couplekiss_man_man" Jdec.string
-        |> Jpipe.required "couplekiss_man_woman" Jdec.string
-        |> Jpipe.required "couplekiss_woman_woman" Jdec.string
-        |> Jpipe.required "cow" Jdec.string
-        |> Jpipe.required "cow2" Jdec.string
-        |> Jpipe.required "cowboy_hat_face" Jdec.string
-        |> Jpipe.required "crab" Jdec.string
-        |> Jpipe.required "crayon" Jdec.string
-        |> Jpipe.required "credit_card" Jdec.string
-        |> Jpipe.required "crescent_moon" Jdec.string
-        |> Jpipe.required "cricket" Jdec.string
-        |> Jpipe.required "croatia" Jdec.string
-        |> Jpipe.required "crocodile" Jdec.string
-        |> Jpipe.required "croissant" Jdec.string
-        |> Jpipe.required "crossed_fingers" Jdec.string
-        |> Jpipe.required "crossed_flags" Jdec.string
-        |> Jpipe.required "crossed_swords" Jdec.string
-        |> Jpipe.required "crown" Jdec.string
-        |> Jpipe.required "cry" Jdec.string
-        |> Jpipe.required "crying_cat_face" Jdec.string
-        |> Jpipe.required "crystal_ball" Jdec.string
-        |> Jpipe.required "cuba" Jdec.string
-        |> Jpipe.required "cucumber" Jdec.string
-        |> Jpipe.required "cupid" Jdec.string
-        |> Jpipe.required "curacao" Jdec.string
-        |> Jpipe.required "curly_loop" Jdec.string
-        |> Jpipe.required "currency_exchange" Jdec.string
-        |> Jpipe.required "curry" Jdec.string
-        |> Jpipe.required "custard" Jdec.string
-        |> Jpipe.required "customs" Jdec.string
-        |> Jpipe.required "cyclone" Jdec.string
-        |> Jpipe.required "cyprus" Jdec.string
-        |> Jpipe.required "czech_republic" Jdec.string
-        |> Jpipe.required "dagger" Jdec.string
-        |> Jpipe.required "dancer" Jdec.string
-        |> Jpipe.required "dancers" Jdec.string
-        |> Jpipe.required "dancing_men" Jdec.string
-        |> Jpipe.required "dancing_women" Jdec.string
-        |> Jpipe.required "dango" Jdec.string
-        |> Jpipe.required "dark_sunglasses" Jdec.string
-        |> Jpipe.required "dart" Jdec.string
-        |> Jpipe.required "dash" Jdec.string
-        |> Jpipe.required "date" Jdec.string
-        |> Jpipe.required "de" Jdec.string
-        |> Jpipe.required "deciduous_tree" Jdec.string
-        |> Jpipe.required "deer" Jdec.string
-        |> Jpipe.required "denmark" Jdec.string
-        |> Jpipe.required "department_store" Jdec.string
-        |> Jpipe.required "derelict_house" Jdec.string
-        |> Jpipe.required "desert" Jdec.string
-        |> Jpipe.required "desert_island" Jdec.string
-        |> Jpipe.required "desktop_computer" Jdec.string
-        |> Jpipe.required "detective" Jdec.string
-        |> Jpipe.required "diamond_shape_with_a_dot_inside" Jdec.string
-        |> Jpipe.required "diamonds" Jdec.string
-        |> Jpipe.required "disappointed" Jdec.string
-        |> Jpipe.required "disappointed_relieved" Jdec.string
-        |> Jpipe.required "dizzy" Jdec.string
-        |> Jpipe.required "dizzy_face" Jdec.string
-        |> Jpipe.required "djibouti" Jdec.string
-        |> Jpipe.required "do_not_litter" Jdec.string
-        |> Jpipe.required "dog" Jdec.string
-        |> Jpipe.required "dog2" Jdec.string
-        |> Jpipe.required "dollar" Jdec.string
-        |> Jpipe.required "dolls" Jdec.string
-        |> Jpipe.required "dolphin" Jdec.string
-        |> Jpipe.required "dominica" Jdec.string
-        |> Jpipe.required "dominican_republic" Jdec.string
-        |> Jpipe.required "door" Jdec.string
-        |> Jpipe.required "doughnut" Jdec.string
-        |> Jpipe.required "dove" Jdec.string
-        |> Jpipe.required "dragon" Jdec.string
-        |> Jpipe.required "dragon_face" Jdec.string
-        |> Jpipe.required "dress" Jdec.string
-        |> Jpipe.required "dromedary_camel" Jdec.string
-        |> Jpipe.required "drooling_face" Jdec.string
-        |> Jpipe.required "droplet" Jdec.string
-        |> Jpipe.required "drum" Jdec.string
-        |> Jpipe.required "duck" Jdec.string
-        |> Jpipe.required "dvd" Jdec.string
-        |> Jpipe.required "e-mail" Jdec.string
-        |> Jpipe.required "eagle" Jdec.string
-        |> Jpipe.required "ear" Jdec.string
-        |> Jpipe.required "ear_of_rice" Jdec.string
-        |> Jpipe.required "earth_africa" Jdec.string
-        |> Jpipe.required "earth_americas" Jdec.string
-        |> Jpipe.required "earth_asia" Jdec.string
-        |> Jpipe.required "ecuador" Jdec.string
-        |> Jpipe.required "egg" Jdec.string
-        |> Jpipe.required "eggplant" Jdec.string
-        |> Jpipe.required "egypt" Jdec.string
-        |> Jpipe.required "eight" Jdec.string
-        |> Jpipe.required "eight_pointed_black_star" Jdec.string
-        |> Jpipe.required "eight_spoked_asterisk" Jdec.string
-        |> Jpipe.required "el_salvador" Jdec.string
-        |> Jpipe.required "electric_plug" Jdec.string
-        |> Jpipe.required "electron" Jdec.string
-        |> Jpipe.required "elephant" Jdec.string
-        |> Jpipe.required "email" Jdec.string
-        |> Jpipe.required "end" Jdec.string
-        |> Jpipe.required "envelope" Jdec.string
-        |> Jpipe.required "envelope_with_arrow" Jdec.string
-        |> Jpipe.required "equatorial_guinea" Jdec.string
-        |> Jpipe.required "eritrea" Jdec.string
-        |> Jpipe.required "es" Jdec.string
-        |> Jpipe.required "estonia" Jdec.string
-        |> Jpipe.required "ethiopia" Jdec.string
-        |> Jpipe.required "eu" Jdec.string
-        |> Jpipe.required "euro" Jdec.string
-        |> Jpipe.required "european_castle" Jdec.string
-        |> Jpipe.required "european_post_office" Jdec.string
-        |> Jpipe.required "european_union" Jdec.string
-        |> Jpipe.required "evergreen_tree" Jdec.string
-        |> Jpipe.required "exclamation" Jdec.string
-        |> Jpipe.required "expressionless" Jdec.string
-        |> Jpipe.required "eye" Jdec.string
-        |> Jpipe.required "eye_speech_bubble" Jdec.string
-        |> Jpipe.required "eyeglasses" Jdec.string
-        |> Jpipe.required "eyes" Jdec.string
-        |> Jpipe.required "face_with_head_bandage" Jdec.string
-        |> Jpipe.required "face_with_thermometer" Jdec.string
-        |> Jpipe.required "facepunch" Jdec.string
-        |> Jpipe.required "factory" Jdec.string
-        |> Jpipe.required "falkland_islands" Jdec.string
-        |> Jpipe.required "fallen_leaf" Jdec.string
-        |> Jpipe.required "family" Jdec.string
-        |> Jpipe.required "family_man_boy" Jdec.string
-        |> Jpipe.required "family_man_boy_boy" Jdec.string
-        |> Jpipe.required "family_man_girl" Jdec.string
-        |> Jpipe.required "family_man_girl_boy" Jdec.string
-        |> Jpipe.required "family_man_girl_girl" Jdec.string
-        |> Jpipe.required "family_man_man_boy" Jdec.string
-        |> Jpipe.required "family_man_man_boy_boy" Jdec.string
-        |> Jpipe.required "family_man_man_girl" Jdec.string
-        |> Jpipe.required "family_man_man_girl_boy" Jdec.string
-        |> Jpipe.required "family_man_man_girl_girl" Jdec.string
-        |> Jpipe.required "family_man_woman_boy" Jdec.string
-        |> Jpipe.required "family_man_woman_boy_boy" Jdec.string
-        |> Jpipe.required "family_man_woman_girl" Jdec.string
-        |> Jpipe.required "family_man_woman_girl_boy" Jdec.string
-        |> Jpipe.required "family_man_woman_girl_girl" Jdec.string
-        |> Jpipe.required "family_woman_boy" Jdec.string
-        |> Jpipe.required "family_woman_boy_boy" Jdec.string
-        |> Jpipe.required "family_woman_girl" Jdec.string
-        |> Jpipe.required "family_woman_girl_boy" Jdec.string
-        |> Jpipe.required "family_woman_girl_girl" Jdec.string
-        |> Jpipe.required "family_woman_woman_boy" Jdec.string
-        |> Jpipe.required "family_woman_woman_boy_boy" Jdec.string
-        |> Jpipe.required "family_woman_woman_girl" Jdec.string
-        |> Jpipe.required "family_woman_woman_girl_boy" Jdec.string
-        |> Jpipe.required "family_woman_woman_girl_girl" Jdec.string
-        |> Jpipe.required "faroe_islands" Jdec.string
-        |> Jpipe.required "fast_forward" Jdec.string
-        |> Jpipe.required "fax" Jdec.string
-        |> Jpipe.required "fearful" Jdec.string
-        |> Jpipe.required "feelsgood" Jdec.string
-        |> Jpipe.required "feet" Jdec.string
-        |> Jpipe.required "female_detective" Jdec.string
-        |> Jpipe.required "ferris_wheel" Jdec.string
-        |> Jpipe.required "ferry" Jdec.string
-        |> Jpipe.required "field_hockey" Jdec.string
-        |> Jpipe.required "fiji" Jdec.string
-        |> Jpipe.required "file_cabinet" Jdec.string
-        |> Jpipe.required "file_folder" Jdec.string
-        |> Jpipe.required "film_projector" Jdec.string
-        |> Jpipe.required "film_strip" Jdec.string
-        |> Jpipe.required "finland" Jdec.string
-        |> Jpipe.required "finnadie" Jdec.string
-        |> Jpipe.required "fire" Jdec.string
-        |> Jpipe.required "fire_engine" Jdec.string
-        |> Jpipe.required "fireworks" Jdec.string
-        |> Jpipe.required "first_quarter_moon" Jdec.string
-        |> Jpipe.required "first_quarter_moon_with_face" Jdec.string
-        |> Jpipe.required "fish" Jdec.string
-        |> Jpipe.required "fish_cake" Jdec.string
-        |> Jpipe.required "fishing_pole_and_fish" Jdec.string
-        |> Jpipe.required "fist" Jdec.string
-        |> Jpipe.required "fist_left" Jdec.string
-        |> Jpipe.required "fist_oncoming" Jdec.string
-        |> Jpipe.required "fist_raised" Jdec.string
-        |> Jpipe.required "fist_right" Jdec.string
-        |> Jpipe.required "five" Jdec.string
-        |> Jpipe.required "flags" Jdec.string
-        |> Jpipe.required "flashlight" Jdec.string
-        |> Jpipe.required "fleur_de_lis" Jdec.string
-        |> Jpipe.required "flight_arrival" Jdec.string
-        |> Jpipe.required "flight_departure" Jdec.string
-        |> Jpipe.required "flipper" Jdec.string
-        |> Jpipe.required "floppy_disk" Jdec.string
-        |> Jpipe.required "flower_playing_cards" Jdec.string
-        |> Jpipe.required "flushed" Jdec.string
-        |> Jpipe.required "fog" Jdec.string
-        |> Jpipe.required "foggy" Jdec.string
-        |> Jpipe.required "football" Jdec.string
-        |> Jpipe.required "footprints" Jdec.string
-        |> Jpipe.required "fork_and_knife" Jdec.string
-        |> Jpipe.required "fountain" Jdec.string
-        |> Jpipe.required "fountain_pen" Jdec.string
-        |> Jpipe.required "four" Jdec.string
-        |> Jpipe.required "four_leaf_clover" Jdec.string
-        |> Jpipe.required "fox_face" Jdec.string
-        |> Jpipe.required "fr" Jdec.string
-        |> Jpipe.required "framed_picture" Jdec.string
-        |> Jpipe.required "free" Jdec.string
-        |> Jpipe.required "french_guiana" Jdec.string
-        |> Jpipe.required "french_polynesia" Jdec.string
-        |> Jpipe.required "french_southern_territories" Jdec.string
-        |> Jpipe.required "fried_egg" Jdec.string
-        |> Jpipe.required "fried_shrimp" Jdec.string
-        |> Jpipe.required "fries" Jdec.string
-        |> Jpipe.required "frog" Jdec.string
-        |> Jpipe.required "frowning" Jdec.string
-        |> Jpipe.required "frowning_face" Jdec.string
-        |> Jpipe.required "frowning_man" Jdec.string
-        |> Jpipe.required "frowning_woman" Jdec.string
-        |> Jpipe.required "fu" Jdec.string
-        |> Jpipe.required "fuelpump" Jdec.string
-        |> Jpipe.required "full_moon" Jdec.string
-        |> Jpipe.required "full_moon_with_face" Jdec.string
-        |> Jpipe.required "funeral_urn" Jdec.string
-        |> Jpipe.required "gabon" Jdec.string
-        |> Jpipe.required "gambia" Jdec.string
-        |> Jpipe.required "game_die" Jdec.string
-        |> Jpipe.required "gb" Jdec.string
-        |> Jpipe.required "gear" Jdec.string
-        |> Jpipe.required "gem" Jdec.string
-        |> Jpipe.required "gemini" Jdec.string
-        |> Jpipe.required "georgia" Jdec.string
-        |> Jpipe.required "ghana" Jdec.string
-        |> Jpipe.required "ghost" Jdec.string
-        |> Jpipe.required "gibraltar" Jdec.string
-        |> Jpipe.required "gift" Jdec.string
-        |> Jpipe.required "gift_heart" Jdec.string
-        |> Jpipe.required "girl" Jdec.string
-        |> Jpipe.required "globe_with_meridians" Jdec.string
-        |> Jpipe.required "goal_net" Jdec.string
-        |> Jpipe.required "goat" Jdec.string
-        |> Jpipe.required "goberserk" Jdec.string
-        |> Jpipe.required "godmode" Jdec.string
-        |> Jpipe.required "golf" Jdec.string
-        |> Jpipe.required "golfing_man" Jdec.string
-        |> Jpipe.required "golfing_woman" Jdec.string
-        |> Jpipe.required "gorilla" Jdec.string
-        |> Jpipe.required "grapes" Jdec.string
-        |> Jpipe.required "greece" Jdec.string
-        |> Jpipe.required "green_apple" Jdec.string
-        |> Jpipe.required "green_book" Jdec.string
-        |> Jpipe.required "green_heart" Jdec.string
-        |> Jpipe.required "green_salad" Jdec.string
-        |> Jpipe.required "greenland" Jdec.string
-        |> Jpipe.required "grenada" Jdec.string
-        |> Jpipe.required "grey_exclamation" Jdec.string
-        |> Jpipe.required "grey_question" Jdec.string
-        |> Jpipe.required "grimacing" Jdec.string
-        |> Jpipe.required "grin" Jdec.string
-        |> Jpipe.required "grinning" Jdec.string
-        |> Jpipe.required "guadeloupe" Jdec.string
-        |> Jpipe.required "guam" Jdec.string
-        |> Jpipe.required "guardsman" Jdec.string
-        |> Jpipe.required "guardswoman" Jdec.string
-        |> Jpipe.required "guatemala" Jdec.string
-        |> Jpipe.required "guernsey" Jdec.string
-        |> Jpipe.required "guinea" Jdec.string
-        |> Jpipe.required "guinea_bissau" Jdec.string
-        |> Jpipe.required "guitar" Jdec.string
-        |> Jpipe.required "gun" Jdec.string
-        |> Jpipe.required "guyana" Jdec.string
-        |> Jpipe.required "haircut" Jdec.string
-        |> Jpipe.required "haircut_man" Jdec.string
-        |> Jpipe.required "haircut_woman" Jdec.string
-        |> Jpipe.required "haiti" Jdec.string
-        |> Jpipe.required "hamburger" Jdec.string
-        |> Jpipe.required "hammer" Jdec.string
-        |> Jpipe.required "hammer_and_pick" Jdec.string
-        |> Jpipe.required "hammer_and_wrench" Jdec.string
-        |> Jpipe.required "hamster" Jdec.string
-        |> Jpipe.required "hand" Jdec.string
-        |> Jpipe.required "handbag" Jdec.string
-        |> Jpipe.required "handshake" Jdec.string
-        |> Jpipe.required "hankey" Jdec.string
-        |> Jpipe.required "hash" Jdec.string
-        |> Jpipe.required "hatched_chick" Jdec.string
-        |> Jpipe.required "hatching_chick" Jdec.string
-        |> Jpipe.required "headphones" Jdec.string
-        |> Jpipe.required "hear_no_evil" Jdec.string
-        |> Jpipe.required "heart" Jdec.string
-        |> Jpipe.required "heart_decoration" Jdec.string
-        |> Jpipe.required "heart_eyes" Jdec.string
-        |> Jpipe.required "heart_eyes_cat" Jdec.string
-        |> Jpipe.required "heartbeat" Jdec.string
-        |> Jpipe.required "heartpulse" Jdec.string
-        |> Jpipe.required "hearts" Jdec.string
-        |> Jpipe.required "heavy_check_mark" Jdec.string
-        |> Jpipe.required "heavy_division_sign" Jdec.string
-        |> Jpipe.required "heavy_dollar_sign" Jdec.string
-        |> Jpipe.required "heavy_exclamation_mark" Jdec.string
-        |> Jpipe.required "heavy_heart_exclamation" Jdec.string
-        |> Jpipe.required "heavy_minus_sign" Jdec.string
-        |> Jpipe.required "heavy_multiplication_x" Jdec.string
-        |> Jpipe.required "heavy_plus_sign" Jdec.string
-        |> Jpipe.required "helicopter" Jdec.string
-        |> Jpipe.required "herb" Jdec.string
-        |> Jpipe.required "hibiscus" Jdec.string
-        |> Jpipe.required "high_brightness" Jdec.string
-        |> Jpipe.required "high_heel" Jdec.string
-        |> Jpipe.required "hocho" Jdec.string
-        |> Jpipe.required "hole" Jdec.string
-        |> Jpipe.required "honduras" Jdec.string
-        |> Jpipe.required "honey_pot" Jdec.string
-        |> Jpipe.required "honeybee" Jdec.string
-        |> Jpipe.required "hong_kong" Jdec.string
-        |> Jpipe.required "horse" Jdec.string
-        |> Jpipe.required "horse_racing" Jdec.string
-        |> Jpipe.required "hospital" Jdec.string
-        |> Jpipe.required "hot_pepper" Jdec.string
-        |> Jpipe.required "hotdog" Jdec.string
-        |> Jpipe.required "hotel" Jdec.string
-        |> Jpipe.required "hotsprings" Jdec.string
-        |> Jpipe.required "hourglass" Jdec.string
-        |> Jpipe.required "hourglass_flowing_sand" Jdec.string
-        |> Jpipe.required "house" Jdec.string
-        |> Jpipe.required "house_with_garden" Jdec.string
-        |> Jpipe.required "houses" Jdec.string
-        |> Jpipe.required "hugs" Jdec.string
-        |> Jpipe.required "hungary" Jdec.string
-        |> Jpipe.required "hurtrealbad" Jdec.string
-        |> Jpipe.required "hushed" Jdec.string
-        |> Jpipe.required "ice_cream" Jdec.string
-        |> Jpipe.required "ice_hockey" Jdec.string
-        |> Jpipe.required "ice_skate" Jdec.string
-        |> Jpipe.required "icecream" Jdec.string
-        |> Jpipe.required "iceland" Jdec.string
-        |> Jpipe.required "id" Jdec.string
-        |> Jpipe.required "ideograph_advantage" Jdec.string
-        |> Jpipe.required "imp" Jdec.string
-        |> Jpipe.required "inbox_tray" Jdec.string
-        |> Jpipe.required "incoming_envelope" Jdec.string
-        |> Jpipe.required "india" Jdec.string
-        |> Jpipe.required "indonesia" Jdec.string
-        |> Jpipe.required "information_desk_person" Jdec.string
-        |> Jpipe.required "information_source" Jdec.string
-        |> Jpipe.required "innocent" Jdec.string
-        |> Jpipe.required "interrobang" Jdec.string
-        |> Jpipe.required "iphone" Jdec.string
-        |> Jpipe.required "iran" Jdec.string
-        |> Jpipe.required "iraq" Jdec.string
-        |> Jpipe.required "ireland" Jdec.string
-        |> Jpipe.required "isle_of_man" Jdec.string
-        |> Jpipe.required "israel" Jdec.string
-        |> Jpipe.required "it" Jdec.string
-        |> Jpipe.required "izakaya_lantern" Jdec.string
-        |> Jpipe.required "jack_o_lantern" Jdec.string
-        |> Jpipe.required "jamaica" Jdec.string
-        |> Jpipe.required "japan" Jdec.string
-        |> Jpipe.required "japanese_castle" Jdec.string
-        |> Jpipe.required "japanese_goblin" Jdec.string
-        |> Jpipe.required "japanese_ogre" Jdec.string
-        |> Jpipe.required "jeans" Jdec.string
-        |> Jpipe.required "jersey" Jdec.string
-        |> Jpipe.required "jordan" Jdec.string
-        |> Jpipe.required "joy" Jdec.string
-        |> Jpipe.required "joy_cat" Jdec.string
-        |> Jpipe.required "joystick" Jdec.string
-        |> Jpipe.required "jp" Jdec.string
-        |> Jpipe.required "kaaba" Jdec.string
-        |> Jpipe.required "kazakhstan" Jdec.string
-        |> Jpipe.required "kenya" Jdec.string
-        |> Jpipe.required "key" Jdec.string
-        |> Jpipe.required "keyboard" Jdec.string
-        |> Jpipe.required "keycap_ten" Jdec.string
-        |> Jpipe.required "kick_scooter" Jdec.string
-        |> Jpipe.required "kimono" Jdec.string
-        |> Jpipe.required "kiribati" Jdec.string
-        |> Jpipe.required "kiss" Jdec.string
-        |> Jpipe.required "kissing" Jdec.string
-        |> Jpipe.required "kissing_cat" Jdec.string
-        |> Jpipe.required "kissing_closed_eyes" Jdec.string
-        |> Jpipe.required "kissing_heart" Jdec.string
-        |> Jpipe.required "kissing_smiling_eyes" Jdec.string
-        |> Jpipe.required "kiwi_fruit" Jdec.string
-        |> Jpipe.required "knife" Jdec.string
-        |> Jpipe.required "koala" Jdec.string
-        |> Jpipe.required "koko" Jdec.string
-        |> Jpipe.required "kosovo" Jdec.string
-        |> Jpipe.required "kr" Jdec.string
-        |> Jpipe.required "kuwait" Jdec.string
-        |> Jpipe.required "kyrgyzstan" Jdec.string
-        |> Jpipe.required "label" Jdec.string
-        |> Jpipe.required "lantern" Jdec.string
-        |> Jpipe.required "laos" Jdec.string
-        |> Jpipe.required "large_blue_circle" Jdec.string
-        |> Jpipe.required "large_blue_diamond" Jdec.string
-        |> Jpipe.required "large_orange_diamond" Jdec.string
-        |> Jpipe.required "last_quarter_moon" Jdec.string
-        |> Jpipe.required "last_quarter_moon_with_face" Jdec.string
-        |> Jpipe.required "latin_cross" Jdec.string
-        |> Jpipe.required "latvia" Jdec.string
-        |> Jpipe.required "laughing" Jdec.string
-        |> Jpipe.required "leaves" Jdec.string
-        |> Jpipe.required "lebanon" Jdec.string
-        |> Jpipe.required "ledger" Jdec.string
-        |> Jpipe.required "left_luggage" Jdec.string
-        |> Jpipe.required "left_right_arrow" Jdec.string
-        |> Jpipe.required "leftwards_arrow_with_hook" Jdec.string
-        |> Jpipe.required "lemon" Jdec.string
-        |> Jpipe.required "leo" Jdec.string
-        |> Jpipe.required "leopard" Jdec.string
-        |> Jpipe.required "lesotho" Jdec.string
-        |> Jpipe.required "level_slider" Jdec.string
-        |> Jpipe.required "liberia" Jdec.string
-        |> Jpipe.required "libra" Jdec.string
-        |> Jpipe.required "libya" Jdec.string
-        |> Jpipe.required "liechtenstein" Jdec.string
-        |> Jpipe.required "light_rail" Jdec.string
-        |> Jpipe.required "link" Jdec.string
-        |> Jpipe.required "lion" Jdec.string
-        |> Jpipe.required "lips" Jdec.string
-        |> Jpipe.required "lipstick" Jdec.string
-        |> Jpipe.required "lithuania" Jdec.string
-        |> Jpipe.required "lizard" Jdec.string
-        |> Jpipe.required "lock" Jdec.string
-        |> Jpipe.required "lock_with_ink_pen" Jdec.string
-        |> Jpipe.required "lollipop" Jdec.string
-        |> Jpipe.required "loop" Jdec.string
-        |> Jpipe.required "loud_sound" Jdec.string
-        |> Jpipe.required "loudspeaker" Jdec.string
-        |> Jpipe.required "love_hotel" Jdec.string
-        |> Jpipe.required "love_letter" Jdec.string
-        |> Jpipe.required "low_brightness" Jdec.string
-        |> Jpipe.required "luxembourg" Jdec.string
-        |> Jpipe.required "lying_face" Jdec.string
-        |> Jpipe.required "m" Jdec.string
-        |> Jpipe.required "macau" Jdec.string
-        |> Jpipe.required "macedonia" Jdec.string
-        |> Jpipe.required "madagascar" Jdec.string
-        |> Jpipe.required "mag" Jdec.string
-        |> Jpipe.required "mag_right" Jdec.string
-        |> Jpipe.required "mahjong" Jdec.string
-        |> Jpipe.required "mailbox" Jdec.string
-        |> Jpipe.required "mailbox_closed" Jdec.string
-        |> Jpipe.required "mailbox_with_mail" Jdec.string
-        |> Jpipe.required "mailbox_with_no_mail" Jdec.string
-        |> Jpipe.required "malawi" Jdec.string
-        |> Jpipe.required "malaysia" Jdec.string
-        |> Jpipe.required "maldives" Jdec.string
-        |> Jpipe.required "male_detective" Jdec.string
-        |> Jpipe.required "mali" Jdec.string
-        |> Jpipe.required "malta" Jdec.string
-        |> Jpipe.required "man" Jdec.string
-        |> Jpipe.required "man_artist" Jdec.string
-        |> Jpipe.required "man_astronaut" Jdec.string
-        |> Jpipe.required "man_cartwheeling" Jdec.string
-        |> Jpipe.required "man_cook" Jdec.string
-        |> Jpipe.required "man_dancing" Jdec.string
-        |> Jpipe.required "man_facepalming" Jdec.string
-        |> Jpipe.required "man_factory_worker" Jdec.string
-        |> Jpipe.required "man_farmer" Jdec.string
-        |> Jpipe.required "man_firefighter" Jdec.string
-        |> Jpipe.required "man_health_worker" Jdec.string
-        |> Jpipe.required "man_in_tuxedo" Jdec.string
-        |> Jpipe.required "man_judge" Jdec.string
-        |> Jpipe.required "man_juggling" Jdec.string
-        |> Jpipe.required "man_mechanic" Jdec.string
-        |> Jpipe.required "man_office_worker" Jdec.string
-        |> Jpipe.required "man_pilot" Jdec.string
-        |> Jpipe.required "man_playing_handball" Jdec.string
-        |> Jpipe.required "man_playing_water_polo" Jdec.string
-        |> Jpipe.required "man_scientist" Jdec.string
-        |> Jpipe.required "man_shrugging" Jdec.string
-        |> Jpipe.required "man_singer" Jdec.string
-        |> Jpipe.required "man_student" Jdec.string
-        |> Jpipe.required "man_teacher" Jdec.string
-        |> Jpipe.required "man_technologist" Jdec.string
-        |> Jpipe.required "man_with_gua_pi_mao" Jdec.string
-        |> Jpipe.required "man_with_turban" Jdec.string
-        |> Jpipe.required "mandarin" Jdec.string
-        |> Jpipe.required "mans_shoe" Jdec.string
-        |> Jpipe.required "mantelpiece_clock" Jdec.string
-        |> Jpipe.required "maple_leaf" Jdec.string
-        |> Jpipe.required "marshall_islands" Jdec.string
-        |> Jpipe.required "martial_arts_uniform" Jdec.string
-        |> Jpipe.required "martinique" Jdec.string
-        |> Jpipe.required "mask" Jdec.string
-        |> Jpipe.required "massage" Jdec.string
-        |> Jpipe.required "massage_man" Jdec.string
-        |> Jpipe.required "massage_woman" Jdec.string
-        |> Jpipe.required "mauritania" Jdec.string
-        |> Jpipe.required "mauritius" Jdec.string
-        |> Jpipe.required "mayotte" Jdec.string
-        |> Jpipe.required "meat_on_bone" Jdec.string
-        |> Jpipe.required "medal_military" Jdec.string
-        |> Jpipe.required "medal_sports" Jdec.string
-        |> Jpipe.required "mega" Jdec.string
-        |> Jpipe.required "melon" Jdec.string
-        |> Jpipe.required "memo" Jdec.string
-        |> Jpipe.required "men_wrestling" Jdec.string
-        |> Jpipe.required "menorah" Jdec.string
-        |> Jpipe.required "mens" Jdec.string
-        |> Jpipe.required "metal" Jdec.string
-        |> Jpipe.required "metro" Jdec.string
-        |> Jpipe.required "mexico" Jdec.string
-        |> Jpipe.required "micronesia" Jdec.string
-        |> Jpipe.required "microphone" Jdec.string
-        |> Jpipe.required "microscope" Jdec.string
-        |> Jpipe.required "middle_finger" Jdec.string
-        |> Jpipe.required "milk_glass" Jdec.string
-        |> Jpipe.required "milky_way" Jdec.string
-        |> Jpipe.required "minibus" Jdec.string
-        |> Jpipe.required "minidisc" Jdec.string
-        |> Jpipe.required "mobile_phone_off" Jdec.string
-        |> Jpipe.required "moldova" Jdec.string
-        |> Jpipe.required "monaco" Jdec.string
-        |> Jpipe.required "money_mouth_face" Jdec.string
-        |> Jpipe.required "money_with_wings" Jdec.string
-        |> Jpipe.required "moneybag" Jdec.string
-        |> Jpipe.required "mongolia" Jdec.string
-        |> Jpipe.required "monkey" Jdec.string
-        |> Jpipe.required "monkey_face" Jdec.string
-        |> Jpipe.required "monorail" Jdec.string
-        |> Jpipe.required "montenegro" Jdec.string
-        |> Jpipe.required "montserrat" Jdec.string
-        |> Jpipe.required "moon" Jdec.string
-        |> Jpipe.required "morocco" Jdec.string
-        |> Jpipe.required "mortar_board" Jdec.string
-        |> Jpipe.required "mosque" Jdec.string
-        |> Jpipe.required "motor_boat" Jdec.string
-        |> Jpipe.required "motor_scooter" Jdec.string
-        |> Jpipe.required "motorcycle" Jdec.string
-        |> Jpipe.required "motorway" Jdec.string
-        |> Jpipe.required "mount_fuji" Jdec.string
-        |> Jpipe.required "mountain" Jdec.string
-        |> Jpipe.required "mountain_bicyclist" Jdec.string
-        |> Jpipe.required "mountain_biking_man" Jdec.string
-        |> Jpipe.required "mountain_biking_woman" Jdec.string
-        |> Jpipe.required "mountain_cableway" Jdec.string
-        |> Jpipe.required "mountain_railway" Jdec.string
-        |> Jpipe.required "mountain_snow" Jdec.string
-        |> Jpipe.required "mouse" Jdec.string
-        |> Jpipe.required "mouse2" Jdec.string
-        |> Jpipe.required "movie_camera" Jdec.string
-        |> Jpipe.required "moyai" Jdec.string
-        |> Jpipe.required "mozambique" Jdec.string
-        |> Jpipe.required "mrs_claus" Jdec.string
-        |> Jpipe.required "muscle" Jdec.string
-        |> Jpipe.required "mushroom" Jdec.string
-        |> Jpipe.required "musical_keyboard" Jdec.string
-        |> Jpipe.required "musical_note" Jdec.string
-        |> Jpipe.required "musical_score" Jdec.string
-        |> Jpipe.required "mute" Jdec.string
-        |> Jpipe.required "myanmar" Jdec.string
-        |> Jpipe.required "nail_care" Jdec.string
-        |> Jpipe.required "name_badge" Jdec.string
-        |> Jpipe.required "namibia" Jdec.string
-        |> Jpipe.required "national_park" Jdec.string
-        |> Jpipe.required "nauru" Jdec.string
-        |> Jpipe.required "nauseated_face" Jdec.string
-        |> Jpipe.required "neckbeard" Jdec.string
-        |> Jpipe.required "necktie" Jdec.string
-        |> Jpipe.required "negative_squared_cross_mark" Jdec.string
-        |> Jpipe.required "nepal" Jdec.string
-        |> Jpipe.required "nerd_face" Jdec.string
-        |> Jpipe.required "netherlands" Jdec.string
-        |> Jpipe.required "neutral_face" Jdec.string
-        |> Jpipe.required "new" Jdec.string
-        |> Jpipe.required "new_caledonia" Jdec.string
-        |> Jpipe.required "new_moon" Jdec.string
-        |> Jpipe.required "new_moon_with_face" Jdec.string
-        |> Jpipe.required "new_zealand" Jdec.string
-        |> Jpipe.required "newspaper" Jdec.string
-        |> Jpipe.required "newspaper_roll" Jdec.string
-        |> Jpipe.required "next_track_button" Jdec.string
-        |> Jpipe.required "ng" Jdec.string
-        |> Jpipe.required "ng_man" Jdec.string
-        |> Jpipe.required "ng_woman" Jdec.string
-        |> Jpipe.required "nicaragua" Jdec.string
-        |> Jpipe.required "niger" Jdec.string
-        |> Jpipe.required "nigeria" Jdec.string
-        |> Jpipe.required "night_with_stars" Jdec.string
-        |> Jpipe.required "nine" Jdec.string
-        |> Jpipe.required "niue" Jdec.string
-        |> Jpipe.required "no_bell" Jdec.string
-        |> Jpipe.required "no_bicycles" Jdec.string
-        |> Jpipe.required "no_entry" Jdec.string
-        |> Jpipe.required "no_entry_sign" Jdec.string
-        |> Jpipe.required "no_good" Jdec.string
-        |> Jpipe.required "no_good_man" Jdec.string
-        |> Jpipe.required "no_good_woman" Jdec.string
-        |> Jpipe.required "no_mobile_phones" Jdec.string
-        |> Jpipe.required "no_mouth" Jdec.string
-        |> Jpipe.required "no_pedestrians" Jdec.string
-        |> Jpipe.required "no_smoking" Jdec.string
-        |> Jpipe.required "non-potable_water" Jdec.string
-        |> Jpipe.required "norfolk_island" Jdec.string
-        |> Jpipe.required "north_korea" Jdec.string
-        |> Jpipe.required "northern_mariana_islands" Jdec.string
-        |> Jpipe.required "norway" Jdec.string
-        |> Jpipe.required "nose" Jdec.string
-        |> Jpipe.required "notebook" Jdec.string
-        |> Jpipe.required "notebook_with_decorative_cover" Jdec.string
-        |> Jpipe.required "notes" Jdec.string
-        |> Jpipe.required "nut_and_bolt" Jdec.string
-        |> Jpipe.required "o" Jdec.string
-        |> Jpipe.required "o2" Jdec.string
-        |> Jpipe.required "ocean" Jdec.string
-        |> Jpipe.required "octocat" Jdec.string
-        |> Jpipe.required "octopus" Jdec.string
-        |> Jpipe.required "oden" Jdec.string
-        |> Jpipe.required "office" Jdec.string
-        |> Jpipe.required "oil_drum" Jdec.string
-        |> Jpipe.required "ok" Jdec.string
-        |> Jpipe.required "ok_hand" Jdec.string
-        |> Jpipe.required "ok_man" Jdec.string
-        |> Jpipe.required "ok_woman" Jdec.string
-        |> Jpipe.required "old_key" Jdec.string
-        |> Jpipe.required "older_man" Jdec.string
-        |> Jpipe.required "older_woman" Jdec.string
-        |> Jpipe.required "om" Jdec.string
-        |> Jpipe.required "oman" Jdec.string
-        |> Jpipe.required "on" Jdec.string
-        |> Jpipe.required "oncoming_automobile" Jdec.string
-        |> Jpipe.required "oncoming_bus" Jdec.string
-        |> Jpipe.required "oncoming_police_car" Jdec.string
-        |> Jpipe.required "oncoming_taxi" Jdec.string
-        |> Jpipe.required "one" Jdec.string
-        |> Jpipe.required "open_book" Jdec.string
-        |> Jpipe.required "open_file_folder" Jdec.string
-        |> Jpipe.required "open_hands" Jdec.string
-        |> Jpipe.required "open_mouth" Jdec.string
-        |> Jpipe.required "open_umbrella" Jdec.string
-        |> Jpipe.required "ophiuchus" Jdec.string
-        |> Jpipe.required "orange" Jdec.string
-        |> Jpipe.required "orange_book" Jdec.string
-        |> Jpipe.required "orthodox_cross" Jdec.string
-        |> Jpipe.required "outbox_tray" Jdec.string
-        |> Jpipe.required "owl" Jdec.string
-        |> Jpipe.required "ox" Jdec.string
-        |> Jpipe.required "package" Jdec.string
-        |> Jpipe.required "page_facing_up" Jdec.string
-        |> Jpipe.required "page_with_curl" Jdec.string
-        |> Jpipe.required "pager" Jdec.string
-        |> Jpipe.required "paintbrush" Jdec.string
-        |> Jpipe.required "pakistan" Jdec.string
-        |> Jpipe.required "palau" Jdec.string
-        |> Jpipe.required "palestinian_territories" Jdec.string
-        |> Jpipe.required "palm_tree" Jdec.string
-        |> Jpipe.required "panama" Jdec.string
-        |> Jpipe.required "pancakes" Jdec.string
-        |> Jpipe.required "panda_face" Jdec.string
-        |> Jpipe.required "paperclip" Jdec.string
-        |> Jpipe.required "paperclips" Jdec.string
-        |> Jpipe.required "papua_new_guinea" Jdec.string
-        |> Jpipe.required "paraguay" Jdec.string
-        |> Jpipe.required "parasol_on_ground" Jdec.string
-        |> Jpipe.required "parking" Jdec.string
-        |> Jpipe.required "part_alternation_mark" Jdec.string
-        |> Jpipe.required "partly_sunny" Jdec.string
-        |> Jpipe.required "passenger_ship" Jdec.string
-        |> Jpipe.required "passport_control" Jdec.string
-        |> Jpipe.required "pause_button" Jdec.string
-        |> Jpipe.required "paw_prints" Jdec.string
-        |> Jpipe.required "peace_symbol" Jdec.string
-        |> Jpipe.required "peach" Jdec.string
-        |> Jpipe.required "peanuts" Jdec.string
-        |> Jpipe.required "pear" Jdec.string
-        |> Jpipe.required "pen" Jdec.string
-        |> Jpipe.required "pencil" Jdec.string
-        |> Jpipe.required "pencil2" Jdec.string
-        |> Jpipe.required "penguin" Jdec.string
-        |> Jpipe.required "pensive" Jdec.string
-        |> Jpipe.required "performing_arts" Jdec.string
-        |> Jpipe.required "persevere" Jdec.string
-        |> Jpipe.required "person_fencing" Jdec.string
-        |> Jpipe.required "person_frowning" Jdec.string
-        |> Jpipe.required "person_with_blond_hair" Jdec.string
-        |> Jpipe.required "person_with_pouting_face" Jdec.string
-        |> Jpipe.required "peru" Jdec.string
-        |> Jpipe.required "philippines" Jdec.string
-        |> Jpipe.required "phone" Jdec.string
-        |> Jpipe.required "pick" Jdec.string
-        |> Jpipe.required "pig" Jdec.string
-        |> Jpipe.required "pig2" Jdec.string
-        |> Jpipe.required "pig_nose" Jdec.string
-        |> Jpipe.required "pill" Jdec.string
-        |> Jpipe.required "pineapple" Jdec.string
-        |> Jpipe.required "ping_pong" Jdec.string
-        |> Jpipe.required "pisces" Jdec.string
-        |> Jpipe.required "pitcairn_islands" Jdec.string
-        |> Jpipe.required "pizza" Jdec.string
-        |> Jpipe.required "place_of_worship" Jdec.string
-        |> Jpipe.required "plate_with_cutlery" Jdec.string
-        |> Jpipe.required "play_or_pause_button" Jdec.string
-        |> Jpipe.required "point_down" Jdec.string
-        |> Jpipe.required "point_left" Jdec.string
-        |> Jpipe.required "point_right" Jdec.string
-        |> Jpipe.required "point_up" Jdec.string
-        |> Jpipe.required "point_up_2" Jdec.string
-        |> Jpipe.required "poland" Jdec.string
-        |> Jpipe.required "police_car" Jdec.string
-        |> Jpipe.required "policeman" Jdec.string
-        |> Jpipe.required "policewoman" Jdec.string
-        |> Jpipe.required "poodle" Jdec.string
-        |> Jpipe.required "poop" Jdec.string
-        |> Jpipe.required "popcorn" Jdec.string
-        |> Jpipe.required "portugal" Jdec.string
-        |> Jpipe.required "post_office" Jdec.string
-        |> Jpipe.required "postal_horn" Jdec.string
-        |> Jpipe.required "postbox" Jdec.string
-        |> Jpipe.required "potable_water" Jdec.string
-        |> Jpipe.required "potato" Jdec.string
-        |> Jpipe.required "pouch" Jdec.string
-        |> Jpipe.required "poultry_leg" Jdec.string
-        |> Jpipe.required "pound" Jdec.string
-        |> Jpipe.required "pout" Jdec.string
-        |> Jpipe.required "pouting_cat" Jdec.string
-        |> Jpipe.required "pouting_man" Jdec.string
-        |> Jpipe.required "pouting_woman" Jdec.string
-        |> Jpipe.required "pray" Jdec.string
-        |> Jpipe.required "prayer_beads" Jdec.string
-        |> Jpipe.required "pregnant_woman" Jdec.string
-        |> Jpipe.required "previous_track_button" Jdec.string
-        |> Jpipe.required "prince" Jdec.string
-        |> Jpipe.required "princess" Jdec.string
-        |> Jpipe.required "printer" Jdec.string
-        |> Jpipe.required "puerto_rico" Jdec.string
-        |> Jpipe.required "punch" Jdec.string
-        |> Jpipe.required "purple_heart" Jdec.string
-        |> Jpipe.required "purse" Jdec.string
-        |> Jpipe.required "pushpin" Jdec.string
-        |> Jpipe.required "put_litter_in_its_place" Jdec.string
-        |> Jpipe.required "qatar" Jdec.string
-        |> Jpipe.required "question" Jdec.string
-        |> Jpipe.required "rabbit" Jdec.string
-        |> Jpipe.required "rabbit2" Jdec.string
-        |> Jpipe.required "racehorse" Jdec.string
-        |> Jpipe.required "racing_car" Jdec.string
-        |> Jpipe.required "radio" Jdec.string
-        |> Jpipe.required "radio_button" Jdec.string
-        |> Jpipe.required "radioactive" Jdec.string
-        |> Jpipe.required "rage" Jdec.string
-        |> Jpipe.required "rage1" Jdec.string
-        |> Jpipe.required "rage2" Jdec.string
-        |> Jpipe.required "rage3" Jdec.string
-        |> Jpipe.required "rage4" Jdec.string
-        |> Jpipe.required "railway_car" Jdec.string
-        |> Jpipe.required "railway_track" Jdec.string
-        |> Jpipe.required "rainbow" Jdec.string
-        |> Jpipe.required "rainbow_flag" Jdec.string
-        |> Jpipe.required "raised_back_of_hand" Jdec.string
-        |> Jpipe.required "raised_hand" Jdec.string
-        |> Jpipe.required "raised_hand_with_fingers_splayed" Jdec.string
-        |> Jpipe.required "raised_hands" Jdec.string
-        |> Jpipe.required "raising_hand" Jdec.string
-        |> Jpipe.required "raising_hand_man" Jdec.string
-        |> Jpipe.required "raising_hand_woman" Jdec.string
-        |> Jpipe.required "ram" Jdec.string
-        |> Jpipe.required "ramen" Jdec.string
-        |> Jpipe.required "rat" Jdec.string
-        |> Jpipe.required "record_button" Jdec.string
-        |> Jpipe.required "recycle" Jdec.string
-        |> Jpipe.required "red_car" Jdec.string
-        |> Jpipe.required "red_circle" Jdec.string
-        |> Jpipe.required "registered" Jdec.string
-        |> Jpipe.required "relaxed" Jdec.string
-        |> Jpipe.required "relieved" Jdec.string
-        |> Jpipe.required "reminder_ribbon" Jdec.string
-        |> Jpipe.required "repeat" Jdec.string
-        |> Jpipe.required "repeat_one" Jdec.string
-        |> Jpipe.required "rescue_worker_helmet" Jdec.string
-        |> Jpipe.required "restroom" Jdec.string
-        |> Jpipe.required "reunion" Jdec.string
-        |> Jpipe.required "revolving_hearts" Jdec.string
-        |> Jpipe.required "rewind" Jdec.string
-        |> Jpipe.required "rhinoceros" Jdec.string
-        |> Jpipe.required "ribbon" Jdec.string
-        |> Jpipe.required "rice" Jdec.string
-        |> Jpipe.required "rice_ball" Jdec.string
-        |> Jpipe.required "rice_cracker" Jdec.string
-        |> Jpipe.required "rice_scene" Jdec.string
-        |> Jpipe.required "right_anger_bubble" Jdec.string
-        |> Jpipe.required "ring" Jdec.string
-        |> Jpipe.required "robot" Jdec.string
-        |> Jpipe.required "rocket" Jdec.string
-        |> Jpipe.required "rofl" Jdec.string
-        |> Jpipe.required "roll_eyes" Jdec.string
-        |> Jpipe.required "roller_coaster" Jdec.string
-        |> Jpipe.required "romania" Jdec.string
-        |> Jpipe.required "rooster" Jdec.string
-        |> Jpipe.required "rose" Jdec.string
-        |> Jpipe.required "rosette" Jdec.string
-        |> Jpipe.required "rotating_light" Jdec.string
-        |> Jpipe.required "round_pushpin" Jdec.string
-        |> Jpipe.required "rowboat" Jdec.string
-        |> Jpipe.required "rowing_man" Jdec.string
-        |> Jpipe.required "rowing_woman" Jdec.string
-        |> Jpipe.required "ru" Jdec.string
-        |> Jpipe.required "rugby_football" Jdec.string
-        |> Jpipe.required "runner" Jdec.string
-        |> Jpipe.required "running" Jdec.string
-        |> Jpipe.required "running_man" Jdec.string
-        |> Jpipe.required "running_shirt_with_sash" Jdec.string
-        |> Jpipe.required "running_woman" Jdec.string
-        |> Jpipe.required "rwanda" Jdec.string
-        |> Jpipe.required "sa" Jdec.string
-        |> Jpipe.required "sagittarius" Jdec.string
-        |> Jpipe.required "sailboat" Jdec.string
-        |> Jpipe.required "sake" Jdec.string
-        |> Jpipe.required "samoa" Jdec.string
-        |> Jpipe.required "san_marino" Jdec.string
-        |> Jpipe.required "sandal" Jdec.string
-        |> Jpipe.required "santa" Jdec.string
-        |> Jpipe.required "sao_tome_principe" Jdec.string
-        |> Jpipe.required "satellite" Jdec.string
-        |> Jpipe.required "satisfied" Jdec.string
-        |> Jpipe.required "saudi_arabia" Jdec.string
-        |> Jpipe.required "saxophone" Jdec.string
-        |> Jpipe.required "school" Jdec.string
-        |> Jpipe.required "school_satchel" Jdec.string
-        |> Jpipe.required "scissors" Jdec.string
-        |> Jpipe.required "scorpion" Jdec.string
-        |> Jpipe.required "scorpius" Jdec.string
-        |> Jpipe.required "scream" Jdec.string
-        |> Jpipe.required "scream_cat" Jdec.string
-        |> Jpipe.required "scroll" Jdec.string
-        |> Jpipe.required "seat" Jdec.string
-        |> Jpipe.required "secret" Jdec.string
-        |> Jpipe.required "see_no_evil" Jdec.string
-        |> Jpipe.required "seedling" Jdec.string
-        |> Jpipe.required "selfie" Jdec.string
-        |> Jpipe.required "senegal" Jdec.string
-        |> Jpipe.required "serbia" Jdec.string
-        |> Jpipe.required "seven" Jdec.string
-        |> Jpipe.required "seychelles" Jdec.string
-        |> Jpipe.required "shallow_pan_of_food" Jdec.string
-        |> Jpipe.required "shamrock" Jdec.string
-        |> Jpipe.required "shark" Jdec.string
-        |> Jpipe.required "shaved_ice" Jdec.string
-        |> Jpipe.required "sheep" Jdec.string
-        |> Jpipe.required "shell" Jdec.string
-        |> Jpipe.required "shield" Jdec.string
-        |> Jpipe.required "shinto_shrine" Jdec.string
-        |> Jpipe.required "ship" Jdec.string
-        |> Jpipe.required "shipit" Jdec.string
-        |> Jpipe.required "shirt" Jdec.string
-        |> Jpipe.required "shit" Jdec.string
-        |> Jpipe.required "shoe" Jdec.string
-        |> Jpipe.required "shopping" Jdec.string
-        |> Jpipe.required "shopping_cart" Jdec.string
-        |> Jpipe.required "shower" Jdec.string
-        |> Jpipe.required "shrimp" Jdec.string
-        |> Jpipe.required "sierra_leone" Jdec.string
-        |> Jpipe.required "signal_strength" Jdec.string
-        |> Jpipe.required "singapore" Jdec.string
-        |> Jpipe.required "sint_maarten" Jdec.string
-        |> Jpipe.required "six" Jdec.string
-        |> Jpipe.required "six_pointed_star" Jdec.string
-        |> Jpipe.required "ski" Jdec.string
-        |> Jpipe.required "skier" Jdec.string
-        |> Jpipe.required "skull" Jdec.string
-        |> Jpipe.required "skull_and_crossbones" Jdec.string
-        |> Jpipe.required "sleeping" Jdec.string
-        |> Jpipe.required "sleeping_bed" Jdec.string
-        |> Jpipe.required "sleepy" Jdec.string
-        |> Jpipe.required "slightly_frowning_face" Jdec.string
-        |> Jpipe.required "slightly_smiling_face" Jdec.string
-        |> Jpipe.required "slot_machine" Jdec.string
-        |> Jpipe.required "slovakia" Jdec.string
-        |> Jpipe.required "slovenia" Jdec.string
-        |> Jpipe.required "small_airplane" Jdec.string
-        |> Jpipe.required "small_blue_diamond" Jdec.string
-        |> Jpipe.required "small_orange_diamond" Jdec.string
-        |> Jpipe.required "small_red_triangle" Jdec.string
-        |> Jpipe.required "small_red_triangle_down" Jdec.string
-        |> Jpipe.required "smile" Jdec.string
-        |> Jpipe.required "smile_cat" Jdec.string
-        |> Jpipe.required "smiley" Jdec.string
-        |> Jpipe.required "smiley_cat" Jdec.string
-        |> Jpipe.required "smiling_imp" Jdec.string
-        |> Jpipe.required "smirk" Jdec.string
-        |> Jpipe.required "smirk_cat" Jdec.string
-        |> Jpipe.required "smoking" Jdec.string
-        |> Jpipe.required "snail" Jdec.string
-        |> Jpipe.required "snake" Jdec.string
-        |> Jpipe.required "sneezing_face" Jdec.string
-        |> Jpipe.required "snowboarder" Jdec.string
-        |> Jpipe.required "snowflake" Jdec.string
-        |> Jpipe.required "snowman" Jdec.string
-        |> Jpipe.required "snowman_with_snow" Jdec.string
-        |> Jpipe.required "sob" Jdec.string
-        |> Jpipe.required "soccer" Jdec.string
-        |> Jpipe.required "solomon_islands" Jdec.string
-        |> Jpipe.required "somalia" Jdec.string
-        |> Jpipe.required "soon" Jdec.string
-        |> Jpipe.required "sos" Jdec.string
-        |> Jpipe.required "sound" Jdec.string
-        |> Jpipe.required "south_africa" Jdec.string
-        |> Jpipe.required "south_georgia_south_sandwich_islands" Jdec.string
-        |> Jpipe.required "south_sudan" Jdec.string
-        |> Jpipe.required "space_invader" Jdec.string
-        |> Jpipe.required "spades" Jdec.string
-        |> Jpipe.required "spaghetti" Jdec.string
-        |> Jpipe.required "sparkle" Jdec.string
-        |> Jpipe.required "sparkler" Jdec.string
-        |> Jpipe.required "sparkles" Jdec.string
-        |> Jpipe.required "sparkling_heart" Jdec.string
-        |> Jpipe.required "speak_no_evil" Jdec.string
-        |> Jpipe.required "speaker" Jdec.string
-        |> Jpipe.required "speaking_head" Jdec.string
-        |> Jpipe.required "speech_balloon" Jdec.string
-        |> Jpipe.required "speedboat" Jdec.string
-        |> Jpipe.required "spider" Jdec.string
-        |> Jpipe.required "spider_web" Jdec.string
-        |> Jpipe.required "spiral_calendar" Jdec.string
-        |> Jpipe.required "spiral_notepad" Jdec.string
-        |> Jpipe.required "spoon" Jdec.string
-        |> Jpipe.required "squid" Jdec.string
-        |> Jpipe.required "squirrel" Jdec.string
-        |> Jpipe.required "sri_lanka" Jdec.string
-        |> Jpipe.required "st_barthelemy" Jdec.string
-        |> Jpipe.required "st_helena" Jdec.string
-        |> Jpipe.required "st_kitts_nevis" Jdec.string
-        |> Jpipe.required "st_lucia" Jdec.string
-        |> Jpipe.required "st_pierre_miquelon" Jdec.string
-        |> Jpipe.required "st_vincent_grenadines" Jdec.string
-        |> Jpipe.required "stadium" Jdec.string
-        |> Jpipe.required "star" Jdec.string
-        |> Jpipe.required "star2" Jdec.string
-        |> Jpipe.required "star_and_crescent" Jdec.string
-        |> Jpipe.required "star_of_david" Jdec.string
-        |> Jpipe.required "stars" Jdec.string
-        |> Jpipe.required "station" Jdec.string
-        |> Jpipe.required "statue_of_liberty" Jdec.string
-        |> Jpipe.required "steam_locomotive" Jdec.string
-        |> Jpipe.required "stew" Jdec.string
-        |> Jpipe.required "stop_button" Jdec.string
-        |> Jpipe.required "stop_sign" Jdec.string
-        |> Jpipe.required "stopwatch" Jdec.string
-        |> Jpipe.required "straight_ruler" Jdec.string
-        |> Jpipe.required "strawberry" Jdec.string
-        |> Jpipe.required "stuck_out_tongue" Jdec.string
-        |> Jpipe.required "stuck_out_tongue_closed_eyes" Jdec.string
-        |> Jpipe.required "stuck_out_tongue_winking_eye" Jdec.string
-        |> Jpipe.required "studio_microphone" Jdec.string
-        |> Jpipe.required "stuffed_flatbread" Jdec.string
-        |> Jpipe.required "sudan" Jdec.string
-        |> Jpipe.required "sun_behind_large_cloud" Jdec.string
-        |> Jpipe.required "sun_behind_rain_cloud" Jdec.string
-        |> Jpipe.required "sun_behind_small_cloud" Jdec.string
-        |> Jpipe.required "sun_with_face" Jdec.string
-        |> Jpipe.required "sunflower" Jdec.string
-        |> Jpipe.required "sunglasses" Jdec.string
-        |> Jpipe.required "sunny" Jdec.string
-        |> Jpipe.required "sunrise" Jdec.string
-        |> Jpipe.required "sunrise_over_mountains" Jdec.string
-        |> Jpipe.required "surfer" Jdec.string
-        |> Jpipe.required "surfing_man" Jdec.string
-        |> Jpipe.required "surfing_woman" Jdec.string
-        |> Jpipe.required "suriname" Jdec.string
-        |> Jpipe.required "sushi" Jdec.string
-        |> Jpipe.required "suspect" Jdec.string
-        |> Jpipe.required "suspension_railway" Jdec.string
-        |> Jpipe.required "swaziland" Jdec.string
-        |> Jpipe.required "sweat" Jdec.string
-        |> Jpipe.required "sweat_drops" Jdec.string
-        |> Jpipe.required "sweat_smile" Jdec.string
-        |> Jpipe.required "sweden" Jdec.string
-        |> Jpipe.required "sweet_potato" Jdec.string
-        |> Jpipe.required "swimmer" Jdec.string
-        |> Jpipe.required "swimming_man" Jdec.string
-        |> Jpipe.required "swimming_woman" Jdec.string
-        |> Jpipe.required "switzerland" Jdec.string
-        |> Jpipe.required "symbols" Jdec.string
-        |> Jpipe.required "synagogue" Jdec.string
-        |> Jpipe.required "syria" Jdec.string
-        |> Jpipe.required "syringe" Jdec.string
-        |> Jpipe.required "taco" Jdec.string
-        |> Jpipe.required "tada" Jdec.string
-        |> Jpipe.required "taiwan" Jdec.string
-        |> Jpipe.required "tajikistan" Jdec.string
-        |> Jpipe.required "tanabata_tree" Jdec.string
-        |> Jpipe.required "tangerine" Jdec.string
-        |> Jpipe.required "tanzania" Jdec.string
-        |> Jpipe.required "taurus" Jdec.string
-        |> Jpipe.required "taxi" Jdec.string
-        |> Jpipe.required "tea" Jdec.string
-        |> Jpipe.required "telephone" Jdec.string
-        |> Jpipe.required "telephone_receiver" Jdec.string
-        |> Jpipe.required "telescope" Jdec.string
-        |> Jpipe.required "tennis" Jdec.string
-        |> Jpipe.required "tent" Jdec.string
-        |> Jpipe.required "thailand" Jdec.string
-        |> Jpipe.required "thermometer" Jdec.string
-        |> Jpipe.required "thinking" Jdec.string
-        |> Jpipe.required "thought_balloon" Jdec.string
-        |> Jpipe.required "three" Jdec.string
-        |> Jpipe.required "thumbsdown" Jdec.string
-        |> Jpipe.required "thumbsup" Jdec.string
-        |> Jpipe.required "ticket" Jdec.string
-        |> Jpipe.required "tickets" Jdec.string
-        |> Jpipe.required "tiger" Jdec.string
-        |> Jpipe.required "tiger2" Jdec.string
-        |> Jpipe.required "timer_clock" Jdec.string
-        |> Jpipe.required "timor_leste" Jdec.string
-        |> Jpipe.required "tipping_hand_man" Jdec.string
-        |> Jpipe.required "tipping_hand_woman" Jdec.string
-        |> Jpipe.required "tired_face" Jdec.string
-        |> Jpipe.required "tm" Jdec.string
-        |> Jpipe.required "togo" Jdec.string
-        |> Jpipe.required "toilet" Jdec.string
-        |> Jpipe.required "tokelau" Jdec.string
-        |> Jpipe.required "tokyo_tower" Jdec.string
-        |> Jpipe.required "tomato" Jdec.string
-        |> Jpipe.required "tonga" Jdec.string
-        |> Jpipe.required "tongue" Jdec.string
-        |> Jpipe.required "top" Jdec.string
-        |> Jpipe.required "tophat" Jdec.string
-        |> Jpipe.required "tornado" Jdec.string
-        |> Jpipe.required "tr" Jdec.string
-        |> Jpipe.required "trackball" Jdec.string
-        |> Jpipe.required "tractor" Jdec.string
-        |> Jpipe.required "traffic_light" Jdec.string
-        |> Jpipe.required "train" Jdec.string
-        |> Jpipe.required "train2" Jdec.string
-        |> Jpipe.required "tram" Jdec.string
-        |> Jpipe.required "triangular_flag_on_post" Jdec.string
-        |> Jpipe.required "triangular_ruler" Jdec.string
-        |> Jpipe.required "trident" Jdec.string
-        |> Jpipe.required "trinidad_tobago" Jdec.string
-        |> Jpipe.required "triumph" Jdec.string
-        |> Jpipe.required "trolleybus" Jdec.string
-        |> Jpipe.required "trollface" Jdec.string
-        |> Jpipe.required "trophy" Jdec.string
-        |> Jpipe.required "tropical_drink" Jdec.string
-        |> Jpipe.required "tropical_fish" Jdec.string
-        |> Jpipe.required "truck" Jdec.string
-        |> Jpipe.required "trumpet" Jdec.string
-        |> Jpipe.required "tshirt" Jdec.string
-        |> Jpipe.required "tulip" Jdec.string
-        |> Jpipe.required "tumbler_glass" Jdec.string
-        |> Jpipe.required "tunisia" Jdec.string
-        |> Jpipe.required "turkey" Jdec.string
-        |> Jpipe.required "turkmenistan" Jdec.string
-        |> Jpipe.required "turks_caicos_islands" Jdec.string
-        |> Jpipe.required "turtle" Jdec.string
-        |> Jpipe.required "tuvalu" Jdec.string
-        |> Jpipe.required "tv" Jdec.string
-        |> Jpipe.required "twisted_rightwards_arrows" Jdec.string
-        |> Jpipe.required "two" Jdec.string
-        |> Jpipe.required "two_hearts" Jdec.string
-        |> Jpipe.required "two_men_holding_hands" Jdec.string
-        |> Jpipe.required "two_women_holding_hands" Jdec.string
-        |> Jpipe.required "u5272" Jdec.string
-        |> Jpipe.required "u5408" Jdec.string
-        |> Jpipe.required "u55b6" Jdec.string
-        |> Jpipe.required "u6307" Jdec.string
-        |> Jpipe.required "u6708" Jdec.string
-        |> Jpipe.required "u6709" Jdec.string
-        |> Jpipe.required "u6e80" Jdec.string
-        |> Jpipe.required "u7121" Jdec.string
-        |> Jpipe.required "u7533" Jdec.string
-        |> Jpipe.required "u7981" Jdec.string
-        |> Jpipe.required "u7a7a" Jdec.string
-        |> Jpipe.required "uganda" Jdec.string
-        |> Jpipe.required "uk" Jdec.string
-        |> Jpipe.required "ukraine" Jdec.string
-        |> Jpipe.required "umbrella" Jdec.string
-        |> Jpipe.required "unamused" Jdec.string
-        |> Jpipe.required "underage" Jdec.string
-        |> Jpipe.required "unicorn" Jdec.string
-        |> Jpipe.required "united_arab_emirates" Jdec.string
-        |> Jpipe.required "unlock" Jdec.string
-        |> Jpipe.required "up" Jdec.string
-        |> Jpipe.required "upside_down_face" Jdec.string
-        |> Jpipe.required "uruguay" Jdec.string
-        |> Jpipe.required "us" Jdec.string
-        |> Jpipe.required "us_virgin_islands" Jdec.string
-        |> Jpipe.required "uzbekistan" Jdec.string
-        |> Jpipe.required "v" Jdec.string
-        |> Jpipe.required "vanuatu" Jdec.string
-        |> Jpipe.required "vatican_city" Jdec.string
-        |> Jpipe.required "venezuela" Jdec.string
-        |> Jpipe.required "vertical_traffic_light" Jdec.string
-        |> Jpipe.required "vhs" Jdec.string
-        |> Jpipe.required "vibration_mode" Jdec.string
-        |> Jpipe.required "video_camera" Jdec.string
-        |> Jpipe.required "video_game" Jdec.string
-        |> Jpipe.required "vietnam" Jdec.string
-        |> Jpipe.required "violin" Jdec.string
-        |> Jpipe.required "virgo" Jdec.string
-        |> Jpipe.required "volcano" Jdec.string
-        |> Jpipe.required "volleyball" Jdec.string
-        |> Jpipe.required "vs" Jdec.string
-        |> Jpipe.required "vulcan_salute" Jdec.string
-        |> Jpipe.required "walking" Jdec.string
-        |> Jpipe.required "walking_man" Jdec.string
-        |> Jpipe.required "walking_woman" Jdec.string
-        |> Jpipe.required "wallis_futuna" Jdec.string
-        |> Jpipe.required "waning_crescent_moon" Jdec.string
-        |> Jpipe.required "waning_gibbous_moon" Jdec.string
-        |> Jpipe.required "warning" Jdec.string
-        |> Jpipe.required "wastebasket" Jdec.string
-        |> Jpipe.required "watch" Jdec.string
-        |> Jpipe.required "water_buffalo" Jdec.string
-        |> Jpipe.required "watermelon" Jdec.string
-        |> Jpipe.required "wave" Jdec.string
-        |> Jpipe.required "wavy_dash" Jdec.string
-        |> Jpipe.required "waxing_crescent_moon" Jdec.string
-        |> Jpipe.required "waxing_gibbous_moon" Jdec.string
-        |> Jpipe.required "wc" Jdec.string
-        |> Jpipe.required "weary" Jdec.string
-        |> Jpipe.required "wedding" Jdec.string
-        |> Jpipe.required "weight_lifting_man" Jdec.string
-        |> Jpipe.required "weight_lifting_woman" Jdec.string
-        |> Jpipe.required "western_sahara" Jdec.string
-        |> Jpipe.required "whale" Jdec.string
-        |> Jpipe.required "whale2" Jdec.string
-        |> Jpipe.required "wheel_of_dharma" Jdec.string
-        |> Jpipe.required "wheelchair" Jdec.string
-        |> Jpipe.required "white_check_mark" Jdec.string
-        |> Jpipe.required "white_circle" Jdec.string
-        |> Jpipe.required "white_flag" Jdec.string
-        |> Jpipe.required "white_flower" Jdec.string
-        |> Jpipe.required "white_large_square" Jdec.string
-        |> Jpipe.required "white_medium_small_square" Jdec.string
-        |> Jpipe.required "white_medium_square" Jdec.string
-        |> Jpipe.required "white_small_square" Jdec.string
-        |> Jpipe.required "white_square_button" Jdec.string
-        |> Jpipe.required "wilted_flower" Jdec.string
-        |> Jpipe.required "wind_chime" Jdec.string
-        |> Jpipe.required "wind_face" Jdec.string
-        |> Jpipe.required "wine_glass" Jdec.string
-        |> Jpipe.required "wink" Jdec.string
-        |> Jpipe.required "wolf" Jdec.string
-        |> Jpipe.required "woman" Jdec.string
-        |> Jpipe.required "woman_artist" Jdec.string
-        |> Jpipe.required "woman_astronaut" Jdec.string
-        |> Jpipe.required "woman_cartwheeling" Jdec.string
-        |> Jpipe.required "woman_cook" Jdec.string
-        |> Jpipe.required "woman_facepalming" Jdec.string
-        |> Jpipe.required "woman_factory_worker" Jdec.string
-        |> Jpipe.required "woman_farmer" Jdec.string
-        |> Jpipe.required "woman_firefighter" Jdec.string
-        |> Jpipe.required "woman_health_worker" Jdec.string
-        |> Jpipe.required "woman_judge" Jdec.string
-        |> Jpipe.required "woman_juggling" Jdec.string
-        |> Jpipe.required "woman_mechanic" Jdec.string
-        |> Jpipe.required "woman_office_worker" Jdec.string
-        |> Jpipe.required "woman_pilot" Jdec.string
-        |> Jpipe.required "woman_playing_handball" Jdec.string
-        |> Jpipe.required "woman_playing_water_polo" Jdec.string
-        |> Jpipe.required "woman_scientist" Jdec.string
-        |> Jpipe.required "woman_shrugging" Jdec.string
-        |> Jpipe.required "woman_singer" Jdec.string
-        |> Jpipe.required "woman_student" Jdec.string
-        |> Jpipe.required "woman_teacher" Jdec.string
-        |> Jpipe.required "woman_technologist" Jdec.string
-        |> Jpipe.required "woman_with_turban" Jdec.string
-        |> Jpipe.required "womans_clothes" Jdec.string
-        |> Jpipe.required "womans_hat" Jdec.string
-        |> Jpipe.required "women_wrestling" Jdec.string
-        |> Jpipe.required "womens" Jdec.string
-        |> Jpipe.required "world_map" Jdec.string
-        |> Jpipe.required "worried" Jdec.string
-        |> Jpipe.required "wrench" Jdec.string
-        |> Jpipe.required "writing_hand" Jdec.string
-        |> Jpipe.required "x" Jdec.string
-        |> Jpipe.required "yellow_heart" Jdec.string
-        |> Jpipe.required "yemen" Jdec.string
-        |> Jpipe.required "yen" Jdec.string
-        |> Jpipe.required "yin_yang" Jdec.string
-        |> Jpipe.required "yum" Jdec.string
-        |> Jpipe.required "zambia" Jdec.string
-        |> Jpipe.required "zap" Jdec.string
-        |> Jpipe.required "zero" Jdec.string
-        |> Jpipe.required "zimbabwe" Jdec.string
-        |> Jpipe.required "zipper_mouth_face" Jdec.string
-        |> Jpipe.required "zzz" Jdec.string
-
-encodeEmojis : Emojis -> Jenc.Value
-encodeEmojis x =
-    Jenc.object
-        [ ("+1", Jenc.string x.the1)
-        , ("-1", Jenc.string x.emojis1)
-        , ("100", Jenc.string x.the100)
-        , ("1234", Jenc.string x.the1234)
-        , ("1st_place_medal", Jenc.string x.the1StPlaceMedal)
-        , ("2nd_place_medal", Jenc.string x.the2NdPlaceMedal)
-        , ("3rd_place_medal", Jenc.string x.the3RDPlaceMedal)
-        , ("8ball", Jenc.string x.the8Ball)
-        , ("a", Jenc.string x.a)
-        , ("ab", Jenc.string x.ab)
-        , ("abc", Jenc.string x.abc)
-        , ("abcd", Jenc.string x.abcd)
-        , ("accept", Jenc.string x.accept)
-        , ("aerial_tramway", Jenc.string x.aerialTramway)
-        , ("afghanistan", Jenc.string x.afghanistan)
-        , ("airplane", Jenc.string x.airplane)
-        , ("aland_islands", Jenc.string x.alandIslands)
-        , ("alarm_clock", Jenc.string x.alarmClock)
-        , ("albania", Jenc.string x.albania)
-        , ("alembic", Jenc.string x.alembic)
-        , ("algeria", Jenc.string x.algeria)
-        , ("alien", Jenc.string x.alien)
-        , ("ambulance", Jenc.string x.ambulance)
-        , ("american_samoa", Jenc.string x.americanSamoa)
-        , ("amphora", Jenc.string x.amphora)
-        , ("anchor", Jenc.string x.anchor)
-        , ("andorra", Jenc.string x.andorra)
-        , ("angel", Jenc.string x.angel)
-        , ("anger", Jenc.string x.anger)
-        , ("angola", Jenc.string x.angola)
-        , ("angry", Jenc.string x.angry)
-        , ("anguilla", Jenc.string x.anguilla)
-        , ("anguished", Jenc.string x.anguished)
-        , ("ant", Jenc.string x.ant)
-        , ("antarctica", Jenc.string x.antarctica)
-        , ("antigua_barbuda", Jenc.string x.antiguaBarbuda)
-        , ("apple", Jenc.string x.apple)
-        , ("aquarius", Jenc.string x.aquarius)
-        , ("argentina", Jenc.string x.argentina)
-        , ("aries", Jenc.string x.aries)
-        , ("armenia", Jenc.string x.armenia)
-        , ("arrow_backward", Jenc.string x.arrowBackward)
-        , ("arrow_double_down", Jenc.string x.arrowDoubleDown)
-        , ("arrow_double_up", Jenc.string x.arrowDoubleUp)
-        , ("arrow_down", Jenc.string x.arrowDown)
-        , ("arrow_down_small", Jenc.string x.arrowDownSmall)
-        , ("arrow_forward", Jenc.string x.arrowForward)
-        , ("arrow_heading_down", Jenc.string x.arrowHeadingDown)
-        , ("arrow_heading_up", Jenc.string x.arrowHeadingUp)
-        , ("arrow_left", Jenc.string x.arrowLeft)
-        , ("arrow_lower_left", Jenc.string x.arrowLowerLeft)
-        , ("arrow_lower_right", Jenc.string x.arrowLowerRight)
-        , ("arrow_right", Jenc.string x.arrowRight)
-        , ("arrow_right_hook", Jenc.string x.arrowRightHook)
-        , ("arrow_up", Jenc.string x.arrowUp)
-        , ("arrow_up_down", Jenc.string x.arrowUpDown)
-        , ("arrow_up_small", Jenc.string x.arrowUpSmall)
-        , ("arrow_upper_left", Jenc.string x.arrowUpperLeft)
-        , ("arrow_upper_right", Jenc.string x.arrowUpperRight)
-        , ("arrows_clockwise", Jenc.string x.arrowsClockwise)
-        , ("arrows_counterclockwise", Jenc.string x.arrowsCounterclockwise)
-        , ("art", Jenc.string x.art)
-        , ("articulated_lorry", Jenc.string x.articulatedLorry)
-        , ("artificial_satellite", Jenc.string x.artificialSatellite)
-        , ("aruba", Jenc.string x.aruba)
-        , ("asterisk", Jenc.string x.asterisk)
-        , ("astonished", Jenc.string x.astonished)
-        , ("athletic_shoe", Jenc.string x.athleticShoe)
-        , ("atm", Jenc.string x.atm)
-        , ("atom", Jenc.string x.atom)
-        , ("atom_symbol", Jenc.string x.atomSymbol)
-        , ("australia", Jenc.string x.australia)
-        , ("austria", Jenc.string x.austria)
-        , ("avocado", Jenc.string x.avocado)
-        , ("azerbaijan", Jenc.string x.azerbaijan)
-        , ("b", Jenc.string x.b)
-        , ("baby", Jenc.string x.baby)
-        , ("baby_bottle", Jenc.string x.babyBottle)
-        , ("baby_chick", Jenc.string x.babyChick)
-        , ("baby_symbol", Jenc.string x.babySymbol)
-        , ("back", Jenc.string x.back)
-        , ("bacon", Jenc.string x.bacon)
-        , ("badminton", Jenc.string x.badminton)
-        , ("baggage_claim", Jenc.string x.baggageClaim)
-        , ("baguette_bread", Jenc.string x.baguetteBread)
-        , ("bahamas", Jenc.string x.bahamas)
-        , ("bahrain", Jenc.string x.bahrain)
-        , ("balance_scale", Jenc.string x.balanceScale)
-        , ("balloon", Jenc.string x.balloon)
-        , ("ballot_box", Jenc.string x.ballotBox)
-        , ("ballot_box_with_check", Jenc.string x.ballotBoxWithCheck)
-        , ("bamboo", Jenc.string x.bamboo)
-        , ("banana", Jenc.string x.banana)
-        , ("bangbang", Jenc.string x.bangbang)
-        , ("bangladesh", Jenc.string x.bangladesh)
-        , ("bank", Jenc.string x.bank)
-        , ("bar_chart", Jenc.string x.barChart)
-        , ("barbados", Jenc.string x.barbados)
-        , ("barber", Jenc.string x.barber)
-        , ("baseball", Jenc.string x.baseball)
-        , ("basecamp", Jenc.string x.basecamp)
-        , ("basecampy", Jenc.string x.basecampy)
-        , ("basketball", Jenc.string x.basketball)
-        , ("basketball_man", Jenc.string x.basketballMan)
-        , ("basketball_woman", Jenc.string x.basketballWoman)
-        , ("bat", Jenc.string x.bat)
-        , ("bath", Jenc.string x.bath)
-        , ("bathtub", Jenc.string x.bathtub)
-        , ("battery", Jenc.string x.battery)
-        , ("beach_umbrella", Jenc.string x.beachUmbrella)
-        , ("bear", Jenc.string x.bear)
-        , ("bed", Jenc.string x.bed)
-        , ("bee", Jenc.string x.bee)
-        , ("beer", Jenc.string x.beer)
-        , ("beers", Jenc.string x.beers)
-        , ("beetle", Jenc.string x.beetle)
-        , ("beginner", Jenc.string x.beginner)
-        , ("belarus", Jenc.string x.belarus)
-        , ("belgium", Jenc.string x.belgium)
-        , ("belize", Jenc.string x.belize)
-        , ("bell", Jenc.string x.bell)
-        , ("bellhop_bell", Jenc.string x.bellhopBell)
-        , ("benin", Jenc.string x.benin)
-        , ("bento", Jenc.string x.bento)
-        , ("bermuda", Jenc.string x.bermuda)
-        , ("bhutan", Jenc.string x.bhutan)
-        , ("bicyclist", Jenc.string x.bicyclist)
-        , ("bike", Jenc.string x.bike)
-        , ("biking_man", Jenc.string x.bikingMan)
-        , ("biking_woman", Jenc.string x.bikingWoman)
-        , ("bikini", Jenc.string x.bikini)
-        , ("biohazard", Jenc.string x.biohazard)
-        , ("bird", Jenc.string x.bird)
-        , ("birthday", Jenc.string x.birthday)
-        , ("black_circle", Jenc.string x.blackCircle)
-        , ("black_flag", Jenc.string x.blackFlag)
-        , ("black_heart", Jenc.string x.blackHeart)
-        , ("black_joker", Jenc.string x.blackJoker)
-        , ("black_large_square", Jenc.string x.blackLargeSquare)
-        , ("black_medium_small_square", Jenc.string x.blackMediumSmallSquare)
-        , ("black_medium_square", Jenc.string x.blackMediumSquare)
-        , ("black_nib", Jenc.string x.blackNib)
-        , ("black_small_square", Jenc.string x.blackSmallSquare)
-        , ("black_square_button", Jenc.string x.blackSquareButton)
-        , ("blonde_man", Jenc.string x.blondeMan)
-        , ("blonde_woman", Jenc.string x.blondeWoman)
-        , ("blossom", Jenc.string x.blossom)
-        , ("blowfish", Jenc.string x.blowfish)
-        , ("blue_book", Jenc.string x.blueBook)
-        , ("blue_car", Jenc.string x.blueCar)
-        , ("blue_heart", Jenc.string x.blueHeart)
-        , ("blush", Jenc.string x.blush)
-        , ("boar", Jenc.string x.boar)
-        , ("boat", Jenc.string x.boat)
-        , ("bolivia", Jenc.string x.bolivia)
-        , ("bomb", Jenc.string x.bomb)
-        , ("book", Jenc.string x.book)
-        , ("bookmark", Jenc.string x.bookmark)
-        , ("bookmark_tabs", Jenc.string x.bookmarkTabs)
-        , ("books", Jenc.string x.books)
-        , ("boom", Jenc.string x.boom)
-        , ("boot", Jenc.string x.boot)
-        , ("bosnia_herzegovina", Jenc.string x.bosniaHerzegovina)
-        , ("botswana", Jenc.string x.botswana)
-        , ("bouquet", Jenc.string x.bouquet)
-        , ("bow", Jenc.string x.bow)
-        , ("bow_and_arrow", Jenc.string x.bowAndArrow)
-        , ("bowing_man", Jenc.string x.bowingMan)
-        , ("bowing_woman", Jenc.string x.bowingWoman)
-        , ("bowling", Jenc.string x.bowling)
-        , ("bowtie", Jenc.string x.bowtie)
-        , ("boxing_glove", Jenc.string x.boxingGlove)
-        , ("boy", Jenc.string x.boy)
-        , ("brazil", Jenc.string x.brazil)
-        , ("bread", Jenc.string x.bread)
-        , ("bride_with_veil", Jenc.string x.brideWithVeil)
-        , ("bridge_at_night", Jenc.string x.bridgeAtNight)
-        , ("briefcase", Jenc.string x.briefcase)
-        , ("british_indian_ocean_territory", Jenc.string x.britishIndianOceanTerritory)
-        , ("british_virgin_islands", Jenc.string x.britishVirginIslands)
-        , ("broken_heart", Jenc.string x.brokenHeart)
-        , ("brunei", Jenc.string x.brunei)
-        , ("bug", Jenc.string x.bug)
-        , ("building_construction", Jenc.string x.buildingConstruction)
-        , ("bulb", Jenc.string x.bulb)
-        , ("bulgaria", Jenc.string x.bulgaria)
-        , ("bullettrain_front", Jenc.string x.bullettrainFront)
-        , ("bullettrain_side", Jenc.string x.bullettrainSide)
-        , ("burkina_faso", Jenc.string x.burkinaFaso)
-        , ("burrito", Jenc.string x.burrito)
-        , ("burundi", Jenc.string x.burundi)
-        , ("bus", Jenc.string x.bus)
-        , ("business_suit_levitating", Jenc.string x.businessSuitLevitating)
-        , ("busstop", Jenc.string x.busstop)
-        , ("bust_in_silhouette", Jenc.string x.bustInSilhouette)
-        , ("busts_in_silhouette", Jenc.string x.bustsInSilhouette)
-        , ("butterfly", Jenc.string x.butterfly)
-        , ("cactus", Jenc.string x.cactus)
-        , ("cake", Jenc.string x.cake)
-        , ("calendar", Jenc.string x.calendar)
-        , ("call_me_hand", Jenc.string x.callMeHand)
-        , ("calling", Jenc.string x.calling)
-        , ("cambodia", Jenc.string x.cambodia)
-        , ("camel", Jenc.string x.camel)
-        , ("camera", Jenc.string x.camera)
-        , ("camera_flash", Jenc.string x.cameraFlash)
-        , ("cameroon", Jenc.string x.cameroon)
-        , ("camping", Jenc.string x.camping)
-        , ("canada", Jenc.string x.canada)
-        , ("canary_islands", Jenc.string x.canaryIslands)
-        , ("cancer", Jenc.string x.cancer)
-        , ("candle", Jenc.string x.candle)
-        , ("candy", Jenc.string x.candy)
-        , ("canoe", Jenc.string x.canoe)
-        , ("cape_verde", Jenc.string x.capeVerde)
-        , ("capital_abcd", Jenc.string x.capitalAbcd)
-        , ("capricorn", Jenc.string x.capricorn)
-        , ("car", Jenc.string x.car)
-        , ("card_file_box", Jenc.string x.cardFileBox)
-        , ("card_index", Jenc.string x.cardIndex)
-        , ("card_index_dividers", Jenc.string x.cardIndexDividers)
-        , ("caribbean_netherlands", Jenc.string x.caribbeanNetherlands)
-        , ("carousel_horse", Jenc.string x.carouselHorse)
-        , ("carrot", Jenc.string x.carrot)
-        , ("cat", Jenc.string x.cat)
-        , ("cat2", Jenc.string x.cat2)
-        , ("cayman_islands", Jenc.string x.caymanIslands)
-        , ("cd", Jenc.string x.cd)
-        , ("central_african_republic", Jenc.string x.centralAfricanRepublic)
-        , ("chad", Jenc.string x.chad)
-        , ("chains", Jenc.string x.chains)
-        , ("champagne", Jenc.string x.champagne)
-        , ("chart", Jenc.string x.chart)
-        , ("chart_with_downwards_trend", Jenc.string x.chartWithDownwardsTrend)
-        , ("chart_with_upwards_trend", Jenc.string x.chartWithUpwardsTrend)
-        , ("checkered_flag", Jenc.string x.checkeredFlag)
-        , ("cheese", Jenc.string x.cheese)
-        , ("cherries", Jenc.string x.cherries)
-        , ("cherry_blossom", Jenc.string x.cherryBlossom)
-        , ("chestnut", Jenc.string x.chestnut)
-        , ("chicken", Jenc.string x.chicken)
-        , ("children_crossing", Jenc.string x.childrenCrossing)
-        , ("chile", Jenc.string x.chile)
-        , ("chipmunk", Jenc.string x.chipmunk)
-        , ("chocolate_bar", Jenc.string x.chocolateBar)
-        , ("christmas_island", Jenc.string x.christmasIsland)
-        , ("christmas_tree", Jenc.string x.christmasTree)
-        , ("church", Jenc.string x.church)
-        , ("cinema", Jenc.string x.cinema)
-        , ("circus_tent", Jenc.string x.circusTent)
-        , ("city_sunrise", Jenc.string x.citySunrise)
-        , ("city_sunset", Jenc.string x.citySunset)
-        , ("cityscape", Jenc.string x.cityscape)
-        , ("cl", Jenc.string x.cl)
-        , ("clamp", Jenc.string x.clamp)
-        , ("clap", Jenc.string x.clap)
-        , ("clapper", Jenc.string x.clapper)
-        , ("classical_building", Jenc.string x.classicalBuilding)
-        , ("clinking_glasses", Jenc.string x.clinkingGlasses)
-        , ("clipboard", Jenc.string x.clipboard)
-        , ("clock1", Jenc.string x.clock1)
-        , ("clock10", Jenc.string x.clock10)
-        , ("clock1030", Jenc.string x.clock1030)
-        , ("clock11", Jenc.string x.clock11)
-        , ("clock1130", Jenc.string x.clock1130)
-        , ("clock12", Jenc.string x.clock12)
-        , ("clock1230", Jenc.string x.clock1230)
-        , ("clock130", Jenc.string x.clock130)
-        , ("clock2", Jenc.string x.clock2)
-        , ("clock230", Jenc.string x.clock230)
-        , ("clock3", Jenc.string x.clock3)
-        , ("clock330", Jenc.string x.clock330)
-        , ("clock4", Jenc.string x.clock4)
-        , ("clock430", Jenc.string x.clock430)
-        , ("clock5", Jenc.string x.clock5)
-        , ("clock530", Jenc.string x.clock530)
-        , ("clock6", Jenc.string x.clock6)
-        , ("clock630", Jenc.string x.clock630)
-        , ("clock7", Jenc.string x.clock7)
-        , ("clock730", Jenc.string x.clock730)
-        , ("clock8", Jenc.string x.clock8)
-        , ("clock830", Jenc.string x.clock830)
-        , ("clock9", Jenc.string x.clock9)
-        , ("clock930", Jenc.string x.clock930)
-        , ("closed_book", Jenc.string x.closedBook)
-        , ("closed_lock_with_key", Jenc.string x.closedLockWithKey)
-        , ("closed_umbrella", Jenc.string x.closedUmbrella)
-        , ("cloud", Jenc.string x.cloud)
-        , ("cloud_with_lightning", Jenc.string x.cloudWithLightning)
-        , ("cloud_with_lightning_and_rain", Jenc.string x.cloudWithLightningAndRain)
-        , ("cloud_with_rain", Jenc.string x.cloudWithRain)
-        , ("cloud_with_snow", Jenc.string x.cloudWithSnow)
-        , ("clown_face", Jenc.string x.clownFace)
-        , ("clubs", Jenc.string x.clubs)
-        , ("cn", Jenc.string x.cn)
-        , ("cocktail", Jenc.string x.cocktail)
-        , ("cocos_islands", Jenc.string x.cocosIslands)
-        , ("coffee", Jenc.string x.coffee)
-        , ("coffin", Jenc.string x.coffin)
-        , ("cold_sweat", Jenc.string x.coldSweat)
-        , ("collision", Jenc.string x.collision)
-        , ("colombia", Jenc.string x.colombia)
-        , ("comet", Jenc.string x.comet)
-        , ("comoros", Jenc.string x.comoros)
-        , ("computer", Jenc.string x.computer)
-        , ("computer_mouse", Jenc.string x.computerMouse)
-        , ("confetti_ball", Jenc.string x.confettiBall)
-        , ("confounded", Jenc.string x.confounded)
-        , ("confused", Jenc.string x.confused)
-        , ("congo_brazzaville", Jenc.string x.congoBrazzaville)
-        , ("congo_kinshasa", Jenc.string x.congoKinshasa)
-        , ("congratulations", Jenc.string x.congratulations)
-        , ("construction", Jenc.string x.construction)
-        , ("construction_worker", Jenc.string x.constructionWorker)
-        , ("construction_worker_man", Jenc.string x.constructionWorkerMan)
-        , ("construction_worker_woman", Jenc.string x.constructionWorkerWoman)
-        , ("control_knobs", Jenc.string x.controlKnobs)
-        , ("convenience_store", Jenc.string x.convenienceStore)
-        , ("cook_islands", Jenc.string x.cookIslands)
-        , ("cookie", Jenc.string x.cookie)
-        , ("cool", Jenc.string x.cool)
-        , ("cop", Jenc.string x.cop)
-        , ("copyright", Jenc.string x.copyright)
-        , ("corn", Jenc.string x.corn)
-        , ("costa_rica", Jenc.string x.costaRica)
-        , ("cote_divoire", Jenc.string x.coteDivoire)
-        , ("couch_and_lamp", Jenc.string x.couchAndLamp)
-        , ("couple", Jenc.string x.couple)
-        , ("couple_with_heart", Jenc.string x.coupleWithHeart)
-        , ("couple_with_heart_man_man", Jenc.string x.coupleWithHeartManMan)
-        , ("couple_with_heart_woman_man", Jenc.string x.coupleWithHeartWomanMan)
-        , ("couple_with_heart_woman_woman", Jenc.string x.coupleWithHeartWomanWoman)
-        , ("couplekiss_man_man", Jenc.string x.couplekissManMan)
-        , ("couplekiss_man_woman", Jenc.string x.couplekissManWoman)
-        , ("couplekiss_woman_woman", Jenc.string x.couplekissWomanWoman)
-        , ("cow", Jenc.string x.cow)
-        , ("cow2", Jenc.string x.cow2)
-        , ("cowboy_hat_face", Jenc.string x.cowboyHatFace)
-        , ("crab", Jenc.string x.crab)
-        , ("crayon", Jenc.string x.crayon)
-        , ("credit_card", Jenc.string x.creditCard)
-        , ("crescent_moon", Jenc.string x.crescentMoon)
-        , ("cricket", Jenc.string x.cricket)
-        , ("croatia", Jenc.string x.croatia)
-        , ("crocodile", Jenc.string x.crocodile)
-        , ("croissant", Jenc.string x.croissant)
-        , ("crossed_fingers", Jenc.string x.crossedFingers)
-        , ("crossed_flags", Jenc.string x.crossedFlags)
-        , ("crossed_swords", Jenc.string x.crossedSwords)
-        , ("crown", Jenc.string x.crown)
-        , ("cry", Jenc.string x.cry)
-        , ("crying_cat_face", Jenc.string x.cryingCatFace)
-        , ("crystal_ball", Jenc.string x.crystalBall)
-        , ("cuba", Jenc.string x.cuba)
-        , ("cucumber", Jenc.string x.cucumber)
-        , ("cupid", Jenc.string x.cupid)
-        , ("curacao", Jenc.string x.curacao)
-        , ("curly_loop", Jenc.string x.curlyLoop)
-        , ("currency_exchange", Jenc.string x.currencyExchange)
-        , ("curry", Jenc.string x.curry)
-        , ("custard", Jenc.string x.custard)
-        , ("customs", Jenc.string x.customs)
-        , ("cyclone", Jenc.string x.cyclone)
-        , ("cyprus", Jenc.string x.cyprus)
-        , ("czech_republic", Jenc.string x.czechRepublic)
-        , ("dagger", Jenc.string x.dagger)
-        , ("dancer", Jenc.string x.dancer)
-        , ("dancers", Jenc.string x.dancers)
-        , ("dancing_men", Jenc.string x.dancingMen)
-        , ("dancing_women", Jenc.string x.dancingWomen)
-        , ("dango", Jenc.string x.dango)
-        , ("dark_sunglasses", Jenc.string x.darkSunglasses)
-        , ("dart", Jenc.string x.dart)
-        , ("dash", Jenc.string x.dash)
-        , ("date", Jenc.string x.date)
-        , ("de", Jenc.string x.de)
-        , ("deciduous_tree", Jenc.string x.deciduousTree)
-        , ("deer", Jenc.string x.deer)
-        , ("denmark", Jenc.string x.denmark)
-        , ("department_store", Jenc.string x.departmentStore)
-        , ("derelict_house", Jenc.string x.derelictHouse)
-        , ("desert", Jenc.string x.desert)
-        , ("desert_island", Jenc.string x.desertIsland)
-        , ("desktop_computer", Jenc.string x.desktopComputer)
-        , ("detective", Jenc.string x.detective)
-        , ("diamond_shape_with_a_dot_inside", Jenc.string x.diamondShapeWithADotInside)
-        , ("diamonds", Jenc.string x.diamonds)
-        , ("disappointed", Jenc.string x.disappointed)
-        , ("disappointed_relieved", Jenc.string x.disappointedRelieved)
-        , ("dizzy", Jenc.string x.dizzy)
-        , ("dizzy_face", Jenc.string x.dizzyFace)
-        , ("djibouti", Jenc.string x.djibouti)
-        , ("do_not_litter", Jenc.string x.doNotLitter)
-        , ("dog", Jenc.string x.dog)
-        , ("dog2", Jenc.string x.dog2)
-        , ("dollar", Jenc.string x.dollar)
-        , ("dolls", Jenc.string x.dolls)
-        , ("dolphin", Jenc.string x.dolphin)
-        , ("dominica", Jenc.string x.dominica)
-        , ("dominican_republic", Jenc.string x.dominicanRepublic)
-        , ("door", Jenc.string x.door)
-        , ("doughnut", Jenc.string x.doughnut)
-        , ("dove", Jenc.string x.dove)
-        , ("dragon", Jenc.string x.dragon)
-        , ("dragon_face", Jenc.string x.dragonFace)
-        , ("dress", Jenc.string x.dress)
-        , ("dromedary_camel", Jenc.string x.dromedaryCamel)
-        , ("drooling_face", Jenc.string x.droolingFace)
-        , ("droplet", Jenc.string x.droplet)
-        , ("drum", Jenc.string x.drum)
-        , ("duck", Jenc.string x.duck)
-        , ("dvd", Jenc.string x.dvd)
-        , ("e-mail", Jenc.string x.eMail)
-        , ("eagle", Jenc.string x.eagle)
-        , ("ear", Jenc.string x.ear)
-        , ("ear_of_rice", Jenc.string x.earOfRice)
-        , ("earth_africa", Jenc.string x.earthAfrica)
-        , ("earth_americas", Jenc.string x.earthAmericas)
-        , ("earth_asia", Jenc.string x.earthAsia)
-        , ("ecuador", Jenc.string x.ecuador)
-        , ("egg", Jenc.string x.egg)
-        , ("eggplant", Jenc.string x.eggplant)
-        , ("egypt", Jenc.string x.egypt)
-        , ("eight", Jenc.string x.eight)
-        , ("eight_pointed_black_star", Jenc.string x.eightPointedBlackStar)
-        , ("eight_spoked_asterisk", Jenc.string x.eightSpokedAsterisk)
-        , ("el_salvador", Jenc.string x.elSalvador)
-        , ("electric_plug", Jenc.string x.electricPlug)
-        , ("electron", Jenc.string x.electron)
-        , ("elephant", Jenc.string x.elephant)
-        , ("email", Jenc.string x.email)
-        , ("end", Jenc.string x.end)
-        , ("envelope", Jenc.string x.envelope)
-        , ("envelope_with_arrow", Jenc.string x.envelopeWithArrow)
-        , ("equatorial_guinea", Jenc.string x.equatorialGuinea)
-        , ("eritrea", Jenc.string x.eritrea)
-        , ("es", Jenc.string x.es)
-        , ("estonia", Jenc.string x.estonia)
-        , ("ethiopia", Jenc.string x.ethiopia)
-        , ("eu", Jenc.string x.eu)
-        , ("euro", Jenc.string x.euro)
-        , ("european_castle", Jenc.string x.europeanCastle)
-        , ("european_post_office", Jenc.string x.europeanPostOffice)
-        , ("european_union", Jenc.string x.europeanUnion)
-        , ("evergreen_tree", Jenc.string x.evergreenTree)
-        , ("exclamation", Jenc.string x.exclamation)
-        , ("expressionless", Jenc.string x.expressionless)
-        , ("eye", Jenc.string x.eye)
-        , ("eye_speech_bubble", Jenc.string x.eyeSpeechBubble)
-        , ("eyeglasses", Jenc.string x.eyeglasses)
-        , ("eyes", Jenc.string x.eyes)
-        , ("face_with_head_bandage", Jenc.string x.faceWithHeadBandage)
-        , ("face_with_thermometer", Jenc.string x.faceWithThermometer)
-        , ("facepunch", Jenc.string x.facepunch)
-        , ("factory", Jenc.string x.factory)
-        , ("falkland_islands", Jenc.string x.falklandIslands)
-        , ("fallen_leaf", Jenc.string x.fallenLeaf)
-        , ("family", Jenc.string x.family)
-        , ("family_man_boy", Jenc.string x.familyManBoy)
-        , ("family_man_boy_boy", Jenc.string x.familyManBoyBoy)
-        , ("family_man_girl", Jenc.string x.familyManGirl)
-        , ("family_man_girl_boy", Jenc.string x.familyManGirlBoy)
-        , ("family_man_girl_girl", Jenc.string x.familyManGirlGirl)
-        , ("family_man_man_boy", Jenc.string x.familyManManBoy)
-        , ("family_man_man_boy_boy", Jenc.string x.familyManManBoyBoy)
-        , ("family_man_man_girl", Jenc.string x.familyManManGirl)
-        , ("family_man_man_girl_boy", Jenc.string x.familyManManGirlBoy)
-        , ("family_man_man_girl_girl", Jenc.string x.familyManManGirlGirl)
-        , ("family_man_woman_boy", Jenc.string x.familyManWomanBoy)
-        , ("family_man_woman_boy_boy", Jenc.string x.familyManWomanBoyBoy)
-        , ("family_man_woman_girl", Jenc.string x.familyManWomanGirl)
-        , ("family_man_woman_girl_boy", Jenc.string x.familyManWomanGirlBoy)
-        , ("family_man_woman_girl_girl", Jenc.string x.familyManWomanGirlGirl)
-        , ("family_woman_boy", Jenc.string x.familyWomanBoy)
-        , ("family_woman_boy_boy", Jenc.string x.familyWomanBoyBoy)
-        , ("family_woman_girl", Jenc.string x.familyWomanGirl)
-        , ("family_woman_girl_boy", Jenc.string x.familyWomanGirlBoy)
-        , ("family_woman_girl_girl", Jenc.string x.familyWomanGirlGirl)
-        , ("family_woman_woman_boy", Jenc.string x.familyWomanWomanBoy)
-        , ("family_woman_woman_boy_boy", Jenc.string x.familyWomanWomanBoyBoy)
-        , ("family_woman_woman_girl", Jenc.string x.familyWomanWomanGirl)
-        , ("family_woman_woman_girl_boy", Jenc.string x.familyWomanWomanGirlBoy)
-        , ("family_woman_woman_girl_girl", Jenc.string x.familyWomanWomanGirlGirl)
-        , ("faroe_islands", Jenc.string x.faroeIslands)
-        , ("fast_forward", Jenc.string x.fastForward)
-        , ("fax", Jenc.string x.fax)
-        , ("fearful", Jenc.string x.fearful)
-        , ("feelsgood", Jenc.string x.feelsgood)
-        , ("feet", Jenc.string x.feet)
-        , ("female_detective", Jenc.string x.femaleDetective)
-        , ("ferris_wheel", Jenc.string x.ferrisWheel)
-        , ("ferry", Jenc.string x.ferry)
-        , ("field_hockey", Jenc.string x.fieldHockey)
-        , ("fiji", Jenc.string x.fiji)
-        , ("file_cabinet", Jenc.string x.fileCabinet)
-        , ("file_folder", Jenc.string x.fileFolder)
-        , ("film_projector", Jenc.string x.filmProjector)
-        , ("film_strip", Jenc.string x.filmStrip)
-        , ("finland", Jenc.string x.finland)
-        , ("finnadie", Jenc.string x.finnadie)
-        , ("fire", Jenc.string x.fire)
-        , ("fire_engine", Jenc.string x.fireEngine)
-        , ("fireworks", Jenc.string x.fireworks)
-        , ("first_quarter_moon", Jenc.string x.firstQuarterMoon)
-        , ("first_quarter_moon_with_face", Jenc.string x.firstQuarterMoonWithFace)
-        , ("fish", Jenc.string x.fish)
-        , ("fish_cake", Jenc.string x.fishCake)
-        , ("fishing_pole_and_fish", Jenc.string x.fishingPoleAndFish)
-        , ("fist", Jenc.string x.fist)
-        , ("fist_left", Jenc.string x.fistLeft)
-        , ("fist_oncoming", Jenc.string x.fistOncoming)
-        , ("fist_raised", Jenc.string x.fistRaised)
-        , ("fist_right", Jenc.string x.fistRight)
-        , ("five", Jenc.string x.five)
-        , ("flags", Jenc.string x.flags)
-        , ("flashlight", Jenc.string x.flashlight)
-        , ("fleur_de_lis", Jenc.string x.fleurDeLis)
-        , ("flight_arrival", Jenc.string x.flightArrival)
-        , ("flight_departure", Jenc.string x.flightDeparture)
-        , ("flipper", Jenc.string x.flipper)
-        , ("floppy_disk", Jenc.string x.floppyDisk)
-        , ("flower_playing_cards", Jenc.string x.flowerPlayingCards)
-        , ("flushed", Jenc.string x.flushed)
-        , ("fog", Jenc.string x.fog)
-        , ("foggy", Jenc.string x.foggy)
-        , ("football", Jenc.string x.football)
-        , ("footprints", Jenc.string x.footprints)
-        , ("fork_and_knife", Jenc.string x.forkAndKnife)
-        , ("fountain", Jenc.string x.fountain)
-        , ("fountain_pen", Jenc.string x.fountainPen)
-        , ("four", Jenc.string x.four)
-        , ("four_leaf_clover", Jenc.string x.fourLeafClover)
-        , ("fox_face", Jenc.string x.foxFace)
-        , ("fr", Jenc.string x.fr)
-        , ("framed_picture", Jenc.string x.framedPicture)
-        , ("free", Jenc.string x.free)
-        , ("french_guiana", Jenc.string x.frenchGuiana)
-        , ("french_polynesia", Jenc.string x.frenchPolynesia)
-        , ("french_southern_territories", Jenc.string x.frenchSouthernTerritories)
-        , ("fried_egg", Jenc.string x.friedEgg)
-        , ("fried_shrimp", Jenc.string x.friedShrimp)
-        , ("fries", Jenc.string x.fries)
-        , ("frog", Jenc.string x.frog)
-        , ("frowning", Jenc.string x.frowning)
-        , ("frowning_face", Jenc.string x.frowningFace)
-        , ("frowning_man", Jenc.string x.frowningMan)
-        , ("frowning_woman", Jenc.string x.frowningWoman)
-        , ("fu", Jenc.string x.fu)
-        , ("fuelpump", Jenc.string x.fuelpump)
-        , ("full_moon", Jenc.string x.fullMoon)
-        , ("full_moon_with_face", Jenc.string x.fullMoonWithFace)
-        , ("funeral_urn", Jenc.string x.funeralUrn)
-        , ("gabon", Jenc.string x.gabon)
-        , ("gambia", Jenc.string x.gambia)
-        , ("game_die", Jenc.string x.gameDie)
-        , ("gb", Jenc.string x.gb)
-        , ("gear", Jenc.string x.gear)
-        , ("gem", Jenc.string x.gem)
-        , ("gemini", Jenc.string x.gemini)
-        , ("georgia", Jenc.string x.georgia)
-        , ("ghana", Jenc.string x.ghana)
-        , ("ghost", Jenc.string x.ghost)
-        , ("gibraltar", Jenc.string x.gibraltar)
-        , ("gift", Jenc.string x.gift)
-        , ("gift_heart", Jenc.string x.giftHeart)
-        , ("girl", Jenc.string x.girl)
-        , ("globe_with_meridians", Jenc.string x.globeWithMeridians)
-        , ("goal_net", Jenc.string x.goalNet)
-        , ("goat", Jenc.string x.goat)
-        , ("goberserk", Jenc.string x.goberserk)
-        , ("godmode", Jenc.string x.godmode)
-        , ("golf", Jenc.string x.golf)
-        , ("golfing_man", Jenc.string x.golfingMan)
-        , ("golfing_woman", Jenc.string x.golfingWoman)
-        , ("gorilla", Jenc.string x.gorilla)
-        , ("grapes", Jenc.string x.grapes)
-        , ("greece", Jenc.string x.greece)
-        , ("green_apple", Jenc.string x.greenApple)
-        , ("green_book", Jenc.string x.greenBook)
-        , ("green_heart", Jenc.string x.greenHeart)
-        , ("green_salad", Jenc.string x.greenSalad)
-        , ("greenland", Jenc.string x.greenland)
-        , ("grenada", Jenc.string x.grenada)
-        , ("grey_exclamation", Jenc.string x.greyExclamation)
-        , ("grey_question", Jenc.string x.greyQuestion)
-        , ("grimacing", Jenc.string x.grimacing)
-        , ("grin", Jenc.string x.grin)
-        , ("grinning", Jenc.string x.grinning)
-        , ("guadeloupe", Jenc.string x.guadeloupe)
-        , ("guam", Jenc.string x.guam)
-        , ("guardsman", Jenc.string x.guardsman)
-        , ("guardswoman", Jenc.string x.guardswoman)
-        , ("guatemala", Jenc.string x.guatemala)
-        , ("guernsey", Jenc.string x.guernsey)
-        , ("guinea", Jenc.string x.guinea)
-        , ("guinea_bissau", Jenc.string x.guineaBissau)
-        , ("guitar", Jenc.string x.guitar)
-        , ("gun", Jenc.string x.gun)
-        , ("guyana", Jenc.string x.guyana)
-        , ("haircut", Jenc.string x.haircut)
-        , ("haircut_man", Jenc.string x.haircutMan)
-        , ("haircut_woman", Jenc.string x.haircutWoman)
-        , ("haiti", Jenc.string x.haiti)
-        , ("hamburger", Jenc.string x.hamburger)
-        , ("hammer", Jenc.string x.hammer)
-        , ("hammer_and_pick", Jenc.string x.hammerAndPick)
-        , ("hammer_and_wrench", Jenc.string x.hammerAndWrench)
-        , ("hamster", Jenc.string x.hamster)
-        , ("hand", Jenc.string x.hand)
-        , ("handbag", Jenc.string x.handbag)
-        , ("handshake", Jenc.string x.handshake)
-        , ("hankey", Jenc.string x.hankey)
-        , ("hash", Jenc.string x.hash)
-        , ("hatched_chick", Jenc.string x.hatchedChick)
-        , ("hatching_chick", Jenc.string x.hatchingChick)
-        , ("headphones", Jenc.string x.headphones)
-        , ("hear_no_evil", Jenc.string x.hearNoEvil)
-        , ("heart", Jenc.string x.heart)
-        , ("heart_decoration", Jenc.string x.heartDecoration)
-        , ("heart_eyes", Jenc.string x.heartEyes)
-        , ("heart_eyes_cat", Jenc.string x.heartEyesCat)
-        , ("heartbeat", Jenc.string x.heartbeat)
-        , ("heartpulse", Jenc.string x.heartpulse)
-        , ("hearts", Jenc.string x.hearts)
-        , ("heavy_check_mark", Jenc.string x.heavyCheckMark)
-        , ("heavy_division_sign", Jenc.string x.heavyDivisionSign)
-        , ("heavy_dollar_sign", Jenc.string x.heavyDollarSign)
-        , ("heavy_exclamation_mark", Jenc.string x.heavyExclamationMark)
-        , ("heavy_heart_exclamation", Jenc.string x.heavyHeartExclamation)
-        , ("heavy_minus_sign", Jenc.string x.heavyMinusSign)
-        , ("heavy_multiplication_x", Jenc.string x.heavyMultiplicationX)
-        , ("heavy_plus_sign", Jenc.string x.heavyPlusSign)
-        , ("helicopter", Jenc.string x.helicopter)
-        , ("herb", Jenc.string x.herb)
-        , ("hibiscus", Jenc.string x.hibiscus)
-        , ("high_brightness", Jenc.string x.highBrightness)
-        , ("high_heel", Jenc.string x.highHeel)
-        , ("hocho", Jenc.string x.hocho)
-        , ("hole", Jenc.string x.hole)
-        , ("honduras", Jenc.string x.honduras)
-        , ("honey_pot", Jenc.string x.honeyPot)
-        , ("honeybee", Jenc.string x.honeybee)
-        , ("hong_kong", Jenc.string x.hongKong)
-        , ("horse", Jenc.string x.horse)
-        , ("horse_racing", Jenc.string x.horseRacing)
-        , ("hospital", Jenc.string x.hospital)
-        , ("hot_pepper", Jenc.string x.hotPepper)
-        , ("hotdog", Jenc.string x.hotdog)
-        , ("hotel", Jenc.string x.hotel)
-        , ("hotsprings", Jenc.string x.hotsprings)
-        , ("hourglass", Jenc.string x.hourglass)
-        , ("hourglass_flowing_sand", Jenc.string x.hourglassFlowingSand)
-        , ("house", Jenc.string x.house)
-        , ("house_with_garden", Jenc.string x.houseWithGarden)
-        , ("houses", Jenc.string x.houses)
-        , ("hugs", Jenc.string x.hugs)
-        , ("hungary", Jenc.string x.hungary)
-        , ("hurtrealbad", Jenc.string x.hurtrealbad)
-        , ("hushed", Jenc.string x.hushed)
-        , ("ice_cream", Jenc.string x.iceCream)
-        , ("ice_hockey", Jenc.string x.iceHockey)
-        , ("ice_skate", Jenc.string x.iceSkate)
-        , ("icecream", Jenc.string x.icecream)
-        , ("iceland", Jenc.string x.iceland)
-        , ("id", Jenc.string x.id)
-        , ("ideograph_advantage", Jenc.string x.ideographAdvantage)
-        , ("imp", Jenc.string x.imp)
-        , ("inbox_tray", Jenc.string x.inboxTray)
-        , ("incoming_envelope", Jenc.string x.incomingEnvelope)
-        , ("india", Jenc.string x.india)
-        , ("indonesia", Jenc.string x.indonesia)
-        , ("information_desk_person", Jenc.string x.informationDeskPerson)
-        , ("information_source", Jenc.string x.informationSource)
-        , ("innocent", Jenc.string x.innocent)
-        , ("interrobang", Jenc.string x.interrobang)
-        , ("iphone", Jenc.string x.iphone)
-        , ("iran", Jenc.string x.iran)
-        , ("iraq", Jenc.string x.iraq)
-        , ("ireland", Jenc.string x.ireland)
-        , ("isle_of_man", Jenc.string x.isleOfMan)
-        , ("israel", Jenc.string x.israel)
-        , ("it", Jenc.string x.it)
-        , ("izakaya_lantern", Jenc.string x.izakayaLantern)
-        , ("jack_o_lantern", Jenc.string x.jackOLantern)
-        , ("jamaica", Jenc.string x.jamaica)
-        , ("japan", Jenc.string x.japan)
-        , ("japanese_castle", Jenc.string x.japaneseCastle)
-        , ("japanese_goblin", Jenc.string x.japaneseGoblin)
-        , ("japanese_ogre", Jenc.string x.japaneseOgre)
-        , ("jeans", Jenc.string x.jeans)
-        , ("jersey", Jenc.string x.jersey)
-        , ("jordan", Jenc.string x.jordan)
-        , ("joy", Jenc.string x.joy)
-        , ("joy_cat", Jenc.string x.joyCat)
-        , ("joystick", Jenc.string x.joystick)
-        , ("jp", Jenc.string x.jp)
-        , ("kaaba", Jenc.string x.kaaba)
-        , ("kazakhstan", Jenc.string x.kazakhstan)
-        , ("kenya", Jenc.string x.kenya)
-        , ("key", Jenc.string x.key)
-        , ("keyboard", Jenc.string x.keyboard)
-        , ("keycap_ten", Jenc.string x.keycapTen)
-        , ("kick_scooter", Jenc.string x.kickScooter)
-        , ("kimono", Jenc.string x.kimono)
-        , ("kiribati", Jenc.string x.kiribati)
-        , ("kiss", Jenc.string x.kiss)
-        , ("kissing", Jenc.string x.kissing)
-        , ("kissing_cat", Jenc.string x.kissingCat)
-        , ("kissing_closed_eyes", Jenc.string x.kissingClosedEyes)
-        , ("kissing_heart", Jenc.string x.kissingHeart)
-        , ("kissing_smiling_eyes", Jenc.string x.kissingSmilingEyes)
-        , ("kiwi_fruit", Jenc.string x.kiwiFruit)
-        , ("knife", Jenc.string x.knife)
-        , ("koala", Jenc.string x.koala)
-        , ("koko", Jenc.string x.koko)
-        , ("kosovo", Jenc.string x.kosovo)
-        , ("kr", Jenc.string x.kr)
-        , ("kuwait", Jenc.string x.kuwait)
-        , ("kyrgyzstan", Jenc.string x.kyrgyzstan)
-        , ("label", Jenc.string x.label)
-        , ("lantern", Jenc.string x.lantern)
-        , ("laos", Jenc.string x.laos)
-        , ("large_blue_circle", Jenc.string x.largeBlueCircle)
-        , ("large_blue_diamond", Jenc.string x.largeBlueDiamond)
-        , ("large_orange_diamond", Jenc.string x.largeOrangeDiamond)
-        , ("last_quarter_moon", Jenc.string x.lastQuarterMoon)
-        , ("last_quarter_moon_with_face", Jenc.string x.lastQuarterMoonWithFace)
-        , ("latin_cross", Jenc.string x.latinCross)
-        , ("latvia", Jenc.string x.latvia)
-        , ("laughing", Jenc.string x.laughing)
-        , ("leaves", Jenc.string x.leaves)
-        , ("lebanon", Jenc.string x.lebanon)
-        , ("ledger", Jenc.string x.ledger)
-        , ("left_luggage", Jenc.string x.leftLuggage)
-        , ("left_right_arrow", Jenc.string x.leftRightArrow)
-        , ("leftwards_arrow_with_hook", Jenc.string x.leftwardsArrowWithHook)
-        , ("lemon", Jenc.string x.lemon)
-        , ("leo", Jenc.string x.leo)
-        , ("leopard", Jenc.string x.leopard)
-        , ("lesotho", Jenc.string x.lesotho)
-        , ("level_slider", Jenc.string x.levelSlider)
-        , ("liberia", Jenc.string x.liberia)
-        , ("libra", Jenc.string x.libra)
-        , ("libya", Jenc.string x.libya)
-        , ("liechtenstein", Jenc.string x.liechtenstein)
-        , ("light_rail", Jenc.string x.lightRail)
-        , ("link", Jenc.string x.link)
-        , ("lion", Jenc.string x.lion)
-        , ("lips", Jenc.string x.lips)
-        , ("lipstick", Jenc.string x.lipstick)
-        , ("lithuania", Jenc.string x.lithuania)
-        , ("lizard", Jenc.string x.lizard)
-        , ("lock", Jenc.string x.lock)
-        , ("lock_with_ink_pen", Jenc.string x.lockWithInkPen)
-        , ("lollipop", Jenc.string x.lollipop)
-        , ("loop", Jenc.string x.loop)
-        , ("loud_sound", Jenc.string x.loudSound)
-        , ("loudspeaker", Jenc.string x.loudspeaker)
-        , ("love_hotel", Jenc.string x.loveHotel)
-        , ("love_letter", Jenc.string x.loveLetter)
-        , ("low_brightness", Jenc.string x.lowBrightness)
-        , ("luxembourg", Jenc.string x.luxembourg)
-        , ("lying_face", Jenc.string x.lyingFace)
-        , ("m", Jenc.string x.m)
-        , ("macau", Jenc.string x.macau)
-        , ("macedonia", Jenc.string x.macedonia)
-        , ("madagascar", Jenc.string x.madagascar)
-        , ("mag", Jenc.string x.mag)
-        , ("mag_right", Jenc.string x.magRight)
-        , ("mahjong", Jenc.string x.mahjong)
-        , ("mailbox", Jenc.string x.mailbox)
-        , ("mailbox_closed", Jenc.string x.mailboxClosed)
-        , ("mailbox_with_mail", Jenc.string x.mailboxWithMail)
-        , ("mailbox_with_no_mail", Jenc.string x.mailboxWithNoMail)
-        , ("malawi", Jenc.string x.malawi)
-        , ("malaysia", Jenc.string x.malaysia)
-        , ("maldives", Jenc.string x.maldives)
-        , ("male_detective", Jenc.string x.maleDetective)
-        , ("mali", Jenc.string x.mali)
-        , ("malta", Jenc.string x.malta)
-        , ("man", Jenc.string x.man)
-        , ("man_artist", Jenc.string x.manArtist)
-        , ("man_astronaut", Jenc.string x.manAstronaut)
-        , ("man_cartwheeling", Jenc.string x.manCartwheeling)
-        , ("man_cook", Jenc.string x.manCook)
-        , ("man_dancing", Jenc.string x.manDancing)
-        , ("man_facepalming", Jenc.string x.manFacepalming)
-        , ("man_factory_worker", Jenc.string x.manFactoryWorker)
-        , ("man_farmer", Jenc.string x.manFarmer)
-        , ("man_firefighter", Jenc.string x.manFirefighter)
-        , ("man_health_worker", Jenc.string x.manHealthWorker)
-        , ("man_in_tuxedo", Jenc.string x.manInTuxedo)
-        , ("man_judge", Jenc.string x.manJudge)
-        , ("man_juggling", Jenc.string x.manJuggling)
-        , ("man_mechanic", Jenc.string x.manMechanic)
-        , ("man_office_worker", Jenc.string x.manOfficeWorker)
-        , ("man_pilot", Jenc.string x.manPilot)
-        , ("man_playing_handball", Jenc.string x.manPlayingHandball)
-        , ("man_playing_water_polo", Jenc.string x.manPlayingWaterPolo)
-        , ("man_scientist", Jenc.string x.manScientist)
-        , ("man_shrugging", Jenc.string x.manShrugging)
-        , ("man_singer", Jenc.string x.manSinger)
-        , ("man_student", Jenc.string x.manStudent)
-        , ("man_teacher", Jenc.string x.manTeacher)
-        , ("man_technologist", Jenc.string x.manTechnologist)
-        , ("man_with_gua_pi_mao", Jenc.string x.manWithGuaPiMao)
-        , ("man_with_turban", Jenc.string x.manWithTurban)
-        , ("mandarin", Jenc.string x.mandarin)
-        , ("mans_shoe", Jenc.string x.mansShoe)
-        , ("mantelpiece_clock", Jenc.string x.mantelpieceClock)
-        , ("maple_leaf", Jenc.string x.mapleLeaf)
-        , ("marshall_islands", Jenc.string x.marshallIslands)
-        , ("martial_arts_uniform", Jenc.string x.martialArtsUniform)
-        , ("martinique", Jenc.string x.martinique)
-        , ("mask", Jenc.string x.mask)
-        , ("massage", Jenc.string x.massage)
-        , ("massage_man", Jenc.string x.massageMan)
-        , ("massage_woman", Jenc.string x.massageWoman)
-        , ("mauritania", Jenc.string x.mauritania)
-        , ("mauritius", Jenc.string x.mauritius)
-        , ("mayotte", Jenc.string x.mayotte)
-        , ("meat_on_bone", Jenc.string x.meatOnBone)
-        , ("medal_military", Jenc.string x.medalMilitary)
-        , ("medal_sports", Jenc.string x.medalSports)
-        , ("mega", Jenc.string x.mega)
-        , ("melon", Jenc.string x.melon)
-        , ("memo", Jenc.string x.memo)
-        , ("men_wrestling", Jenc.string x.menWrestling)
-        , ("menorah", Jenc.string x.menorah)
-        , ("mens", Jenc.string x.mens)
-        , ("metal", Jenc.string x.metal)
-        , ("metro", Jenc.string x.metro)
-        , ("mexico", Jenc.string x.mexico)
-        , ("micronesia", Jenc.string x.micronesia)
-        , ("microphone", Jenc.string x.microphone)
-        , ("microscope", Jenc.string x.microscope)
-        , ("middle_finger", Jenc.string x.middleFinger)
-        , ("milk_glass", Jenc.string x.milkGlass)
-        , ("milky_way", Jenc.string x.milkyWay)
-        , ("minibus", Jenc.string x.minibus)
-        , ("minidisc", Jenc.string x.minidisc)
-        , ("mobile_phone_off", Jenc.string x.mobilePhoneOff)
-        , ("moldova", Jenc.string x.moldova)
-        , ("monaco", Jenc.string x.monaco)
-        , ("money_mouth_face", Jenc.string x.moneyMouthFace)
-        , ("money_with_wings", Jenc.string x.moneyWithWings)
-        , ("moneybag", Jenc.string x.moneybag)
-        , ("mongolia", Jenc.string x.mongolia)
-        , ("monkey", Jenc.string x.monkey)
-        , ("monkey_face", Jenc.string x.monkeyFace)
-        , ("monorail", Jenc.string x.monorail)
-        , ("montenegro", Jenc.string x.montenegro)
-        , ("montserrat", Jenc.string x.montserrat)
-        , ("moon", Jenc.string x.moon)
-        , ("morocco", Jenc.string x.morocco)
-        , ("mortar_board", Jenc.string x.mortarBoard)
-        , ("mosque", Jenc.string x.mosque)
-        , ("motor_boat", Jenc.string x.motorBoat)
-        , ("motor_scooter", Jenc.string x.motorScooter)
-        , ("motorcycle", Jenc.string x.motorcycle)
-        , ("motorway", Jenc.string x.motorway)
-        , ("mount_fuji", Jenc.string x.mountFuji)
-        , ("mountain", Jenc.string x.mountain)
-        , ("mountain_bicyclist", Jenc.string x.mountainBicyclist)
-        , ("mountain_biking_man", Jenc.string x.mountainBikingMan)
-        , ("mountain_biking_woman", Jenc.string x.mountainBikingWoman)
-        , ("mountain_cableway", Jenc.string x.mountainCableway)
-        , ("mountain_railway", Jenc.string x.mountainRailway)
-        , ("mountain_snow", Jenc.string x.mountainSnow)
-        , ("mouse", Jenc.string x.mouse)
-        , ("mouse2", Jenc.string x.mouse2)
-        , ("movie_camera", Jenc.string x.movieCamera)
-        , ("moyai", Jenc.string x.moyai)
-        , ("mozambique", Jenc.string x.mozambique)
-        , ("mrs_claus", Jenc.string x.mrsClaus)
-        , ("muscle", Jenc.string x.muscle)
-        , ("mushroom", Jenc.string x.mushroom)
-        , ("musical_keyboard", Jenc.string x.musicalKeyboard)
-        , ("musical_note", Jenc.string x.musicalNote)
-        , ("musical_score", Jenc.string x.musicalScore)
-        , ("mute", Jenc.string x.mute)
-        , ("myanmar", Jenc.string x.myanmar)
-        , ("nail_care", Jenc.string x.nailCare)
-        , ("name_badge", Jenc.string x.nameBadge)
-        , ("namibia", Jenc.string x.namibia)
-        , ("national_park", Jenc.string x.nationalPark)
-        , ("nauru", Jenc.string x.nauru)
-        , ("nauseated_face", Jenc.string x.nauseatedFace)
-        , ("neckbeard", Jenc.string x.neckbeard)
-        , ("necktie", Jenc.string x.necktie)
-        , ("negative_squared_cross_mark", Jenc.string x.negativeSquaredCrossMark)
-        , ("nepal", Jenc.string x.nepal)
-        , ("nerd_face", Jenc.string x.nerdFace)
-        , ("netherlands", Jenc.string x.netherlands)
-        , ("neutral_face", Jenc.string x.neutralFace)
-        , ("new", Jenc.string x.new)
-        , ("new_caledonia", Jenc.string x.newCaledonia)
-        , ("new_moon", Jenc.string x.newMoon)
-        , ("new_moon_with_face", Jenc.string x.newMoonWithFace)
-        , ("new_zealand", Jenc.string x.newZealand)
-        , ("newspaper", Jenc.string x.newspaper)
-        , ("newspaper_roll", Jenc.string x.newspaperRoll)
-        , ("next_track_button", Jenc.string x.nextTrackButton)
-        , ("ng", Jenc.string x.ng)
-        , ("ng_man", Jenc.string x.ngMan)
-        , ("ng_woman", Jenc.string x.ngWoman)
-        , ("nicaragua", Jenc.string x.nicaragua)
-        , ("niger", Jenc.string x.niger)
-        , ("nigeria", Jenc.string x.nigeria)
-        , ("night_with_stars", Jenc.string x.nightWithStars)
-        , ("nine", Jenc.string x.nine)
-        , ("niue", Jenc.string x.niue)
-        , ("no_bell", Jenc.string x.noBell)
-        , ("no_bicycles", Jenc.string x.noBicycles)
-        , ("no_entry", Jenc.string x.noEntry)
-        , ("no_entry_sign", Jenc.string x.noEntrySign)
-        , ("no_good", Jenc.string x.noGood)
-        , ("no_good_man", Jenc.string x.noGoodMan)
-        , ("no_good_woman", Jenc.string x.noGoodWoman)
-        , ("no_mobile_phones", Jenc.string x.noMobilePhones)
-        , ("no_mouth", Jenc.string x.noMouth)
-        , ("no_pedestrians", Jenc.string x.noPedestrians)
-        , ("no_smoking", Jenc.string x.noSmoking)
-        , ("non-potable_water", Jenc.string x.nonPotableWater)
-        , ("norfolk_island", Jenc.string x.norfolkIsland)
-        , ("north_korea", Jenc.string x.northKorea)
-        , ("northern_mariana_islands", Jenc.string x.northernMarianaIslands)
-        , ("norway", Jenc.string x.norway)
-        , ("nose", Jenc.string x.nose)
-        , ("notebook", Jenc.string x.notebook)
-        , ("notebook_with_decorative_cover", Jenc.string x.notebookWithDecorativeCover)
-        , ("notes", Jenc.string x.notes)
-        , ("nut_and_bolt", Jenc.string x.nutAndBolt)
-        , ("o", Jenc.string x.o)
-        , ("o2", Jenc.string x.o2)
-        , ("ocean", Jenc.string x.ocean)
-        , ("octocat", Jenc.string x.octocat)
-        , ("octopus", Jenc.string x.octopus)
-        , ("oden", Jenc.string x.oden)
-        , ("office", Jenc.string x.office)
-        , ("oil_drum", Jenc.string x.oilDrum)
-        , ("ok", Jenc.string x.ok)
-        , ("ok_hand", Jenc.string x.okHand)
-        , ("ok_man", Jenc.string x.okMan)
-        , ("ok_woman", Jenc.string x.okWoman)
-        , ("old_key", Jenc.string x.oldKey)
-        , ("older_man", Jenc.string x.olderMan)
-        , ("older_woman", Jenc.string x.olderWoman)
-        , ("om", Jenc.string x.om)
-        , ("oman", Jenc.string x.oman)
-        , ("on", Jenc.string x.on)
-        , ("oncoming_automobile", Jenc.string x.oncomingAutomobile)
-        , ("oncoming_bus", Jenc.string x.oncomingBus)
-        , ("oncoming_police_car", Jenc.string x.oncomingPoliceCar)
-        , ("oncoming_taxi", Jenc.string x.oncomingTaxi)
-        , ("one", Jenc.string x.one)
-        , ("open_book", Jenc.string x.openBook)
-        , ("open_file_folder", Jenc.string x.openFileFolder)
-        , ("open_hands", Jenc.string x.openHands)
-        , ("open_mouth", Jenc.string x.openMouth)
-        , ("open_umbrella", Jenc.string x.openUmbrella)
-        , ("ophiuchus", Jenc.string x.ophiuchus)
-        , ("orange", Jenc.string x.orange)
-        , ("orange_book", Jenc.string x.orangeBook)
-        , ("orthodox_cross", Jenc.string x.orthodoxCross)
-        , ("outbox_tray", Jenc.string x.outboxTray)
-        , ("owl", Jenc.string x.owl)
-        , ("ox", Jenc.string x.ox)
-        , ("package", Jenc.string x.package)
-        , ("page_facing_up", Jenc.string x.pageFacingUp)
-        , ("page_with_curl", Jenc.string x.pageWithCurl)
-        , ("pager", Jenc.string x.pager)
-        , ("paintbrush", Jenc.string x.paintbrush)
-        , ("pakistan", Jenc.string x.pakistan)
-        , ("palau", Jenc.string x.palau)
-        , ("palestinian_territories", Jenc.string x.palestinianTerritories)
-        , ("palm_tree", Jenc.string x.palmTree)
-        , ("panama", Jenc.string x.panama)
-        , ("pancakes", Jenc.string x.pancakes)
-        , ("panda_face", Jenc.string x.pandaFace)
-        , ("paperclip", Jenc.string x.paperclip)
-        , ("paperclips", Jenc.string x.paperclips)
-        , ("papua_new_guinea", Jenc.string x.papuaNewGuinea)
-        , ("paraguay", Jenc.string x.paraguay)
-        , ("parasol_on_ground", Jenc.string x.parasolOnGround)
-        , ("parking", Jenc.string x.parking)
-        , ("part_alternation_mark", Jenc.string x.partAlternationMark)
-        , ("partly_sunny", Jenc.string x.partlySunny)
-        , ("passenger_ship", Jenc.string x.passengerShip)
-        , ("passport_control", Jenc.string x.passportControl)
-        , ("pause_button", Jenc.string x.pauseButton)
-        , ("paw_prints", Jenc.string x.pawPrints)
-        , ("peace_symbol", Jenc.string x.peaceSymbol)
-        , ("peach", Jenc.string x.peach)
-        , ("peanuts", Jenc.string x.peanuts)
-        , ("pear", Jenc.string x.pear)
-        , ("pen", Jenc.string x.pen)
-        , ("pencil", Jenc.string x.pencil)
-        , ("pencil2", Jenc.string x.pencil2)
-        , ("penguin", Jenc.string x.penguin)
-        , ("pensive", Jenc.string x.pensive)
-        , ("performing_arts", Jenc.string x.performingArts)
-        , ("persevere", Jenc.string x.persevere)
-        , ("person_fencing", Jenc.string x.personFencing)
-        , ("person_frowning", Jenc.string x.personFrowning)
-        , ("person_with_blond_hair", Jenc.string x.personWithBlondHair)
-        , ("person_with_pouting_face", Jenc.string x.personWithPoutingFace)
-        , ("peru", Jenc.string x.peru)
-        , ("philippines", Jenc.string x.philippines)
-        , ("phone", Jenc.string x.phone)
-        , ("pick", Jenc.string x.pick)
-        , ("pig", Jenc.string x.pig)
-        , ("pig2", Jenc.string x.pig2)
-        , ("pig_nose", Jenc.string x.pigNose)
-        , ("pill", Jenc.string x.pill)
-        , ("pineapple", Jenc.string x.pineapple)
-        , ("ping_pong", Jenc.string x.pingPong)
-        , ("pisces", Jenc.string x.pisces)
-        , ("pitcairn_islands", Jenc.string x.pitcairnIslands)
-        , ("pizza", Jenc.string x.pizza)
-        , ("place_of_worship", Jenc.string x.placeOfWorship)
-        , ("plate_with_cutlery", Jenc.string x.plateWithCutlery)
-        , ("play_or_pause_button", Jenc.string x.playOrPauseButton)
-        , ("point_down", Jenc.string x.pointDown)
-        , ("point_left", Jenc.string x.pointLeft)
-        , ("point_right", Jenc.string x.pointRight)
-        , ("point_up", Jenc.string x.pointUp)
-        , ("point_up_2", Jenc.string x.pointUp2)
-        , ("poland", Jenc.string x.poland)
-        , ("police_car", Jenc.string x.policeCar)
-        , ("policeman", Jenc.string x.policeman)
-        , ("policewoman", Jenc.string x.policewoman)
-        , ("poodle", Jenc.string x.poodle)
-        , ("poop", Jenc.string x.poop)
-        , ("popcorn", Jenc.string x.popcorn)
-        , ("portugal", Jenc.string x.portugal)
-        , ("post_office", Jenc.string x.postOffice)
-        , ("postal_horn", Jenc.string x.postalHorn)
-        , ("postbox", Jenc.string x.postbox)
-        , ("potable_water", Jenc.string x.potableWater)
-        , ("potato", Jenc.string x.potato)
-        , ("pouch", Jenc.string x.pouch)
-        , ("poultry_leg", Jenc.string x.poultryLeg)
-        , ("pound", Jenc.string x.pound)
-        , ("pout", Jenc.string x.pout)
-        , ("pouting_cat", Jenc.string x.poutingCat)
-        , ("pouting_man", Jenc.string x.poutingMan)
-        , ("pouting_woman", Jenc.string x.poutingWoman)
-        , ("pray", Jenc.string x.pray)
-        , ("prayer_beads", Jenc.string x.prayerBeads)
-        , ("pregnant_woman", Jenc.string x.pregnantWoman)
-        , ("previous_track_button", Jenc.string x.previousTrackButton)
-        , ("prince", Jenc.string x.prince)
-        , ("princess", Jenc.string x.princess)
-        , ("printer", Jenc.string x.printer)
-        , ("puerto_rico", Jenc.string x.puertoRico)
-        , ("punch", Jenc.string x.punch)
-        , ("purple_heart", Jenc.string x.purpleHeart)
-        , ("purse", Jenc.string x.purse)
-        , ("pushpin", Jenc.string x.pushpin)
-        , ("put_litter_in_its_place", Jenc.string x.putLitterInItsPlace)
-        , ("qatar", Jenc.string x.qatar)
-        , ("question", Jenc.string x.question)
-        , ("rabbit", Jenc.string x.rabbit)
-        , ("rabbit2", Jenc.string x.rabbit2)
-        , ("racehorse", Jenc.string x.racehorse)
-        , ("racing_car", Jenc.string x.racingCar)
-        , ("radio", Jenc.string x.radio)
-        , ("radio_button", Jenc.string x.radioButton)
-        , ("radioactive", Jenc.string x.radioactive)
-        , ("rage", Jenc.string x.rage)
-        , ("rage1", Jenc.string x.rage1)
-        , ("rage2", Jenc.string x.rage2)
-        , ("rage3", Jenc.string x.rage3)
-        , ("rage4", Jenc.string x.rage4)
-        , ("railway_car", Jenc.string x.railwayCar)
-        , ("railway_track", Jenc.string x.railwayTrack)
-        , ("rainbow", Jenc.string x.rainbow)
-        , ("rainbow_flag", Jenc.string x.rainbowFlag)
-        , ("raised_back_of_hand", Jenc.string x.raisedBackOfHand)
-        , ("raised_hand", Jenc.string x.raisedHand)
-        , ("raised_hand_with_fingers_splayed", Jenc.string x.raisedHandWithFingersSplayed)
-        , ("raised_hands", Jenc.string x.raisedHands)
-        , ("raising_hand", Jenc.string x.raisingHand)
-        , ("raising_hand_man", Jenc.string x.raisingHandMan)
-        , ("raising_hand_woman", Jenc.string x.raisingHandWoman)
-        , ("ram", Jenc.string x.ram)
-        , ("ramen", Jenc.string x.ramen)
-        , ("rat", Jenc.string x.rat)
-        , ("record_button", Jenc.string x.recordButton)
-        , ("recycle", Jenc.string x.recycle)
-        , ("red_car", Jenc.string x.redCar)
-        , ("red_circle", Jenc.string x.redCircle)
-        , ("registered", Jenc.string x.registered)
-        , ("relaxed", Jenc.string x.relaxed)
-        , ("relieved", Jenc.string x.relieved)
-        , ("reminder_ribbon", Jenc.string x.reminderRibbon)
-        , ("repeat", Jenc.string x.repeat)
-        , ("repeat_one", Jenc.string x.repeatOne)
-        , ("rescue_worker_helmet", Jenc.string x.rescueWorkerHelmet)
-        , ("restroom", Jenc.string x.restroom)
-        , ("reunion", Jenc.string x.reunion)
-        , ("revolving_hearts", Jenc.string x.revolvingHearts)
-        , ("rewind", Jenc.string x.rewind)
-        , ("rhinoceros", Jenc.string x.rhinoceros)
-        , ("ribbon", Jenc.string x.ribbon)
-        , ("rice", Jenc.string x.rice)
-        , ("rice_ball", Jenc.string x.riceBall)
-        , ("rice_cracker", Jenc.string x.riceCracker)
-        , ("rice_scene", Jenc.string x.riceScene)
-        , ("right_anger_bubble", Jenc.string x.rightAngerBubble)
-        , ("ring", Jenc.string x.ring)
-        , ("robot", Jenc.string x.robot)
-        , ("rocket", Jenc.string x.rocket)
-        , ("rofl", Jenc.string x.rofl)
-        , ("roll_eyes", Jenc.string x.rollEyes)
-        , ("roller_coaster", Jenc.string x.rollerCoaster)
-        , ("romania", Jenc.string x.romania)
-        , ("rooster", Jenc.string x.rooster)
-        , ("rose", Jenc.string x.rose)
-        , ("rosette", Jenc.string x.rosette)
-        , ("rotating_light", Jenc.string x.rotatingLight)
-        , ("round_pushpin", Jenc.string x.roundPushpin)
-        , ("rowboat", Jenc.string x.rowboat)
-        , ("rowing_man", Jenc.string x.rowingMan)
-        , ("rowing_woman", Jenc.string x.rowingWoman)
-        , ("ru", Jenc.string x.ru)
-        , ("rugby_football", Jenc.string x.rugbyFootball)
-        , ("runner", Jenc.string x.runner)
-        , ("running", Jenc.string x.running)
-        , ("running_man", Jenc.string x.runningMan)
-        , ("running_shirt_with_sash", Jenc.string x.runningShirtWithSash)
-        , ("running_woman", Jenc.string x.runningWoman)
-        , ("rwanda", Jenc.string x.rwanda)
-        , ("sa", Jenc.string x.sa)
-        , ("sagittarius", Jenc.string x.sagittarius)
-        , ("sailboat", Jenc.string x.sailboat)
-        , ("sake", Jenc.string x.sake)
-        , ("samoa", Jenc.string x.samoa)
-        , ("san_marino", Jenc.string x.sanMarino)
-        , ("sandal", Jenc.string x.sandal)
-        , ("santa", Jenc.string x.santa)
-        , ("sao_tome_principe", Jenc.string x.saoTomePrincipe)
-        , ("satellite", Jenc.string x.satellite)
-        , ("satisfied", Jenc.string x.satisfied)
-        , ("saudi_arabia", Jenc.string x.saudiArabia)
-        , ("saxophone", Jenc.string x.saxophone)
-        , ("school", Jenc.string x.school)
-        , ("school_satchel", Jenc.string x.schoolSatchel)
-        , ("scissors", Jenc.string x.scissors)
-        , ("scorpion", Jenc.string x.scorpion)
-        , ("scorpius", Jenc.string x.scorpius)
-        , ("scream", Jenc.string x.scream)
-        , ("scream_cat", Jenc.string x.screamCat)
-        , ("scroll", Jenc.string x.scroll)
-        , ("seat", Jenc.string x.seat)
-        , ("secret", Jenc.string x.secret)
-        , ("see_no_evil", Jenc.string x.seeNoEvil)
-        , ("seedling", Jenc.string x.seedling)
-        , ("selfie", Jenc.string x.selfie)
-        , ("senegal", Jenc.string x.senegal)
-        , ("serbia", Jenc.string x.serbia)
-        , ("seven", Jenc.string x.seven)
-        , ("seychelles", Jenc.string x.seychelles)
-        , ("shallow_pan_of_food", Jenc.string x.shallowPanOfFood)
-        , ("shamrock", Jenc.string x.shamrock)
-        , ("shark", Jenc.string x.shark)
-        , ("shaved_ice", Jenc.string x.shavedIce)
-        , ("sheep", Jenc.string x.sheep)
-        , ("shell", Jenc.string x.shell)
-        , ("shield", Jenc.string x.shield)
-        , ("shinto_shrine", Jenc.string x.shintoShrine)
-        , ("ship", Jenc.string x.ship)
-        , ("shipit", Jenc.string x.shipit)
-        , ("shirt", Jenc.string x.shirt)
-        , ("shit", Jenc.string x.shit)
-        , ("shoe", Jenc.string x.shoe)
-        , ("shopping", Jenc.string x.shopping)
-        , ("shopping_cart", Jenc.string x.shoppingCart)
-        , ("shower", Jenc.string x.shower)
-        , ("shrimp", Jenc.string x.shrimp)
-        , ("sierra_leone", Jenc.string x.sierraLeone)
-        , ("signal_strength", Jenc.string x.signalStrength)
-        , ("singapore", Jenc.string x.singapore)
-        , ("sint_maarten", Jenc.string x.sintMaarten)
-        , ("six", Jenc.string x.six)
-        , ("six_pointed_star", Jenc.string x.sixPointedStar)
-        , ("ski", Jenc.string x.ski)
-        , ("skier", Jenc.string x.skier)
-        , ("skull", Jenc.string x.skull)
-        , ("skull_and_crossbones", Jenc.string x.skullAndCrossbones)
-        , ("sleeping", Jenc.string x.sleeping)
-        , ("sleeping_bed", Jenc.string x.sleepingBed)
-        , ("sleepy", Jenc.string x.sleepy)
-        , ("slightly_frowning_face", Jenc.string x.slightlyFrowningFace)
-        , ("slightly_smiling_face", Jenc.string x.slightlySmilingFace)
-        , ("slot_machine", Jenc.string x.slotMachine)
-        , ("slovakia", Jenc.string x.slovakia)
-        , ("slovenia", Jenc.string x.slovenia)
-        , ("small_airplane", Jenc.string x.smallAirplane)
-        , ("small_blue_diamond", Jenc.string x.smallBlueDiamond)
-        , ("small_orange_diamond", Jenc.string x.smallOrangeDiamond)
-        , ("small_red_triangle", Jenc.string x.smallRedTriangle)
-        , ("small_red_triangle_down", Jenc.string x.smallRedTriangleDown)
-        , ("smile", Jenc.string x.smile)
-        , ("smile_cat", Jenc.string x.smileCat)
-        , ("smiley", Jenc.string x.smiley)
-        , ("smiley_cat", Jenc.string x.smileyCat)
-        , ("smiling_imp", Jenc.string x.smilingImp)
-        , ("smirk", Jenc.string x.smirk)
-        , ("smirk_cat", Jenc.string x.smirkCat)
-        , ("smoking", Jenc.string x.smoking)
-        , ("snail", Jenc.string x.snail)
-        , ("snake", Jenc.string x.snake)
-        , ("sneezing_face", Jenc.string x.sneezingFace)
-        , ("snowboarder", Jenc.string x.snowboarder)
-        , ("snowflake", Jenc.string x.snowflake)
-        , ("snowman", Jenc.string x.snowman)
-        , ("snowman_with_snow", Jenc.string x.snowmanWithSnow)
-        , ("sob", Jenc.string x.sob)
-        , ("soccer", Jenc.string x.soccer)
-        , ("solomon_islands", Jenc.string x.solomonIslands)
-        , ("somalia", Jenc.string x.somalia)
-        , ("soon", Jenc.string x.soon)
-        , ("sos", Jenc.string x.sos)
-        , ("sound", Jenc.string x.sound)
-        , ("south_africa", Jenc.string x.southAfrica)
-        , ("south_georgia_south_sandwich_islands", Jenc.string x.southGeorgiaSouthSandwichIslands)
-        , ("south_sudan", Jenc.string x.southSudan)
-        , ("space_invader", Jenc.string x.spaceInvader)
-        , ("spades", Jenc.string x.spades)
-        , ("spaghetti", Jenc.string x.spaghetti)
-        , ("sparkle", Jenc.string x.sparkle)
-        , ("sparkler", Jenc.string x.sparkler)
-        , ("sparkles", Jenc.string x.sparkles)
-        , ("sparkling_heart", Jenc.string x.sparklingHeart)
-        , ("speak_no_evil", Jenc.string x.speakNoEvil)
-        , ("speaker", Jenc.string x.speaker)
-        , ("speaking_head", Jenc.string x.speakingHead)
-        , ("speech_balloon", Jenc.string x.speechBalloon)
-        , ("speedboat", Jenc.string x.speedboat)
-        , ("spider", Jenc.string x.spider)
-        , ("spider_web", Jenc.string x.spiderWeb)
-        , ("spiral_calendar", Jenc.string x.spiralCalendar)
-        , ("spiral_notepad", Jenc.string x.spiralNotepad)
-        , ("spoon", Jenc.string x.spoon)
-        , ("squid", Jenc.string x.squid)
-        , ("squirrel", Jenc.string x.squirrel)
-        , ("sri_lanka", Jenc.string x.sriLanka)
-        , ("st_barthelemy", Jenc.string x.stBarthelemy)
-        , ("st_helena", Jenc.string x.stHelena)
-        , ("st_kitts_nevis", Jenc.string x.stKittsNevis)
-        , ("st_lucia", Jenc.string x.stLucia)
-        , ("st_pierre_miquelon", Jenc.string x.stPierreMiquelon)
-        , ("st_vincent_grenadines", Jenc.string x.stVincentGrenadines)
-        , ("stadium", Jenc.string x.stadium)
-        , ("star", Jenc.string x.star)
-        , ("star2", Jenc.string x.star2)
-        , ("star_and_crescent", Jenc.string x.starAndCrescent)
-        , ("star_of_david", Jenc.string x.starOfDavid)
-        , ("stars", Jenc.string x.stars)
-        , ("station", Jenc.string x.station)
-        , ("statue_of_liberty", Jenc.string x.statueOfLiberty)
-        , ("steam_locomotive", Jenc.string x.steamLocomotive)
-        , ("stew", Jenc.string x.stew)
-        , ("stop_button", Jenc.string x.stopButton)
-        , ("stop_sign", Jenc.string x.stopSign)
-        , ("stopwatch", Jenc.string x.stopwatch)
-        , ("straight_ruler", Jenc.string x.straightRuler)
-        , ("strawberry", Jenc.string x.strawberry)
-        , ("stuck_out_tongue", Jenc.string x.stuckOutTongue)
-        , ("stuck_out_tongue_closed_eyes", Jenc.string x.stuckOutTongueClosedEyes)
-        , ("stuck_out_tongue_winking_eye", Jenc.string x.stuckOutTongueWinkingEye)
-        , ("studio_microphone", Jenc.string x.studioMicrophone)
-        , ("stuffed_flatbread", Jenc.string x.stuffedFlatbread)
-        , ("sudan", Jenc.string x.sudan)
-        , ("sun_behind_large_cloud", Jenc.string x.sunBehindLargeCloud)
-        , ("sun_behind_rain_cloud", Jenc.string x.sunBehindRainCloud)
-        , ("sun_behind_small_cloud", Jenc.string x.sunBehindSmallCloud)
-        , ("sun_with_face", Jenc.string x.sunWithFace)
-        , ("sunflower", Jenc.string x.sunflower)
-        , ("sunglasses", Jenc.string x.sunglasses)
-        , ("sunny", Jenc.string x.sunny)
-        , ("sunrise", Jenc.string x.sunrise)
-        , ("sunrise_over_mountains", Jenc.string x.sunriseOverMountains)
-        , ("surfer", Jenc.string x.surfer)
-        , ("surfing_man", Jenc.string x.surfingMan)
-        , ("surfing_woman", Jenc.string x.surfingWoman)
-        , ("suriname", Jenc.string x.suriname)
-        , ("sushi", Jenc.string x.sushi)
-        , ("suspect", Jenc.string x.suspect)
-        , ("suspension_railway", Jenc.string x.suspensionRailway)
-        , ("swaziland", Jenc.string x.swaziland)
-        , ("sweat", Jenc.string x.sweat)
-        , ("sweat_drops", Jenc.string x.sweatDrops)
-        , ("sweat_smile", Jenc.string x.sweatSmile)
-        , ("sweden", Jenc.string x.sweden)
-        , ("sweet_potato", Jenc.string x.sweetPotato)
-        , ("swimmer", Jenc.string x.swimmer)
-        , ("swimming_man", Jenc.string x.swimmingMan)
-        , ("swimming_woman", Jenc.string x.swimmingWoman)
-        , ("switzerland", Jenc.string x.switzerland)
-        , ("symbols", Jenc.string x.symbols)
-        , ("synagogue", Jenc.string x.synagogue)
-        , ("syria", Jenc.string x.syria)
-        , ("syringe", Jenc.string x.syringe)
-        , ("taco", Jenc.string x.taco)
-        , ("tada", Jenc.string x.tada)
-        , ("taiwan", Jenc.string x.taiwan)
-        , ("tajikistan", Jenc.string x.tajikistan)
-        , ("tanabata_tree", Jenc.string x.tanabataTree)
-        , ("tangerine", Jenc.string x.tangerine)
-        , ("tanzania", Jenc.string x.tanzania)
-        , ("taurus", Jenc.string x.taurus)
-        , ("taxi", Jenc.string x.taxi)
-        , ("tea", Jenc.string x.tea)
-        , ("telephone", Jenc.string x.telephone)
-        , ("telephone_receiver", Jenc.string x.telephoneReceiver)
-        , ("telescope", Jenc.string x.telescope)
-        , ("tennis", Jenc.string x.tennis)
-        , ("tent", Jenc.string x.tent)
-        , ("thailand", Jenc.string x.thailand)
-        , ("thermometer", Jenc.string x.thermometer)
-        , ("thinking", Jenc.string x.thinking)
-        , ("thought_balloon", Jenc.string x.thoughtBalloon)
-        , ("three", Jenc.string x.three)
-        , ("thumbsdown", Jenc.string x.thumbsdown)
-        , ("thumbsup", Jenc.string x.thumbsup)
-        , ("ticket", Jenc.string x.ticket)
-        , ("tickets", Jenc.string x.tickets)
-        , ("tiger", Jenc.string x.tiger)
-        , ("tiger2", Jenc.string x.tiger2)
-        , ("timer_clock", Jenc.string x.timerClock)
-        , ("timor_leste", Jenc.string x.timorLeste)
-        , ("tipping_hand_man", Jenc.string x.tippingHandMan)
-        , ("tipping_hand_woman", Jenc.string x.tippingHandWoman)
-        , ("tired_face", Jenc.string x.tiredFace)
-        , ("tm", Jenc.string x.tm)
-        , ("togo", Jenc.string x.togo)
-        , ("toilet", Jenc.string x.toilet)
-        , ("tokelau", Jenc.string x.tokelau)
-        , ("tokyo_tower", Jenc.string x.tokyoTower)
-        , ("tomato", Jenc.string x.tomato)
-        , ("tonga", Jenc.string x.tonga)
-        , ("tongue", Jenc.string x.tongue)
-        , ("top", Jenc.string x.top)
-        , ("tophat", Jenc.string x.tophat)
-        , ("tornado", Jenc.string x.tornado)
-        , ("tr", Jenc.string x.tr)
-        , ("trackball", Jenc.string x.trackball)
-        , ("tractor", Jenc.string x.tractor)
-        , ("traffic_light", Jenc.string x.trafficLight)
-        , ("train", Jenc.string x.train)
-        , ("train2", Jenc.string x.train2)
-        , ("tram", Jenc.string x.tram)
-        , ("triangular_flag_on_post", Jenc.string x.triangularFlagOnPost)
-        , ("triangular_ruler", Jenc.string x.triangularRuler)
-        , ("trident", Jenc.string x.trident)
-        , ("trinidad_tobago", Jenc.string x.trinidadTobago)
-        , ("triumph", Jenc.string x.triumph)
-        , ("trolleybus", Jenc.string x.trolleybus)
-        , ("trollface", Jenc.string x.trollface)
-        , ("trophy", Jenc.string x.trophy)
-        , ("tropical_drink", Jenc.string x.tropicalDrink)
-        , ("tropical_fish", Jenc.string x.tropicalFish)
-        , ("truck", Jenc.string x.truck)
-        , ("trumpet", Jenc.string x.trumpet)
-        , ("tshirt", Jenc.string x.tshirt)
-        , ("tulip", Jenc.string x.tulip)
-        , ("tumbler_glass", Jenc.string x.tumblerGlass)
-        , ("tunisia", Jenc.string x.tunisia)
-        , ("turkey", Jenc.string x.turkey)
-        , ("turkmenistan", Jenc.string x.turkmenistan)
-        , ("turks_caicos_islands", Jenc.string x.turksCaicosIslands)
-        , ("turtle", Jenc.string x.turtle)
-        , ("tuvalu", Jenc.string x.tuvalu)
-        , ("tv", Jenc.string x.tv)
-        , ("twisted_rightwards_arrows", Jenc.string x.twistedRightwardsArrows)
-        , ("two", Jenc.string x.two)
-        , ("two_hearts", Jenc.string x.twoHearts)
-        , ("two_men_holding_hands", Jenc.string x.twoMenHoldingHands)
-        , ("two_women_holding_hands", Jenc.string x.twoWomenHoldingHands)
-        , ("u5272", Jenc.string x.u5272)
-        , ("u5408", Jenc.string x.u5408)
-        , ("u55b6", Jenc.string x.u55B6)
-        , ("u6307", Jenc.string x.u6307)
-        , ("u6708", Jenc.string x.u6708)
-        , ("u6709", Jenc.string x.u6709)
-        , ("u6e80", Jenc.string x.u6E80)
-        , ("u7121", Jenc.string x.u7121)
-        , ("u7533", Jenc.string x.u7533)
-        , ("u7981", Jenc.string x.u7981)
-        , ("u7a7a", Jenc.string x.u7A7A)
-        , ("uganda", Jenc.string x.uganda)
-        , ("uk", Jenc.string x.uk)
-        , ("ukraine", Jenc.string x.ukraine)
-        , ("umbrella", Jenc.string x.umbrella)
-        , ("unamused", Jenc.string x.unamused)
-        , ("underage", Jenc.string x.underage)
-        , ("unicorn", Jenc.string x.unicorn)
-        , ("united_arab_emirates", Jenc.string x.unitedArabEmirates)
-        , ("unlock", Jenc.string x.unlock)
-        , ("up", Jenc.string x.up)
-        , ("upside_down_face", Jenc.string x.upsideDownFace)
-        , ("uruguay", Jenc.string x.uruguay)
-        , ("us", Jenc.string x.us)
-        , ("us_virgin_islands", Jenc.string x.usVirginIslands)
-        , ("uzbekistan", Jenc.string x.uzbekistan)
-        , ("v", Jenc.string x.v)
-        , ("vanuatu", Jenc.string x.vanuatu)
-        , ("vatican_city", Jenc.string x.vaticanCity)
-        , ("venezuela", Jenc.string x.venezuela)
-        , ("vertical_traffic_light", Jenc.string x.verticalTrafficLight)
-        , ("vhs", Jenc.string x.vhs)
-        , ("vibration_mode", Jenc.string x.vibrationMode)
-        , ("video_camera", Jenc.string x.videoCamera)
-        , ("video_game", Jenc.string x.videoGame)
-        , ("vietnam", Jenc.string x.vietnam)
-        , ("violin", Jenc.string x.violin)
-        , ("virgo", Jenc.string x.virgo)
-        , ("volcano", Jenc.string x.volcano)
-        , ("volleyball", Jenc.string x.volleyball)
-        , ("vs", Jenc.string x.vs)
-        , ("vulcan_salute", Jenc.string x.vulcanSalute)
-        , ("walking", Jenc.string x.walking)
-        , ("walking_man", Jenc.string x.walkingMan)
-        , ("walking_woman", Jenc.string x.walkingWoman)
-        , ("wallis_futuna", Jenc.string x.wallisFutuna)
-        , ("waning_crescent_moon", Jenc.string x.waningCrescentMoon)
-        , ("waning_gibbous_moon", Jenc.string x.waningGibbousMoon)
-        , ("warning", Jenc.string x.warning)
-        , ("wastebasket", Jenc.string x.wastebasket)
-        , ("watch", Jenc.string x.watch)
-        , ("water_buffalo", Jenc.string x.waterBuffalo)
-        , ("watermelon", Jenc.string x.watermelon)
-        , ("wave", Jenc.string x.wave)
-        , ("wavy_dash", Jenc.string x.wavyDash)
-        , ("waxing_crescent_moon", Jenc.string x.waxingCrescentMoon)
-        , ("waxing_gibbous_moon", Jenc.string x.waxingGibbousMoon)
-        , ("wc", Jenc.string x.wc)
-        , ("weary", Jenc.string x.weary)
-        , ("wedding", Jenc.string x.wedding)
-        , ("weight_lifting_man", Jenc.string x.weightLiftingMan)
-        , ("weight_lifting_woman", Jenc.string x.weightLiftingWoman)
-        , ("western_sahara", Jenc.string x.westernSahara)
-        , ("whale", Jenc.string x.whale)
-        , ("whale2", Jenc.string x.whale2)
-        , ("wheel_of_dharma", Jenc.string x.wheelOfDharma)
-        , ("wheelchair", Jenc.string x.wheelchair)
-        , ("white_check_mark", Jenc.string x.whiteCheckMark)
-        , ("white_circle", Jenc.string x.whiteCircle)
-        , ("white_flag", Jenc.string x.whiteFlag)
-        , ("white_flower", Jenc.string x.whiteFlower)
-        , ("white_large_square", Jenc.string x.whiteLargeSquare)
-        , ("white_medium_small_square", Jenc.string x.whiteMediumSmallSquare)
-        , ("white_medium_square", Jenc.string x.whiteMediumSquare)
-        , ("white_small_square", Jenc.string x.whiteSmallSquare)
-        , ("white_square_button", Jenc.string x.whiteSquareButton)
-        , ("wilted_flower", Jenc.string x.wiltedFlower)
-        , ("wind_chime", Jenc.string x.windChime)
-        , ("wind_face", Jenc.string x.windFace)
-        , ("wine_glass", Jenc.string x.wineGlass)
-        , ("wink", Jenc.string x.wink)
-        , ("wolf", Jenc.string x.wolf)
-        , ("woman", Jenc.string x.woman)
-        , ("woman_artist", Jenc.string x.womanArtist)
-        , ("woman_astronaut", Jenc.string x.womanAstronaut)
-        , ("woman_cartwheeling", Jenc.string x.womanCartwheeling)
-        , ("woman_cook", Jenc.string x.womanCook)
-        , ("woman_facepalming", Jenc.string x.womanFacepalming)
-        , ("woman_factory_worker", Jenc.string x.womanFactoryWorker)
-        , ("woman_farmer", Jenc.string x.womanFarmer)
-        , ("woman_firefighter", Jenc.string x.womanFirefighter)
-        , ("woman_health_worker", Jenc.string x.womanHealthWorker)
-        , ("woman_judge", Jenc.string x.womanJudge)
-        , ("woman_juggling", Jenc.string x.womanJuggling)
-        , ("woman_mechanic", Jenc.string x.womanMechanic)
-        , ("woman_office_worker", Jenc.string x.womanOfficeWorker)
-        , ("woman_pilot", Jenc.string x.womanPilot)
-        , ("woman_playing_handball", Jenc.string x.womanPlayingHandball)
-        , ("woman_playing_water_polo", Jenc.string x.womanPlayingWaterPolo)
-        , ("woman_scientist", Jenc.string x.womanScientist)
-        , ("woman_shrugging", Jenc.string x.womanShrugging)
-        , ("woman_singer", Jenc.string x.womanSinger)
-        , ("woman_student", Jenc.string x.womanStudent)
-        , ("woman_teacher", Jenc.string x.womanTeacher)
-        , ("woman_technologist", Jenc.string x.womanTechnologist)
-        , ("woman_with_turban", Jenc.string x.womanWithTurban)
-        , ("womans_clothes", Jenc.string x.womansClothes)
-        , ("womans_hat", Jenc.string x.womansHat)
-        , ("women_wrestling", Jenc.string x.womenWrestling)
-        , ("womens", Jenc.string x.womens)
-        , ("world_map", Jenc.string x.worldMap)
-        , ("worried", Jenc.string x.worried)
-        , ("wrench", Jenc.string x.wrench)
-        , ("writing_hand", Jenc.string x.writingHand)
-        , ("x", Jenc.string x.x)
-        , ("yellow_heart", Jenc.string x.yellowHeart)
-        , ("yemen", Jenc.string x.yemen)
-        , ("yen", Jenc.string x.yen)
-        , ("yin_yang", Jenc.string x.yinYang)
-        , ("yum", Jenc.string x.yum)
-        , ("zambia", Jenc.string x.zambia)
-        , ("zap", Jenc.string x.zap)
-        , ("zero", Jenc.string x.zero)
-        , ("zimbabwe", Jenc.string x.zimbabwe)
-        , ("zipper_mouth_face", Jenc.string x.zipperMouthFace)
-        , ("zzz", Jenc.string x.zzz)
-        ]
-
 event : Jdec.Decoder Event
 event =
     Jpipe.decode Event
         |> Jpipe.required "id" Jdec.string
         |> Jpipe.required "type" Jdec.string
         |> Jpipe.required "actor" actor
-        |> Jpipe.required "repo" repo
+        |> Jpipe.required "repo" eventRepo
         |> Jpipe.required "payload" payload
         |> Jpipe.required "public" Jdec.bool
         |> Jpipe.required "created_at" Jdec.string
@@ -5065,7 +413,7 @@ encodeEvent x =
         [ ("id", Jenc.string x.id)
         , ("type", Jenc.string x.eventType)
         , ("actor", encodeActor x.actor)
-        , ("repo", encodeRepo x.repo)
+        , ("repo", encodeEventRepo x.repo)
         , ("payload", encodePayload x.payload)
         , ("public", Jenc.bool x.public)
         , ("created_at", Jenc.string x.createdAt)
@@ -5078,7 +426,7 @@ actor =
         |> Jpipe.required "id" Jdec.int
         |> Jpipe.required "login" Jdec.string
         |> Jpipe.optional "display_login" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.required "gravatar_id" gravatarID
+        |> Jpipe.required "gravatar_id" Jdec.string
         |> Jpipe.required "url" Jdec.string
         |> Jpipe.required "avatar_url" Jdec.string
 
@@ -5088,23 +436,10 @@ encodeActor x =
         [ ("id", Jenc.int x.id)
         , ("login", Jenc.string x.login)
         , ("display_login", makeNullableEncoder Jenc.string x.displayLogin)
-        , ("gravatar_id", encodeGravatarID x.gravatarID)
+        , ("gravatar_id", Jenc.string x.gravatarID)
         , ("url", Jenc.string x.url)
         , ("avatar_url", Jenc.string x.avatarURL)
         ]
-
-gravatarID : Jdec.Decoder GravatarID
-gravatarID =
-    Jdec.string
-        |> Jdec.andThen (\str ->
-            case str of
-                "" -> Jdec.succeed Empty
-                somethingElse -> Jdec.fail <| "Invalid GravatarID: " ++ somethingElse
-        )
-
-encodeGravatarID : GravatarID -> Jenc.Value
-encodeGravatarID x = case x of
-    Empty -> Jenc.string ""
 
 payload : Jdec.Decoder Payload
 payload =
@@ -5116,7 +451,6 @@ payload =
         |> Jpipe.optional "head" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.optional "before" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.optional "commits" (Jdec.nullable (Jdec.array commit)) Nothing
-        |> Jpipe.optional "forkee" (Jdec.nullable forkee) Nothing
         |> Jpipe.optional "action" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.optional "number" (Jdec.nullable Jdec.int) Nothing
         |> Jpipe.optional "pull_request" (Jdec.nullable pullRequest) Nothing
@@ -5124,7 +458,6 @@ payload =
         |> Jpipe.optional "master_branch" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.optional "description" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.optional "pusher_type" (Jdec.nullable Jdec.string) Nothing
-        |> Jpipe.optional "issue" (Jdec.nullable issue) Nothing
         |> Jpipe.optional "comment" (Jdec.nullable comment) Nothing
 
 encodePayload : Payload -> Jenc.Value
@@ -5137,7 +470,6 @@ encodePayload x =
         , ("head", makeNullableEncoder Jenc.string x.head)
         , ("before", makeNullableEncoder Jenc.string x.before)
         , ("commits", makeNullableEncoder (makeArrayEncoder encodeCommit) x.commits)
-        , ("forkee", makeNullableEncoder encodeForkee x.forkee)
         , ("action", makeNullableEncoder Jenc.string x.action)
         , ("number", makeNullableEncoder Jenc.int x.number)
         , ("pull_request", makeNullableEncoder encodePullRequest x.pullRequest)
@@ -5145,7 +477,6 @@ encodePayload x =
         , ("master_branch", makeNullableEncoder Jenc.string x.masterBranch)
         , ("description", makeNullableEncoder Jenc.string x.description)
         , ("pusher_type", makeNullableEncoder Jenc.string x.pusherType)
-        , ("issue", makeNullableEncoder encodeIssue x.issue)
         , ("comment", makeNullableEncoder encodeComment x.comment)
         ]
 
@@ -5153,36 +484,81 @@ comment : Jdec.Decoder Comment
 comment =
     Jpipe.decode Comment
         |> Jpipe.required "url" Jdec.string
-        |> Jpipe.required "html_url" Jdec.string
-        |> Jpipe.required "issue_url" Jdec.string
+        |> Jpipe.required "pull_request_review_id" Jdec.int
         |> Jpipe.required "id" Jdec.int
-        |> Jpipe.required "user" user
+        |> Jpipe.required "node_id" Jdec.string
+        |> Jpipe.required "diff_hunk" Jdec.string
+        |> Jpipe.required "path" Jdec.string
+        |> Jpipe.required "position" Jdec.int
+        |> Jpipe.required "original_position" Jdec.int
+        |> Jpipe.required "commit_id" Jdec.string
+        |> Jpipe.required "original_commit_id" Jdec.string
+        |> Jpipe.required "user" owner
+        |> Jpipe.required "body" Jdec.string
         |> Jpipe.required "created_at" Jdec.string
         |> Jpipe.required "updated_at" Jdec.string
+        |> Jpipe.required "html_url" Jdec.string
+        |> Jpipe.required "pull_request_url" Jdec.string
         |> Jpipe.required "author_association" Jdec.string
-        |> Jpipe.required "body" Jdec.string
+        |> Jpipe.required "_links" commentLinks
 
 encodeComment : Comment -> Jenc.Value
 encodeComment x =
     Jenc.object
         [ ("url", Jenc.string x.url)
-        , ("html_url", Jenc.string x.htmlURL)
-        , ("issue_url", Jenc.string x.issueURL)
+        , ("pull_request_review_id", Jenc.int x.pullRequestReviewID)
         , ("id", Jenc.int x.id)
-        , ("user", encodeUser x.user)
+        , ("node_id", Jenc.string x.nodeID)
+        , ("diff_hunk", Jenc.string x.diffHunk)
+        , ("path", Jenc.string x.path)
+        , ("position", Jenc.int x.position)
+        , ("original_position", Jenc.int x.originalPosition)
+        , ("commit_id", Jenc.string x.commitID)
+        , ("original_commit_id", Jenc.string x.originalCommitID)
+        , ("user", encodeOwner x.user)
+        , ("body", Jenc.string x.body)
         , ("created_at", Jenc.string x.createdAt)
         , ("updated_at", Jenc.string x.updatedAt)
+        , ("html_url", Jenc.string x.htmlURL)
+        , ("pull_request_url", Jenc.string x.pullRequestURL)
         , ("author_association", Jenc.string x.authorAssociation)
-        , ("body", Jenc.string x.body)
+        , ("_links", encodeCommentLinks x.links)
         ]
 
-user : Jdec.Decoder User
-user =
-    Jpipe.decode User
+commentLinks : Jdec.Decoder CommentLinks
+commentLinks =
+    Jpipe.decode CommentLinks
+        |> Jpipe.required "self" html
+        |> Jpipe.required "html" html
+        |> Jpipe.required "pull_request" html
+
+encodeCommentLinks : CommentLinks -> Jenc.Value
+encodeCommentLinks x =
+    Jenc.object
+        [ ("self", encodeHTML x.self)
+        , ("html", encodeHTML x.html)
+        , ("pull_request", encodeHTML x.pullRequest)
+        ]
+
+html : Jdec.Decoder HTML
+html =
+    Jpipe.decode HTML
+        |> Jpipe.required "href" Jdec.string
+
+encodeHTML : HTML -> Jenc.Value
+encodeHTML x =
+    Jenc.object
+        [ ("href", Jenc.string x.href)
+        ]
+
+owner : Jdec.Decoder Owner
+owner =
+    Jpipe.decode Owner
         |> Jpipe.required "login" Jdec.string
         |> Jpipe.required "id" Jdec.int
+        |> Jpipe.required "node_id" Jdec.string
         |> Jpipe.required "avatar_url" Jdec.string
-        |> Jpipe.required "gravatar_id" gravatarID
+        |> Jpipe.required "gravatar_id" Jdec.string
         |> Jpipe.required "url" Jdec.string
         |> Jpipe.required "html_url" Jdec.string
         |> Jpipe.required "followers_url" Jdec.string
@@ -5194,16 +570,17 @@ user =
         |> Jpipe.required "repos_url" Jdec.string
         |> Jpipe.required "events_url" Jdec.string
         |> Jpipe.required "received_events_url" Jdec.string
-        |> Jpipe.required "type" userType
+        |> Jpipe.required "type" purpleType
         |> Jpipe.required "site_admin" Jdec.bool
 
-encodeUser : User -> Jenc.Value
-encodeUser x =
+encodeOwner : Owner -> Jenc.Value
+encodeOwner x =
     Jenc.object
         [ ("login", Jenc.string x.login)
         , ("id", Jenc.int x.id)
+        , ("node_id", Jenc.string x.nodeID)
         , ("avatar_url", Jenc.string x.avatarURL)
-        , ("gravatar_id", encodeGravatarID x.gravatarID)
+        , ("gravatar_id", Jenc.string x.gravatarID)
         , ("url", Jenc.string x.url)
         , ("html_url", Jenc.string x.htmlURL)
         , ("followers_url", Jenc.string x.followersURL)
@@ -5215,24 +592,24 @@ encodeUser x =
         , ("repos_url", Jenc.string x.reposURL)
         , ("events_url", Jenc.string x.eventsURL)
         , ("received_events_url", Jenc.string x.receivedEventsURL)
-        , ("type", encodeUserType x.userType)
+        , ("type", encodeType x.ownerType)
         , ("site_admin", Jenc.bool x.siteAdmin)
         ]
 
-userType : Jdec.Decoder UserType
-userType =
+purpleType : Jdec.Decoder Type
+purpleType =
     Jdec.string
         |> Jdec.andThen (\str ->
             case str of
                 "Organization" -> Jdec.succeed Organization
-                "User" -> Jdec.succeed TypeUser
-                somethingElse -> Jdec.fail <| "Invalid UserType: " ++ somethingElse
+                "User" -> Jdec.succeed User
+                somethingElse -> Jdec.fail <| "Invalid Type: " ++ somethingElse
         )
 
-encodeUserType : UserType -> Jenc.Value
-encodeUserType x = case x of
+encodeType : Type -> Jenc.Value
+encodeType x = case x of
     Organization -> Jenc.string "Organization"
-    TypeUser -> Jenc.string "User"
+    User -> Jenc.string "User"
 
 commit : Jdec.Decoder Commit
 commit =
@@ -5266,13 +643,132 @@ encodeAuthor x =
         , ("name", Jenc.string x.name)
         ]
 
-forkee : Jdec.Decoder Forkee
-forkee =
-    Jpipe.decode Forkee
+pullRequest : Jdec.Decoder PullRequest
+pullRequest =
+    Jpipe.decode PullRequest
+        |> Jpipe.required "url" Jdec.string
         |> Jpipe.required "id" Jdec.int
+        |> Jpipe.required "node_id" Jdec.string
+        |> Jpipe.required "html_url" Jdec.string
+        |> Jpipe.required "diff_url" Jdec.string
+        |> Jpipe.required "patch_url" Jdec.string
+        |> Jpipe.required "issue_url" Jdec.string
+        |> Jpipe.required "number" Jdec.int
+        |> Jpipe.required "state" Jdec.string
+        |> Jpipe.required "locked" Jdec.bool
+        |> Jpipe.required "title" Jdec.string
+        |> Jpipe.required "user" owner
+        |> Jpipe.optional "body" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.required "created_at" Jdec.string
+        |> Jpipe.required "updated_at" Jdec.string
+        |> Jpipe.optional "closed_at" (Jdec.null ()) ()
+        |> Jpipe.optional "merged_at" (Jdec.null ()) ()
+        |> Jpipe.optional "merge_commit_sha" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.optional "assignee" (Jdec.null ()) ()
+        |> Jpipe.required "assignees" (Jdec.array Jdec.value)
+        |> Jpipe.required "requested_reviewers" (Jdec.array Jdec.value)
+        |> Jpipe.required "requested_teams" (Jdec.array Jdec.value)
+        |> Jpipe.required "labels" (Jdec.array Jdec.value)
+        |> Jpipe.optional "milestone" (Jdec.null ()) ()
+        |> Jpipe.required "commits_url" Jdec.string
+        |> Jpipe.required "review_comments_url" Jdec.string
+        |> Jpipe.required "review_comment_url" Jdec.string
+        |> Jpipe.required "comments_url" Jdec.string
+        |> Jpipe.required "statuses_url" Jdec.string
+        |> Jpipe.required "head" base
+        |> Jpipe.required "base" base
+        |> Jpipe.required "_links" pullRequestLinks
+        |> Jpipe.required "author_association" Jdec.string
+        |> Jpipe.optional "merged" (Jdec.nullable Jdec.bool) Nothing
+        |> Jpipe.optional "mergeable" (Jdec.nullable (Jdec.null ())) Nothing
+        |> Jpipe.optional "rebaseable" (Jdec.nullable (Jdec.null ())) Nothing
+        |> Jpipe.optional "mergeable_state" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.optional "merged_by" (Jdec.nullable (Jdec.null ())) Nothing
+        |> Jpipe.optional "comments" (Jdec.nullable Jdec.int) Nothing
+        |> Jpipe.optional "review_comments" (Jdec.nullable Jdec.int) Nothing
+        |> Jpipe.optional "maintainer_can_modify" (Jdec.nullable Jdec.bool) Nothing
+        |> Jpipe.optional "commits" (Jdec.nullable Jdec.int) Nothing
+        |> Jpipe.optional "additions" (Jdec.nullable Jdec.int) Nothing
+        |> Jpipe.optional "deletions" (Jdec.nullable Jdec.int) Nothing
+        |> Jpipe.optional "changed_files" (Jdec.nullable Jdec.int) Nothing
+
+encodePullRequest : PullRequest -> Jenc.Value
+encodePullRequest x =
+    Jenc.object
+        [ ("url", Jenc.string x.url)
+        , ("id", Jenc.int x.id)
+        , ("node_id", Jenc.string x.nodeID)
+        , ("html_url", Jenc.string x.htmlURL)
+        , ("diff_url", Jenc.string x.diffURL)
+        , ("patch_url", Jenc.string x.patchURL)
+        , ("issue_url", Jenc.string x.issueURL)
+        , ("number", Jenc.int x.number)
+        , ("state", Jenc.string x.state)
+        , ("locked", Jenc.bool x.locked)
+        , ("title", Jenc.string x.title)
+        , ("user", encodeOwner x.user)
+        , ("body", makeNullableEncoder Jenc.string x.body)
+        , ("created_at", Jenc.string x.createdAt)
+        , ("updated_at", Jenc.string x.updatedAt)
+        , ("closed_at", always Jenc.null x.closedAt)
+        , ("merged_at", always Jenc.null x.mergedAt)
+        , ("merge_commit_sha", makeNullableEncoder Jenc.string x.mergeCommitSHA)
+        , ("assignee", always Jenc.null x.assignee)
+        , ("assignees", makeArrayEncoder identity x.assignees)
+        , ("requested_reviewers", makeArrayEncoder identity x.requestedReviewers)
+        , ("requested_teams", makeArrayEncoder identity x.requestedTeams)
+        , ("labels", makeArrayEncoder identity x.labels)
+        , ("milestone", always Jenc.null x.milestone)
+        , ("commits_url", Jenc.string x.commitsURL)
+        , ("review_comments_url", Jenc.string x.reviewCommentsURL)
+        , ("review_comment_url", Jenc.string x.reviewCommentURL)
+        , ("comments_url", Jenc.string x.commentsURL)
+        , ("statuses_url", Jenc.string x.statusesURL)
+        , ("head", encodeBase x.head)
+        , ("base", encodeBase x.base)
+        , ("_links", encodePullRequestLinks x.links)
+        , ("author_association", Jenc.string x.authorAssociation)
+        , ("merged", makeNullableEncoder Jenc.bool x.merged)
+        , ("mergeable", makeNullableEncoder (always Jenc.null) x.mergeable)
+        , ("rebaseable", makeNullableEncoder (always Jenc.null) x.rebaseable)
+        , ("mergeable_state", makeNullableEncoder Jenc.string x.mergeableState)
+        , ("merged_by", makeNullableEncoder (always Jenc.null) x.mergedBy)
+        , ("comments", makeNullableEncoder Jenc.int x.comments)
+        , ("review_comments", makeNullableEncoder Jenc.int x.reviewComments)
+        , ("maintainer_can_modify", makeNullableEncoder Jenc.bool x.maintainerCanModify)
+        , ("commits", makeNullableEncoder Jenc.int x.commits)
+        , ("additions", makeNullableEncoder Jenc.int x.additions)
+        , ("deletions", makeNullableEncoder Jenc.int x.deletions)
+        , ("changed_files", makeNullableEncoder Jenc.int x.changedFiles)
+        ]
+
+base : Jdec.Decoder Base
+base =
+    Jpipe.decode Base
+        |> Jpipe.required "label" Jdec.string
+        |> Jpipe.required "ref" Jdec.string
+        |> Jpipe.required "sha" Jdec.string
+        |> Jpipe.required "user" owner
+        |> Jpipe.required "repo" baseRepo
+
+encodeBase : Base -> Jenc.Value
+encodeBase x =
+    Jenc.object
+        [ ("label", Jenc.string x.label)
+        , ("ref", Jenc.string x.ref)
+        , ("sha", Jenc.string x.sha)
+        , ("user", encodeOwner x.user)
+        , ("repo", encodeBaseRepo x.repo)
+        ]
+
+baseRepo : Jdec.Decoder BaseRepo
+baseRepo =
+    Jpipe.decode BaseRepo
+        |> Jpipe.required "id" Jdec.int
+        |> Jpipe.required "node_id" Jdec.string
         |> Jpipe.required "name" Jdec.string
         |> Jpipe.required "full_name" Jdec.string
-        |> Jpipe.required "owner" user
+        |> Jpipe.required "owner" owner
         |> Jpipe.required "private" Jdec.bool
         |> Jpipe.required "html_url" Jdec.string
         |> Jpipe.optional "description" (Jdec.nullable Jdec.string) Nothing
@@ -5325,7 +821,7 @@ forkee =
         |> Jpipe.required "size" Jdec.int
         |> Jpipe.required "stargazers_count" Jdec.int
         |> Jpipe.required "watchers_count" Jdec.int
-        |> Jpipe.optional "language" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.required "language" Jdec.string
         |> Jpipe.required "has_issues" Jdec.bool
         |> Jpipe.required "has_projects" Jdec.bool
         |> Jpipe.required "has_downloads" Jdec.bool
@@ -5335,20 +831,20 @@ forkee =
         |> Jpipe.optional "mirror_url" (Jdec.null ()) ()
         |> Jpipe.required "archived" Jdec.bool
         |> Jpipe.required "open_issues_count" Jdec.int
-        |> Jpipe.optional "license" (Jdec.null ()) ()
+        |> Jpipe.optional "license" (Jdec.nullable license) Nothing
         |> Jpipe.required "forks" Jdec.int
         |> Jpipe.required "open_issues" Jdec.int
         |> Jpipe.required "watchers" Jdec.int
         |> Jpipe.required "default_branch" Jdec.string
-        |> Jpipe.optional "public" (Jdec.nullable Jdec.bool) Nothing
 
-encodeForkee : Forkee -> Jenc.Value
-encodeForkee x =
+encodeBaseRepo : BaseRepo -> Jenc.Value
+encodeBaseRepo x =
     Jenc.object
         [ ("id", Jenc.int x.id)
+        , ("node_id", Jenc.string x.nodeID)
         , ("name", Jenc.string x.name)
         , ("full_name", Jenc.string x.fullName)
-        , ("owner", encodeUser x.owner)
+        , ("owner", encodeOwner x.owner)
         , ("private", Jenc.bool x.private)
         , ("html_url", Jenc.string x.htmlURL)
         , ("description", makeNullableEncoder Jenc.string x.description)
@@ -5401,7 +897,7 @@ encodeForkee x =
         , ("size", Jenc.int x.size)
         , ("stargazers_count", Jenc.int x.stargazersCount)
         , ("watchers_count", Jenc.int x.watchersCount)
-        , ("language", makeNullableEncoder Jenc.string x.language)
+        , ("language", Jenc.string x.language)
         , ("has_issues", Jenc.bool x.hasIssues)
         , ("has_projects", Jenc.bool x.hasProjects)
         , ("has_downloads", Jenc.bool x.hasDownloads)
@@ -5411,247 +907,66 @@ encodeForkee x =
         , ("mirror_url", always Jenc.null x.mirrorURL)
         , ("archived", Jenc.bool x.archived)
         , ("open_issues_count", Jenc.int x.openIssuesCount)
-        , ("license", always Jenc.null x.license)
+        , ("license", makeNullableEncoder encodeLicense x.license)
         , ("forks", Jenc.int x.forks)
         , ("open_issues", Jenc.int x.openIssues)
         , ("watchers", Jenc.int x.watchers)
         , ("default_branch", Jenc.string x.defaultBranch)
-        , ("public", makeNullableEncoder Jenc.bool x.public)
         ]
 
-issue : Jdec.Decoder Issue
-issue =
-    Jpipe.decode Issue
-        |> Jpipe.required "url" Jdec.string
-        |> Jpipe.required "repository_url" Jdec.string
-        |> Jpipe.required "labels_url" Jdec.string
-        |> Jpipe.required "comments_url" Jdec.string
-        |> Jpipe.required "events_url" Jdec.string
-        |> Jpipe.required "html_url" Jdec.string
-        |> Jpipe.required "id" Jdec.int
-        |> Jpipe.required "number" Jdec.int
-        |> Jpipe.required "title" Jdec.string
-        |> Jpipe.required "user" user
-        |> Jpipe.required "labels" (Jdec.array label)
-        |> Jpipe.required "state" Jdec.string
-        |> Jpipe.required "locked" Jdec.bool
-        |> Jpipe.optional "assignee" (Jdec.nullable user) Nothing
-        |> Jpipe.required "assignees" (Jdec.array user)
-        |> Jpipe.optional "milestone" (Jdec.null ()) ()
-        |> Jpipe.required "comments" Jdec.int
-        |> Jpipe.required "created_at" Jdec.string
-        |> Jpipe.required "updated_at" Jdec.string
-        |> Jpipe.optional "closed_at" (Jdec.null ()) ()
-        |> Jpipe.required "author_association" Jdec.string
-        |> Jpipe.required "body" Jdec.string
-
-encodeIssue : Issue -> Jenc.Value
-encodeIssue x =
-    Jenc.object
-        [ ("url", Jenc.string x.url)
-        , ("repository_url", Jenc.string x.repositoryURL)
-        , ("labels_url", Jenc.string x.labelsURL)
-        , ("comments_url", Jenc.string x.commentsURL)
-        , ("events_url", Jenc.string x.eventsURL)
-        , ("html_url", Jenc.string x.htmlURL)
-        , ("id", Jenc.int x.id)
-        , ("number", Jenc.int x.number)
-        , ("title", Jenc.string x.title)
-        , ("user", encodeUser x.user)
-        , ("labels", makeArrayEncoder encodeLabel x.labels)
-        , ("state", Jenc.string x.state)
-        , ("locked", Jenc.bool x.locked)
-        , ("assignee", makeNullableEncoder encodeUser x.assignee)
-        , ("assignees", makeArrayEncoder encodeUser x.assignees)
-        , ("milestone", always Jenc.null x.milestone)
-        , ("comments", Jenc.int x.comments)
-        , ("created_at", Jenc.string x.createdAt)
-        , ("updated_at", Jenc.string x.updatedAt)
-        , ("closed_at", always Jenc.null x.closedAt)
-        , ("author_association", Jenc.string x.authorAssociation)
-        , ("body", Jenc.string x.body)
-        ]
-
-label : Jdec.Decoder Label
-label =
-    Jpipe.decode Label
-        |> Jpipe.required "id" Jdec.int
-        |> Jpipe.required "url" Jdec.string
+license : Jdec.Decoder License
+license =
+    Jpipe.decode License
+        |> Jpipe.required "key" Jdec.string
         |> Jpipe.required "name" Jdec.string
-        |> Jpipe.required "color" Jdec.string
-        |> Jpipe.required "default" Jdec.bool
+        |> Jpipe.optional "spdx_id" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.optional "url" (Jdec.nullable Jdec.string) Nothing
+        |> Jpipe.required "node_id" Jdec.string
 
-encodeLabel : Label -> Jenc.Value
-encodeLabel x =
+encodeLicense : License -> Jenc.Value
+encodeLicense x =
     Jenc.object
-        [ ("id", Jenc.int x.id)
-        , ("url", Jenc.string x.url)
+        [ ("key", Jenc.string x.key)
         , ("name", Jenc.string x.name)
-        , ("color", Jenc.string x.color)
-        , ("default", Jenc.bool x.default)
+        , ("spdx_id", makeNullableEncoder Jenc.string x.spdxID)
+        , ("url", makeNullableEncoder Jenc.string x.url)
+        , ("node_id", Jenc.string x.nodeID)
         ]
 
-pullRequest : Jdec.Decoder PullRequest
-pullRequest =
-    Jpipe.decode PullRequest
-        |> Jpipe.required "url" Jdec.string
-        |> Jpipe.required "id" Jdec.int
-        |> Jpipe.required "html_url" Jdec.string
-        |> Jpipe.required "diff_url" Jdec.string
-        |> Jpipe.required "patch_url" Jdec.string
-        |> Jpipe.required "issue_url" Jdec.string
-        |> Jpipe.required "number" Jdec.int
-        |> Jpipe.required "state" Jdec.string
-        |> Jpipe.required "locked" Jdec.bool
-        |> Jpipe.required "title" Jdec.string
-        |> Jpipe.required "user" user
-        |> Jpipe.required "body" Jdec.string
-        |> Jpipe.required "created_at" Jdec.string
-        |> Jpipe.required "updated_at" Jdec.string
-        |> Jpipe.optional "closed_at" (Jdec.null ()) ()
-        |> Jpipe.optional "merged_at" (Jdec.null ()) ()
-        |> Jpipe.optional "merge_commit_sha" (Jdec.null ()) ()
-        |> Jpipe.optional "assignee" (Jdec.null ()) ()
-        |> Jpipe.required "assignees" (Jdec.array Jdec.value)
-        |> Jpipe.required "requested_reviewers" (Jdec.array Jdec.value)
-        |> Jpipe.required "requested_teams" (Jdec.array Jdec.value)
-        |> Jpipe.required "labels" (Jdec.array Jdec.value)
-        |> Jpipe.optional "milestone" (Jdec.null ()) ()
-        |> Jpipe.required "commits_url" Jdec.string
-        |> Jpipe.required "review_comments_url" Jdec.string
-        |> Jpipe.required "review_comment_url" Jdec.string
-        |> Jpipe.required "comments_url" Jdec.string
-        |> Jpipe.required "statuses_url" Jdec.string
-        |> Jpipe.required "head" base
-        |> Jpipe.required "base" base
-        |> Jpipe.required "_links" links
-        |> Jpipe.required "author_association" Jdec.string
-        |> Jpipe.required "merged" Jdec.bool
-        |> Jpipe.optional "mergeable" (Jdec.null ()) ()
-        |> Jpipe.optional "rebaseable" (Jdec.null ()) ()
-        |> Jpipe.required "mergeable_state" Jdec.string
-        |> Jpipe.optional "merged_by" (Jdec.null ()) ()
-        |> Jpipe.required "comments" Jdec.int
-        |> Jpipe.required "review_comments" Jdec.int
-        |> Jpipe.required "maintainer_can_modify" Jdec.bool
-        |> Jpipe.required "commits" Jdec.int
-        |> Jpipe.required "additions" Jdec.int
-        |> Jpipe.required "deletions" Jdec.int
-        |> Jpipe.required "changed_files" Jdec.int
+pullRequestLinks : Jdec.Decoder PullRequestLinks
+pullRequestLinks =
+    Jpipe.decode PullRequestLinks
+        |> Jpipe.required "self" html
+        |> Jpipe.required "html" html
+        |> Jpipe.required "issue" html
+        |> Jpipe.required "comments" html
+        |> Jpipe.required "review_comments" html
+        |> Jpipe.required "review_comment" html
+        |> Jpipe.required "commits" html
+        |> Jpipe.required "statuses" html
 
-encodePullRequest : PullRequest -> Jenc.Value
-encodePullRequest x =
+encodePullRequestLinks : PullRequestLinks -> Jenc.Value
+encodePullRequestLinks x =
     Jenc.object
-        [ ("url", Jenc.string x.url)
-        , ("id", Jenc.int x.id)
-        , ("html_url", Jenc.string x.htmlURL)
-        , ("diff_url", Jenc.string x.diffURL)
-        , ("patch_url", Jenc.string x.patchURL)
-        , ("issue_url", Jenc.string x.issueURL)
-        , ("number", Jenc.int x.number)
-        , ("state", Jenc.string x.state)
-        , ("locked", Jenc.bool x.locked)
-        , ("title", Jenc.string x.title)
-        , ("user", encodeUser x.user)
-        , ("body", Jenc.string x.body)
-        , ("created_at", Jenc.string x.createdAt)
-        , ("updated_at", Jenc.string x.updatedAt)
-        , ("closed_at", always Jenc.null x.closedAt)
-        , ("merged_at", always Jenc.null x.mergedAt)
-        , ("merge_commit_sha", always Jenc.null x.mergeCommitSHA)
-        , ("assignee", always Jenc.null x.assignee)
-        , ("assignees", makeArrayEncoder identity x.assignees)
-        , ("requested_reviewers", makeArrayEncoder identity x.requestedReviewers)
-        , ("requested_teams", makeArrayEncoder identity x.requestedTeams)
-        , ("labels", makeArrayEncoder identity x.labels)
-        , ("milestone", always Jenc.null x.milestone)
-        , ("commits_url", Jenc.string x.commitsURL)
-        , ("review_comments_url", Jenc.string x.reviewCommentsURL)
-        , ("review_comment_url", Jenc.string x.reviewCommentURL)
-        , ("comments_url", Jenc.string x.commentsURL)
-        , ("statuses_url", Jenc.string x.statusesURL)
-        , ("head", encodeBase x.head)
-        , ("base", encodeBase x.base)
-        , ("_links", encodeLinks x.links)
-        , ("author_association", Jenc.string x.authorAssociation)
-        , ("merged", Jenc.bool x.merged)
-        , ("mergeable", always Jenc.null x.mergeable)
-        , ("rebaseable", always Jenc.null x.rebaseable)
-        , ("mergeable_state", Jenc.string x.mergeableState)
-        , ("merged_by", always Jenc.null x.mergedBy)
-        , ("comments", Jenc.int x.comments)
-        , ("review_comments", Jenc.int x.reviewComments)
-        , ("maintainer_can_modify", Jenc.bool x.maintainerCanModify)
-        , ("commits", Jenc.int x.commits)
-        , ("additions", Jenc.int x.additions)
-        , ("deletions", Jenc.int x.deletions)
-        , ("changed_files", Jenc.int x.changedFiles)
+        [ ("self", encodeHTML x.self)
+        , ("html", encodeHTML x.html)
+        , ("issue", encodeHTML x.issue)
+        , ("comments", encodeHTML x.comments)
+        , ("review_comments", encodeHTML x.reviewComments)
+        , ("review_comment", encodeHTML x.reviewComment)
+        , ("commits", encodeHTML x.commits)
+        , ("statuses", encodeHTML x.statuses)
         ]
 
-base : Jdec.Decoder Base
-base =
-    Jpipe.decode Base
-        |> Jpipe.required "label" Jdec.string
-        |> Jpipe.required "ref" Jdec.string
-        |> Jpipe.required "sha" Jdec.string
-        |> Jpipe.required "user" user
-        |> Jpipe.required "repo" forkee
-
-encodeBase : Base -> Jenc.Value
-encodeBase x =
-    Jenc.object
-        [ ("label", Jenc.string x.label)
-        , ("ref", Jenc.string x.ref)
-        , ("sha", Jenc.string x.sha)
-        , ("user", encodeUser x.user)
-        , ("repo", encodeForkee x.repo)
-        ]
-
-links : Jdec.Decoder Links
-links =
-    Jpipe.decode Links
-        |> Jpipe.required "self" comments
-        |> Jpipe.required "html" comments
-        |> Jpipe.required "issue" comments
-        |> Jpipe.required "comments" comments
-        |> Jpipe.required "review_comments" comments
-        |> Jpipe.required "review_comment" comments
-        |> Jpipe.required "commits" comments
-        |> Jpipe.required "statuses" comments
-
-encodeLinks : Links -> Jenc.Value
-encodeLinks x =
-    Jenc.object
-        [ ("self", encodeComments x.self)
-        , ("html", encodeComments x.html)
-        , ("issue", encodeComments x.issue)
-        , ("comments", encodeComments x.comments)
-        , ("review_comments", encodeComments x.reviewComments)
-        , ("review_comment", encodeComments x.reviewComment)
-        , ("commits", encodeComments x.commits)
-        , ("statuses", encodeComments x.statuses)
-        ]
-
-comments : Jdec.Decoder Comments
-comments =
-    Jpipe.decode Comments
-        |> Jpipe.required "href" Jdec.string
-
-encodeComments : Comments -> Jenc.Value
-encodeComments x =
-    Jenc.object
-        [ ("href", Jenc.string x.href)
-        ]
-
-repo : Jdec.Decoder Repo
-repo =
-    Jpipe.decode Repo
+eventRepo : Jdec.Decoder EventRepo
+eventRepo =
+    Jpipe.decode EventRepo
         |> Jpipe.required "id" Jdec.int
         |> Jpipe.required "name" Jdec.string
         |> Jpipe.required "url" Jdec.string
 
-encodeRepo : Repo -> Jenc.Value
-encodeRepo x =
+encodeEventRepo : EventRepo -> Jenc.Value
+encodeEventRepo x =
     Jenc.object
         [ ("id", Jenc.int x.id)
         , ("name", Jenc.string x.name)
@@ -5665,6 +980,7 @@ gist =
         |> Jpipe.required "forks_url" Jdec.string
         |> Jpipe.required "commits_url" Jdec.string
         |> Jpipe.required "id" Jdec.string
+        |> Jpipe.required "node_id" Jdec.string
         |> Jpipe.required "git_pull_url" Jdec.string
         |> Jpipe.required "git_push_url" Jdec.string
         |> Jpipe.required "html_url" Jdec.string
@@ -5676,8 +992,8 @@ gist =
         |> Jpipe.required "comments" Jdec.int
         |> Jpipe.optional "user" (Jdec.null ()) ()
         |> Jpipe.required "comments_url" Jdec.string
+        |> Jpipe.required "owner" owner
         |> Jpipe.required "truncated" Jdec.bool
-        |> Jpipe.optional "owner" (Jdec.nullable user) Nothing
 
 encodeGist : Gist -> Jenc.Value
 encodeGist x =
@@ -5686,6 +1002,7 @@ encodeGist x =
         , ("forks_url", Jenc.string x.forksURL)
         , ("commits_url", Jenc.string x.commitsURL)
         , ("id", Jenc.string x.id)
+        , ("node_id", Jenc.string x.nodeID)
         , ("git_pull_url", Jenc.string x.gitPullURL)
         , ("git_push_url", Jenc.string x.gitPushURL)
         , ("html_url", Jenc.string x.htmlURL)
@@ -5697,15 +1014,15 @@ encodeGist x =
         , ("comments", Jenc.int x.comments)
         , ("user", always Jenc.null x.user)
         , ("comments_url", Jenc.string x.commentsURL)
+        , ("owner", encodeOwner x.owner)
         , ("truncated", Jenc.bool x.truncated)
-        , ("owner", makeNullableEncoder encodeUser x.owner)
         ]
 
 file : Jdec.Decoder File
 file =
     Jpipe.decode File
         |> Jpipe.required "filename" Jdec.string
-        |> Jpipe.required "type" fileType
+        |> Jpipe.required "type" Jdec.string
         |> Jpipe.optional "language" (Jdec.nullable Jdec.string) Nothing
         |> Jpipe.required "raw_url" Jdec.string
         |> Jpipe.required "size" Jdec.int
@@ -5714,32 +1031,11 @@ encodeFile : File -> Jenc.Value
 encodeFile x =
     Jenc.object
         [ ("filename", Jenc.string x.filename)
-        , ("type", encodeFileType x.fileType)
+        , ("type", Jenc.string x.fileType)
         , ("language", makeNullableEncoder Jenc.string x.language)
         , ("raw_url", Jenc.string x.rawURL)
         , ("size", Jenc.int x.size)
         ]
-
-fileType : Jdec.Decoder FileType
-fileType =
-    Jdec.string
-        |> Jdec.andThen (\str ->
-            case str of
-                "application/javascript" -> Jdec.succeed ApplicationJavascript
-                "application/x-python" -> Jdec.succeed ApplicationXPython
-                "text/css" -> Jdec.succeed TextCSS
-                "text/html" -> Jdec.succeed TextHTML
-                "text/plain" -> Jdec.succeed TextPlain
-                somethingElse -> Jdec.fail <| "Invalid FileType: " ++ somethingElse
-        )
-
-encodeFileType : FileType -> Jenc.Value
-encodeFileType x = case x of
-    ApplicationJavascript -> Jenc.string "application/javascript"
-    ApplicationXPython -> Jenc.string "application/x-python"
-    TextCSS -> Jenc.string "text/css"
-    TextHTML -> Jenc.string "text/html"
-    TextPlain -> Jenc.string "text/plain"
 
 meta : Jdec.Decoder Meta
 meta =

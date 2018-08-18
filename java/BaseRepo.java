@@ -3,12 +3,13 @@ package io.quicktype;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.*;
 
-public class Forkee {
+public class BaseRepo {
     private long id;
+    private String nodeID;
     private String name;
     private String fullName;
-    private User owner;
-    private boolean forkeePrivate;
+    private Owner owner;
+    private boolean repoPrivate;
     private String htmlURL;
     private String description;
     private boolean fork;
@@ -70,17 +71,21 @@ public class Forkee {
     private Object mirrorURL;
     private boolean archived;
     private long openIssuesCount;
-    private Object license;
+    private License license;
     private long forks;
     private long openIssues;
     private long watchers;
     private String defaultBranch;
-    private Boolean forkeePublic;
 
     @JsonProperty("id")
     public long getID() { return id; }
     @JsonProperty("id")
     public void setID(long value) { this.id = value; }
+
+    @JsonProperty("node_id")
+    public String getNodeID() { return nodeID; }
+    @JsonProperty("node_id")
+    public void setNodeID(String value) { this.nodeID = value; }
 
     @JsonProperty("name")
     public String getName() { return name; }
@@ -93,14 +98,14 @@ public class Forkee {
     public void setFullName(String value) { this.fullName = value; }
 
     @JsonProperty("owner")
-    public User getOwner() { return owner; }
+    public Owner getOwner() { return owner; }
     @JsonProperty("owner")
-    public void setOwner(User value) { this.owner = value; }
+    public void setOwner(Owner value) { this.owner = value; }
 
     @JsonProperty("private")
-    public boolean getForkeePrivate() { return forkeePrivate; }
+    public boolean getRepoPrivate() { return repoPrivate; }
     @JsonProperty("private")
-    public void setForkeePrivate(boolean value) { this.forkeePrivate = value; }
+    public void setRepoPrivate(boolean value) { this.repoPrivate = value; }
 
     @JsonProperty("html_url")
     public String getHTMLURL() { return htmlURL; }
@@ -408,9 +413,9 @@ public class Forkee {
     public void setOpenIssuesCount(long value) { this.openIssuesCount = value; }
 
     @JsonProperty("license")
-    public Object getLicense() { return license; }
+    public License getLicense() { return license; }
     @JsonProperty("license")
-    public void setLicense(Object value) { this.license = value; }
+    public void setLicense(License value) { this.license = value; }
 
     @JsonProperty("forks")
     public long getForks() { return forks; }
@@ -431,9 +436,4 @@ public class Forkee {
     public String getDefaultBranch() { return defaultBranch; }
     @JsonProperty("default_branch")
     public void setDefaultBranch(String value) { this.defaultBranch = value; }
-
-    @JsonProperty("public")
-    public Boolean getForkeePublic() { return forkeePublic; }
-    @JsonProperty("public")
-    public void setForkeePublic(Boolean value) { this.forkeePublic = value; }
 }

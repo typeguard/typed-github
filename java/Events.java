@@ -7,7 +7,7 @@ public class Events {
     private String id;
     private String type;
     private Actor actor;
-    private Repo repo;
+    private EventRepo repo;
     private Payload payload;
     private boolean eventPublic;
     private String createdAt;
@@ -29,9 +29,9 @@ public class Events {
     public void setActor(Actor value) { this.actor = value; }
 
     @JsonProperty("repo")
-    public Repo getRepo() { return repo; }
+    public EventRepo getRepo() { return repo; }
     @JsonProperty("repo")
-    public void setRepo(Repo value) { this.repo = value; }
+    public void setRepo(EventRepo value) { this.repo = value; }
 
     @JsonProperty("payload")
     public Payload getPayload() { return payload; }

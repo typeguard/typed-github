@@ -1,15 +1,15 @@
 // To use this code, add the following Maven dependency to your project:
-// 
+//
 //     com.fasterxml.jackson.core : jackson-databind : 2.9.0
-// 
+//
 // Import this package:
-// 
+//
 //     import io.quicktype.Converter;
 //
 // Then you can deserialize a JSON string with
 //
-//     APIData data = Converter.APIDataFromJsonString(jsonString);
-//     Emojis data = Converter.EmojisFromJsonString(jsonString);
+//     Map<String, String> data = Converter.APIDataFromJsonString(jsonString);
+//     Map<String, String> data = Converter.EmojisFromJsonString(jsonString);
 //     Events[] data = Converter.EventsFromJsonString(jsonString);
 //     Gists[] data = Converter.GistsFromJsonString(jsonString);
 //     Meta data = Converter.MetaFromJsonString(jsonString);
@@ -24,19 +24,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class Converter {
     // Serialize/deserialize helpers
 
-    public static APIData APIDataFromJsonString(String json) throws IOException {
+    public static Map<String, String> APIDataFromJsonString(String json) throws IOException {
         return getAPIDataObjectReader().readValue(json);
     }
 
-    public static String APIDataToJsonString(APIData obj) throws JsonProcessingException {
+    public static String APIDataToJsonString(Map<String, String> obj) throws JsonProcessingException {
         return getAPIDataObjectWriter().writeValueAsString(obj);
     }
 
-    public static Emojis EmojisFromJsonString(String json) throws IOException {
+    public static Map<String, String> EmojisFromJsonString(String json) throws IOException {
         return getEmojisObjectReader().readValue(json);
     }
 
-    public static String EmojisToJsonString(Emojis obj) throws JsonProcessingException {
+    public static String EmojisToJsonString(Map<String, String> obj) throws JsonProcessingException {
         return getEmojisObjectWriter().writeValueAsString(obj);
     }
 
@@ -69,17 +69,17 @@ public class Converter {
 
     private static void instantiateAPIDataMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        APIDataReader = mapper.reader(APIData.class);
-        APIDataWriter = mapper.writerFor(APIData.class);
+        APIDataReader = mapper.reader(Map.class);
+        APIDataWriter = mapper.writerFor(Map.class);
     }
 
     private static ObjectReader getAPIDataObjectReader() {
-        if (APIDataReader == null) instantiateMapper();
+        if (APIDataReader == null) instantiateAPIDataMapper();
         return APIDataReader;
     }
 
     private static ObjectWriter getAPIDataObjectWriter() {
-        if (APIDataWriter == null) instantiateMapper();
+        if (APIDataWriter == null) instantiateAPIDataMapper();
         return APIDataWriter;
     }
 
@@ -88,17 +88,17 @@ public class Converter {
 
     private static void instantiateEmojisMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        EmojisReader = mapper.reader(Emojis.class);
-        EmojisWriter = mapper.writerFor(Emojis.class);
+        EmojisReader = mapper.reader(Map.class);
+        EmojisWriter = mapper.writerFor(Map.class);
     }
 
     private static ObjectReader getEmojisObjectReader() {
-        if (EmojisReader == null) instantiateMapper();
+        if (EmojisReader == null) instantiateEmojisMapper();
         return EmojisReader;
     }
 
     private static ObjectWriter getEmojisObjectWriter() {
-        if (EmojisWriter == null) instantiateMapper();
+        if (EmojisWriter == null) instantiateEmojisMapper();
         return EmojisWriter;
     }
 
@@ -112,12 +112,12 @@ public class Converter {
     }
 
     private static ObjectReader getEventsObjectReader() {
-        if (EventsReader == null) instantiateMapper();
+        if (EventsReader == null) instantiateEventsMapper();
         return EventsReader;
     }
 
     private static ObjectWriter getEventsObjectWriter() {
-        if (EventsWriter == null) instantiateMapper();
+        if (EventsWriter == null) instantiateEventsMapper();
         return EventsWriter;
     }
 
@@ -131,12 +131,12 @@ public class Converter {
     }
 
     private static ObjectReader getGistsObjectReader() {
-        if (GistsReader == null) instantiateMapper();
+        if (GistsReader == null) instantiateGistsMapper();
         return GistsReader;
     }
 
     private static ObjectWriter getGistsObjectWriter() {
-        if (GistsWriter == null) instantiateMapper();
+        if (GistsWriter == null) instantiateGistsMapper();
         return GistsWriter;
     }
 
@@ -150,12 +150,12 @@ public class Converter {
     }
 
     private static ObjectReader getMetaObjectReader() {
-        if (MetaReader == null) instantiateMapper();
+        if (MetaReader == null) instantiateMetaMapper();
         return MetaReader;
     }
 
     private static ObjectWriter getMetaObjectWriter() {
-        if (MetaWriter == null) instantiateMapper();
+        if (MetaWriter == null) instantiateMetaMapper();
         return MetaWriter;
     }
 }
